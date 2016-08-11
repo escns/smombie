@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <group android:id="@+id/drawer_Group1"
+        android:checkableBehavior="all">
+        <item android:title="홈" android:id="@+id/drawer_Home"/>
+    </group>
+    <group android:id="@+id/drawer_Group2"
+        android:checkableBehavior="all">
+        <item
+            android:title="어워드"
+            android:id="@+id/drawer_menu1"/>
+        <item
+            android:title="그래프"
+            android:id="@+id/drawer_menu2"/>
+        <item
+            android:title="설정"
+            android:id="@+id/drawer_menu3"/>
+        <item
+            android:title="내정보"
+            android:id="@+id/drawer_menu4"/>
+        <item
+            android:title="로그아웃"
+            android:id="@+id/drawer_menu5"/>
+    </group>
+
+</menu>
