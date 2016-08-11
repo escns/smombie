@@ -43,24 +43,26 @@ import java.net.URL;
 
 public class MainScreen extends AppCompatActivity {
 
-    private TextView stepView;
+    private TextView stepView; // 화면에 출력되는 걸음 수
 
-    String fbId, fbName;
-    Bitmap myBitmap;
+    String fbId, fbName; // 페이스북으로부터 id, 이름을 받아올 변수
+    Bitmap myBitmap; // 페이스북부터 사진을 받아올 객체
 
-    ImageView headerPhoto;
-    TextView headerName;
+    ImageView headerPhoto; // 사이드 메뉴에 사용자 이름,이메일
+    TextView headerName; // 사이드 메뉴에 사용자 사진
 
-    private SharedPreferences pref;
-    private SwitchCompat swc;
+    private SharedPreferences pref; // 화면 꺼짐 및 이동 시 switch가 초기화되기 때문에 파일에 따로 저장하기 위한 객체
+    private SwitchCompat swc; // 화면에 출력되는 lock 스위치
 
     DBManager dbManager; // DB 선언
     int StepCount=0; // 걸음 수
 
     private WalkCheckThread mService;
-    private boolean mBound = false;
+    private boolean mBound = false; // WalkCheckThread Service가 제대로 동작하면 true 아니면 false
 
-    // UI thread에서 mHandler로 message를 보내면 logView를 갱신시켜준다.
+    /**
+     * UI thread에서 mHandler로 message를 보내면 logView를 갱신시켜준다.
+     */
     private Handler mHandler = new Handler() {
         public void handleMessage(Message msg) {
             StepCount = dbManager.printData(); // DB에서 걸음수 불러오기
@@ -135,15 +137,28 @@ public class MainScreen extends AppCompatActivity {
         navigationView.inflateMenu((R.menu.navigation_item));
         View HeaderLayout = navigationView.getHeaderView(0);
 
+        // navigation_headr에 있는 사진과 정보
+        headerName = (TextView) HeaderLayout.findViewById(R.id.header_name);
+        headerPhoto = (ImageView) HeaderLayout.findViewById(R.id.header_photo);
+
         // 추가한 코드...아래
 
+        // 사이드메뉴에 있는 item들을 클릭 시 동작
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(MenuItem item) {
                 int id = item.getItemId();
 
                 switch(id) {
-                    case R.id.drawer_menu5 :
+                    case R.id.drawer_menu1 : // 어워드
+                        return true;
+                    case R.id.drawer_menu2 : // 그래프
+                        return true;
+                    case R.id.drawer_menu3 : // 설정
+                        return true;
+                    case R.id.drawer_menu4 : // 내정보
+                        return true;
+                    case R.id.drawer_menu5 : // 로그아웃
                         com.facebook.login.LoginManager.getInstance().logOut();
                         Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                         startActivity(intent);
@@ -156,9 +171,6 @@ public class MainScreen extends AppCompatActivity {
             }
         });
 
-
-        headerName = (TextView) HeaderLayout.findViewById(R.id.header_name);
-        headerPhoto = (ImageView) HeaderLayout.findViewById(R.id.header_photo);
     }
 
     /**
@@ -200,6 +212,7 @@ public class MainScreen extends AppCompatActivity {
         StepCount = dbManager.printData(); // DB에서 걸음수 불러오기
         stepView.setText("" + StepCount);
 
+
         // UI 변경을 위한 Thread 생성 --> Because 서브쓰레드는 직접적으로 UI를 변경시킬 수 없다
         Thread thread =  new Thread(new Runnable() {
             @Override
@@ -219,8 +232,8 @@ public class MainScreen extends AppCompatActivity {
 
                         Thread.sleep(100);
 
-                        headerName.setText(fbName);
-                        headerPhoto.setImageBitmap(myBitmap);
+                        headerName.setText(fbName);  // 페이스북 이름 입력
+                        headerPhoto.setImageBitmap(myBitmap); // 페이스북 사진 입력
 
                     } catch (Exception e){
                         e.printStackTrace();
@@ -237,8 +250,14 @@ public class MainScreen extends AppCompatActivity {
         thread.start();
     }
 
+    /**
+     * 페이스북으로부터 받아온 사진을 편집해주는 함수
+     * @param bitmap
+     * @return
+     */
     public static Bitmap getRoundedCornerBitmap(Bitmap bitmap) {
 
+        // 원 모양으로 편집
         Bitmap output = Bitmap.createBitmap(bitmap.getWidth(), bitmap.getHeight(), Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(output);
         final int color = 0xff424242;
@@ -253,7 +272,8 @@ public class MainScreen extends AppCompatActivity {
         canvas.drawBitmap(bitmap, rect, rect, paint);
         return output;
 
-        /**
+        /*
+        // 모서리를 라운딩으로 편집
         Bitmap output = Bitmap.createBitmap(bitmap.getWidth(), bitmap.getHeight(), Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(output);
 

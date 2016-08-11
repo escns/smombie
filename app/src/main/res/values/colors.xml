@@ -32,4 +32,10 @@
     <color name="orange">#FF9800</color>
     <color name="deep_orange">#FF5722</color>
     <color name="grey">#d1d1d1</color>
+
+    <color name="smombiePrimary">#FFA500</color>
+    <color name="smombiePrimaryDark">#FF8C00</color>
+    <color name="smombiePrimaryAccent">#FFA500</color>
+
+
 </resources>

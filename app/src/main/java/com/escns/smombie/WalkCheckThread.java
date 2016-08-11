@@ -1,5 +1,6 @@
 package com.escns.smombie;
 
+import android.app.Activity;
 import android.app.Service;
 import android.content.Intent;
 import android.hardware.Sensor;
@@ -7,9 +8,15 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Binder;
+import android.os.Handler;
 import android.os.IBinder;
+import android.os.Message;
 import android.support.annotation.Nullable;
 import android.util.Log;
+import android.widget.Toast;
+
+import java.util.Timer;
+import java.util.TimerTask;
 
 /**
  * Created by Administrator on 2016-08-02.
@@ -24,7 +31,7 @@ public class WalkCheckThread extends Service {
     private float lastZ; // 만보기: 마지막 z축 위치
     private float x, y, z; // 만보기: 현재 x,y,z축 위치
 
-    private static final int SHAKE_THRESHOLD = 800; // 만보기: 흔듦을 감지하는 민감도
+    private static final int SHAKE_THRESHOLD = 200; // 만보기: 흔듦을 감지하는 민감도
     private static final int DATA_X = SensorManager.DATA_X; // 만보기: 센서에서 x축 데이터
     private static final int DATA_Y = SensorManager.DATA_Y; // 만보기: 센서에서 y축 데이터
     private static final int DATA_Z = SensorManager.DATA_Z; // 만보기: 센서에서 z축 데이터
@@ -39,6 +46,11 @@ public class WalkCheckThread extends Service {
 
     DBManager dbManager; // DB 선언
     int StepCount = 0; // 걸음 수
+
+    GPSManager gpsManager; // GPS 선언
+
+    private TimerTask myTimer;
+    Handler handler;
 
     // 다른 프로세스들도 Service에 접근이 가능하게 해주는 Binder를 리턴해주기 위한 Binder 생성
     private final IBinder mBinder = new LocalBinder();
@@ -73,27 +85,15 @@ public class WalkCheckThread extends Service {
 
                     speed = Math.abs(x + y + z - lastX - lastY - lastZ) / gabOfTime * 10000;
 
-                    //curTimer = System.currentTimeMillis();
-
-                    // 1초전 스피드와 현재 스피드를 비교하여 제자리/걷기를 구분
-                    //if( ((curTimer - lastTimer) / 1000) > 1 ) {
-                    //    if(lastSpeed < SHAKE_THRESHOLD && speed < SHAKE_THRESHOLD) { // 흔들리지 않음
-                    //        isWalking = false;
-                    //    }
-                    //    else { // 흔들림
-                    //        isWalking = true;
-                    //    }
-                    //    lastSpeed = speed;
-                    //    lastTimer = curTimer;
-                    //}
-
-                    // 흔듦 이벤트발생!!
-                    if(speed > SHAKE_THRESHOLD) {
-                        // 가속도센서를 이용해 걸음수를 측정
-                        Log.d("tag", "onSensorChanged SHAKE !!");
-                        StepCount = dbManager.printData(); // DB에서 걸음 수 불러오기
-                        StepCount++; // 걸음 수 증가
-                        dbManager.inputQuery("UPDATE RECORD_LIST SET number=" + StepCount + " WHERE number=" + (StepCount - 1)); // DB에 걸음수 업데이트
+                    if (isWalking) {
+                        // 흔듦 이벤트발생!!
+                        if (speed > SHAKE_THRESHOLD) {
+                            // 가속도센서를 이용해 걸음수를 측정
+                            Log.d("tag", "onSensorChanged SHAKE !!");
+                            StepCount = dbManager.printData(); // DB에서 걸음 수 불러오기
+                            StepCount++; // 걸음 수 증가
+                            dbManager.inputQuery("UPDATE RECORD_LIST SET number=" + StepCount + " WHERE number=" + (StepCount - 1)); // DB에 걸음수
+                        }
                     }
 
                     lastX = event.values[DATA_X];
@@ -102,6 +102,7 @@ public class WalkCheckThread extends Service {
                 }
             }
         }
+
         @Override
         public void onAccuracyChanged(Sensor sensor, int accuracy) {
 
@@ -128,8 +129,45 @@ public class WalkCheckThread extends Service {
         // DB 객체화
         dbManager = new DBManager(this, "RECORD_LIST", "(number INTEGER)"); // DB 객체화
 
-        // 잠금화면 실행
-        startService(new Intent(WalkCheckThread.this, LockScreenService.class));
+        // GPS 객체화
+        gpsManager = new GPSManager(getApplicationContext(), this);
+
+        myTimer = new TimerTask() {
+            @Override
+            public void run() {
+                Log.d("tag", "5초마다 한번씩 동작!!!");
+                Message msg = handler.obtainMessage();
+                handler.sendMessage(msg);
+            }
+        };
+        Timer timer = new Timer();
+        timer.schedule(myTimer,3000,3000); // App 시작 5초 이후에 5초마다 실행
+
+        // handler 안에 들어갈 코드
+        handler = new Handler() {
+            public void handleMessage(Message msg) {
+
+                int state = gpsManager.getData();
+
+                if (state == 2) { // 걸을 때
+                    // 잠금화면 실행
+                    isWalking = true;
+                    startService(new Intent(WalkCheckThread.this, LockScreenService.class));
+                } else if (state == 1) { // 제자리일 때
+                    //잠금화면 종료
+                    isWalking = false;
+                    stopService(new Intent(WalkCheckThread.this, LockScreenService.class));
+                } else {
+                    //잠금화면 작동안함
+                    isWalking = false;
+                    stopService(new Intent(WalkCheckThread.this, LockScreenService.class));
+                }
+            }
+
+        };
+
+
+
     }
 
     @Override
@@ -148,10 +186,11 @@ public class WalkCheckThread extends Service {
         // 만보기: 가속도센서 감지 끝
         if (sensorManager != null)
             sensorManager.unregisterListener(sensorEventListener);
-        //if(isWalking) {
-        //    isWalking=false;
-        //    // Service가 끝나면 자금화면 종료
-            stopService(new Intent(WalkCheckThread.this, LockScreenService.class));
+
+        //if (isWalking) {
+            // Service가 끝나면 자금화면 종료
+        myTimer.cancel();
+        stopService(new Intent(WalkCheckThread.this, LockScreenService.class));
         //}
         super.onDestroy();
     }
@@ -162,5 +201,10 @@ public class WalkCheckThread extends Service {
     public IBinder onBind(Intent intent) {
         return mBinder;
     }
+
+    public void setIsWalking(boolean b) {
+        isWalking = b;
+    }
+
 }
 
