@@ -146,15 +146,13 @@ public class MainActivity extends AppCompatActivity {
                 int id = item.getItemId();
 
                 switch(id) {
-                    case R.id.drawer_menu1 : // 어워드
+                    case R.id.drawer_menu1 : // 히스토리
                         return true;
-                    case R.id.drawer_menu2 : // 그래프
+                    case R.id.drawer_menu2 : // 설정
                         return true;
-                    case R.id.drawer_menu3 : // 설정
+                    case R.id.drawer_menu3 : // 내정보
                         return true;
-                    case R.id.drawer_menu4 : // 내정보
-                        return true;
-                    case R.id.drawer_menu5 : // 로그아웃
+                    case R.id.drawer_menu4 : // 로그아웃
                         com.facebook.login.LoginManager.getInstance().logOut();
                         Intent intent = new Intent(getApplicationContext(), StartActivity.class);
                         startActivity(intent);

@@ -7,20 +7,17 @@
     <group android:id="@+id/drawer_Group2"
         android:checkableBehavior="all">
         <item
-            android:title="어워드"
+            android:title="히스토리"
             android:id="@+id/drawer_menu1"/>
         <item
-            android:title="그래프"
+            android:title="설정"
             android:id="@+id/drawer_menu2"/>
         <item
-            android:title="설정"
+            android:title="내정보"
             android:id="@+id/drawer_menu3"/>
         <item
-            android:title="내정보"
-            android:id="@+id/drawer_menu4"/>
-        <item
             android:title="로그아웃"
-            android:id="@+id/drawer_menu5"/>
+            android:id="@+id/drawer_menu4"/>]
     </group>
 
 </menu>
