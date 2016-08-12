@@ -18,7 +18,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
-        <activity android:name=".MainActivity">
+        <activity android:name=".StartActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -51,10 +51,10 @@
             </intent-filter>
         </receiver>
 
-        <activity android:name=".MainScreen">
+        <activity android:name=".MainActivity">
         </activity>
 
-        <activity android:name=".LoginManager">
+        <activity android:name=".LoginActivity">
         </activity>
 
         <meta-data android:name="com.facebook.sdk.ApplicationId" android:value="@string/facebook_app_id"/> // Facebook 추가

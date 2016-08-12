@@ -27,7 +27,7 @@ import java.util.Arrays;
  * Created by hyo99 on 2016-08-10.
  */
 
-public class LoginManager extends Activity {
+public class LoginActivity extends Activity {
 
     String fbId; // 페이스북 고유ID
     String fbName; // 페이스북 이름
@@ -78,7 +78,7 @@ public class LoginManager extends Activity {
                                     fbName = jsonObject.getString("name");
                                     fbEmail = jsonObject.getString("email");
 
-                                    Intent intent = new Intent(getApplicationContext(), MainScreen.class);
+                                    Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                                     intent.putExtra("id", fbId);
                                     intent.putExtra("name", fbName +"\n"+ fbEmail);
                                     startActivity(intent);
@@ -112,7 +112,7 @@ public class LoginManager extends Activity {
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(), MainScreen.class);
+                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                 fbId = "12345";
                 fbName = "이름";
                 fbEmail = "이메일주소";

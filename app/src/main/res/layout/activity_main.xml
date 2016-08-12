@@ -1,21 +1,62 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/activity_main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
     android:orientation="vertical"
-    tools:context="com.escns.smombie.MainActivity">
+    >
 
-    <TextView
-        android:id="@+id/stepView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Loading...."
-        android:textSize="30sp"
-        android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true" />
+    <include layout="@layout/toolbar"></include>
 
-</RelativeLayout>
+    <android.support.v4.widget.DrawerLayout
+        android:id="@+id/drawerLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <android.support.design.widget.CoordinatorLayout
+            android:id="@+id/coordinator_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <!-- 만약 프래그먼트로 작업시에는 이 부분이 Frame이 되야됨 -->
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:id="@+id/stepView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Step"
+                    android:textSize="30sp"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="50dp"/>
+
+                <android.support.v7.widget.SwitchCompat
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Lock ON"
+                    android:id="@+id/switchLock"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="200dp"/>
+
+            </RelativeLayout>
+            <!-- 만약 프래그먼트로 작업시에는 이 부분이 Frame이 되야됨 -->
+        </android.support.design.widget.CoordinatorLayout>
+
+        <android.support.design.widget.NavigationView
+            android:id="@+id/navigation_view"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="start"
+            android:background="#ffffff"
+            app:headerLayout="@layout/navigation_header"
+            app:itemIconTint="#ff1b6bae"
+            app:itemTextColor="#333"
+            app:theme="@style/NavigationDrawerStyle" />
+    </android.support.v4.widget.DrawerLayout>
+
+</LinearLayout>
