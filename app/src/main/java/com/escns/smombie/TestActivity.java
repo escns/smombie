@@ -1,10 +1,15 @@
 package com.escns.smombie;
 
+import android.content.ComponentName;
+import android.content.Context;
+import android.content.Intent;
+import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.IBinder;
 import android.os.Message;
 import android.support.design.widget.NavigationView;
 import android.support.v4.widget.DrawerLayout;
@@ -12,11 +17,13 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SwitchCompat;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -41,12 +48,18 @@ public class TestActivity extends AppCompatActivity {
     private CustomImageView profileImage;
     private Bitmap bit;
 
+    private WalkCheckThread mService;
+    private boolean mBound = false; // WalkCheckThread Service가 제대로 동작하면 true 아니면 false
+
+    boolean isProfileImageLoaded;
+
     Handler handler = new Handler() {
 
         @Override
         public void handleMessage(Message msg) {
             Log.i("tag", "handleMessage");
             profileImage.setImageBitmap(bit);
+            isProfileImageLoaded=true;
         }
     };
 
@@ -156,7 +169,7 @@ public class TestActivity extends AppCompatActivity {
         Thread thread =  new Thread(new Runnable() {
             @Override
             public void run() {
-                while(true) {
+                while(!isProfileImageLoaded) {
                     try{
                         URL url = new URL("https://graph.facebook.com/" + fbId + "/picture?type=large"); // URL 주소를 이용해서 URL 객체 생성
 
@@ -185,7 +198,58 @@ public class TestActivity extends AppCompatActivity {
         profileName.setText(fbName);
         TextView profileEmail = (TextView) findViewById(R.id.profile_email);
         profileEmail.setText(fbEmail);
+
+
+        pref = getSharedPreferences("pref", MODE_PRIVATE);
+
+        // Lock on 스위치
+        SwitchCompat swc = (SwitchCompat) findViewById(R.id.switchLock);
+        swc.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+
+                //isChecked = pref.getBoolean("switch", true);
+
+                if(isChecked) {
+                    // 화면이 꺼지고 켜질 때 Lock의 값이 초기화 되기 때문에
+                    // SharedPreferences을 사용하여 값을 파일에 저장시켜둔다
+                    SharedPreferences.Editor editor = pref.edit();
+                    editor.putBoolean("switch", true);
+                    editor.commit();
+
+                    Intent intent = new Intent("com.escns.smombie.service");
+                    intent.setPackage("com.escns.smombie");
+                    bindService(intent, mConnection, Context.BIND_AUTO_CREATE); // 만보기 동작
+                } else {
+                    SharedPreferences.Editor editor = pref.edit();
+                    editor.putBoolean("switch", false);
+                    editor.commit();
+
+                    unbindService(mConnection);
+                }
+            }
+        });
     }
+
+    // ThreadService와 MainActivity를 연결 시켜줄 ServiceConnection
+    /** Defines callbacks for service binding, passed to bindService() */
+    private ServiceConnection mConnection = new ServiceConnection() {
+
+        // 리턴되는 Binder를 다시 Service로 꺼내서 ThreadSerivce내부의 함수 사용이 가능하다.
+        @Override
+        public void onServiceConnected(ComponentName className, IBinder service) {
+            WalkCheckThread.LocalBinder binder = (WalkCheckThread.LocalBinder) service;
+            mService = binder.getService();
+            mBound = true;
+            Log.d("tag", "onServiceConnected");
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName arg0) {
+            mBound = false;
+            Log.d("tag", "onServiceDisconnected");
+        }
+    };
 
 
     /**

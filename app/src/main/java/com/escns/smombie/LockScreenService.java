@@ -51,6 +51,8 @@ public class LockScreenService extends Service {
     @Override
     public void onDestroy() {
         Log.d("Tag", "LockScreenService - onDestroy");
+        Intent intent = new Intent("com.escns.smombie.LOCK_SCREEN_OFF");
+        sendBroadcast(intent);
         unregisterReceiver(mReceiver);
 
         super.onDestroy();

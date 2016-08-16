@@ -43,7 +43,6 @@ public class LockScreenReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         Log.d("Tag", "LockReceiver - onReceive");
 
-
         String action = intent.getAction();
 
         // 어떤 메시지인지 확인
@@ -92,6 +91,12 @@ public class LockScreenReceiver extends BroadcastReceiver {
 
         } else if(action.equals("com.escns.smombie.CALL_STATE_IDLE")) {
 
+        } else if(action.equals("com.escns.smombie.LOCK_SCREEN_OFF")) {
+            if(mWindowManager!=null && isLock) {
+                mWindowManager.removeView(mLockScreenView);
+                mWindowManager = null;
+                isLock=false;
+            }
         }
     }
 
