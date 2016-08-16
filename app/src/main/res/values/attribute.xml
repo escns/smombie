@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <declare-styleable name="CustomImageView">
+        <attr name="customImageViewType" format="reference|string"/>
+        <attr name="customImageViewBorder" format="reference|boolean"/>
+        <attr name="customImageViewBorderWidth" format="reference|integer"/>
+        <attr name="customImageViewBorderColor" format="reference|color"/>
+    </declare-styleable>
+
+</resources>
