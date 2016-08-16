@@ -39,16 +39,16 @@ import java.net.URL;
 
 public class MainActivity extends AppCompatActivity {
 
-    private TextView stepView; // 화면에 출력되는 걸음 수
+    private TextView stepView;          // 화면에 출력되는 걸음 수
 
-    String fbId, fbName; // 페이스북으로부터 id, 이름을 받아올 변수
-    Bitmap myBitmap; // 페이스북부터 사진을 받아올 객체
+    String fbId, fbName, fbEmail;                // 페이스북으로부터 id, 이름을 받아올 변수
+    Bitmap myBitmap;                    // 페이스북부터 사진을 받아올 객체
 
-    ImageView headerPhoto; // 사이드 메뉴에 사용자 이름,이메일
-    TextView headerName; // 사이드 메뉴에 사용자 사진
+    ImageView headerPhoto;              // 사이드 메뉴에 사용자 이름,이메일
+    TextView headerName;                // 사이드 메뉴에 사용자 사진
 
-    private SharedPreferences pref; // 화면 꺼짐 및 이동 시 switch가 초기화되기 때문에 파일에 따로 저장하기 위한 객체
-    private SwitchCompat swc; // 화면에 출력되는 lock 스위치
+    private SharedPreferences pref;     // 화면 꺼짐 및 이동 시 switch가 초기화되기 때문에 파일에 따로 저장하기 위한 객체
+    private SwitchCompat swc;           // 화면에 출력되는 lock 스위치
 
     DBManager dbManager; // DB 선언
     int StepCount=0; // 걸음 수
@@ -80,6 +80,7 @@ public class MainActivity extends AppCompatActivity {
 
         fbId = getIntent().getStringExtra("id");
         fbName = getIntent().getStringExtra("name");
+        fbEmail = getIntent().getStringExtra("email");
         Log.d("tag", "id : " + fbId);
         Log.d("tag", "name : " + fbName);
 

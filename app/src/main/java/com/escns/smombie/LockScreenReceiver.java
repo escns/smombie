@@ -5,30 +5,18 @@ import android.content.Context;
 import android.content.Intent;
 import android.support.v4.view.PagerAdapter;
 import android.util.Log;
-import android.util.TypedValue;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.drawable.GlideDrawable;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
-import com.escns.smombie.graph.GraphData;
-import com.escns.smombie.graph.GraphDataVO;
-import com.escns.smombie.graph.GraphView;
 
-import java.text.DateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
 import java.util.Random;
 
 /**
@@ -144,6 +132,7 @@ public class LockScreenReceiver extends BroadcastReceiver {
                         .asGif()
                         .into(zombie);
                 */
+                /*
                 LinearLayout clockLayout = (LinearLayout) layout.findViewById(R.id.clockLayout);
 
                 List<GraphData> list = new ArrayList<>();
@@ -218,6 +207,7 @@ public class LockScreenReceiver extends BroadcastReceiver {
                 });
 
                 container.addView(layout);
+                */
                 return layout;
 
             } else if(position ==1){

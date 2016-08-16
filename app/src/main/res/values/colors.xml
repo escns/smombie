@@ -12,6 +12,10 @@
     <color name="section2">#59da9c</color>
     <color name="section3">#7659ef</color>
 
+    <color name="mainColor">#ffa500</color>
+    <color name="secondColor">#ff7900</color>
+    <color name="thirdColor">#d86600</color>
+
     <color name="white">#FFFFFF</color>
     <color name="black">#0e1315</color>
     <color name="blue_grey">#455A64</color>

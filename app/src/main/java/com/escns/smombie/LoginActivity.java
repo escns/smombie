@@ -78,9 +78,11 @@ public class LoginActivity extends Activity {
                                     fbName = jsonObject.getString("name");
                                     fbEmail = jsonObject.getString("email");
 
-                                    Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                                    //Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                                    Intent intent = new Intent(getApplicationContext(), TestActivity.class);
                                     intent.putExtra("id", fbId);
-                                    intent.putExtra("name", fbName +"\n"+ fbEmail);
+                                    intent.putExtra("name", fbName);
+                                    intent.putExtra("email", fbEmail);
                                     startActivity(intent);
                                     finish();
 
@@ -112,12 +114,14 @@ public class LoginActivity extends Activity {
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                //Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                Intent intent = new Intent(getApplicationContext(), TestActivity.class);
                 fbId = "12345";
                 fbName = "이름";
                 fbEmail = "이메일주소";
                 intent.putExtra("id", fbId);
-                intent.putExtra("name", fbName +"\n"+ fbEmail);
+                intent.putExtra("name", fbName);
+                intent.putExtra("email",fbEmail);
                 startActivity(intent);
                 finish();
             }
