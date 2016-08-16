@@ -48,6 +48,7 @@
                 <action android:name="com.escns.smombie.CALL_STATE_RINGING" />
                 <action android:name="com.escns.smombie.CALL_STATE_OFFHOOK" />
                 <action android:name="com.escns.smombie.CALL_STATE_IDLE" />
+                <action android:name="com.escns.smombie.LOCK_SCREEN_ON" />
                 <action android:name="com.escns.smombie.LOCK_SCREEN_OFF" />
             </intent-filter>
         </receiver>

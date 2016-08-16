@@ -111,7 +111,6 @@ public class TestActivity extends AppCompatActivity {
         navigationView.inflateMenu((R.menu.navigation_item));
         View HeaderLayout = navigationView.getHeaderView(0);
 
-
         ImageView profileImageView = (ImageView) findViewById(R.id.profile_view);
         //profileImageView.setClipToOutline(true);
 
@@ -213,19 +212,19 @@ public class TestActivity extends AppCompatActivity {
                 if(isChecked) {
                     // 화면이 꺼지고 켜질 때 Lock의 값이 초기화 되기 때문에
                     // SharedPreferences을 사용하여 값을 파일에 저장시켜둔다
-                    SharedPreferences.Editor editor = pref.edit();
-                    editor.putBoolean("switch", true);
-                    editor.commit();
+                    pref.edit().putBoolean("switch", true);
+                    pref.edit().commit();
 
                     Intent intent = new Intent("com.escns.smombie.service");
                     intent.setPackage("com.escns.smombie");
                     bindService(intent, mConnection, Context.BIND_AUTO_CREATE); // 만보기 동작
+                    startService(new Intent(TestActivity.this, LockScreenService.class));
                 } else {
-                    SharedPreferences.Editor editor = pref.edit();
-                    editor.putBoolean("switch", false);
-                    editor.commit();
+                    pref.edit().putBoolean("switch", false);
+                    pref.edit().commit();
 
                     unbindService(mConnection);
+                    stopService(new Intent(TestActivity.this, LockScreenService.class));
                 }
             }
         });

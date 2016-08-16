@@ -2,15 +2,12 @@ package com.escns.smombie;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
-import android.system.ErrnoException;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -188,15 +185,15 @@ public class GPSManager implements LocationListener
 
             // 제자리일 때는 1, 걸을 때는 2를 반환
             if (speed < 0.5) {
-                Toast.makeText(mContext, "lon: " + curLon + " / lat: " + curLat + "\n제자리입니다 " + betweenTime, Toast.LENGTH_LONG).show();
+                Toast.makeText(mContext, "lon: " + curLon + " / lat: " + curLat + "\n제자리입니다 " + betweenTime, Toast.LENGTH_SHORT).show();
                 return 1;
             } else {
-                Toast.makeText(mContext, "lon: " + curLon + " / lat: " + curLat + "\n" + speed + "m/s입니다 " + betweenTime, Toast.LENGTH_LONG).show();
+                Toast.makeText(mContext, "lon: " + curLon + " / lat: " + curLat + "\n" + speed + "m/s입니다 " + betweenTime, Toast.LENGTH_SHORT).show();
                 return 2;
             }
         }
         else { // GPS 정보를 받아오지 못할 때 0을 반환
-            Toast.makeText(mContext, "GPS가 작동하지않습니다 " + betweenTime, Toast.LENGTH_LONG).show();
+            Toast.makeText(mContext, "GPS가 작동하지않습니다 " + betweenTime, Toast.LENGTH_SHORT).show();
             return 0;
         }
     }

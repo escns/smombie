@@ -33,6 +33,8 @@ public class LockScreenService extends Service {
             filter.addAction("com.escns.smombie.CALL_STATE_RINGING");
             filter.addAction("com.escns.smombie.CALL_STATE_OFFHOOK");
             filter.addAction("com.escns.smombie.CALL_STATE_IDLE");
+            filter.addAction("com.escns.smombie.LOCK_SCREEN_ON");
+            filter.addAction("com.escns.smombie.LOCK_SCREEN_OFF");
             mReceiver = new LockScreenReceiver();
             registerReceiver(mReceiver, filter);
 
@@ -51,8 +53,6 @@ public class LockScreenService extends Service {
     @Override
     public void onDestroy() {
         Log.d("Tag", "LockScreenService - onDestroy");
-        Intent intent = new Intent("com.escns.smombie.LOCK_SCREEN_OFF");
-        sendBroadcast(intent);
         unregisterReceiver(mReceiver);
 
         super.onDestroy();

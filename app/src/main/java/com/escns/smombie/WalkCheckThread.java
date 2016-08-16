@@ -1,6 +1,5 @@
 package com.escns.smombie;
 
-import android.app.Activity;
 import android.app.Service;
 import android.content.Intent;
 import android.hardware.Sensor;
@@ -13,7 +12,6 @@ import android.os.IBinder;
 import android.os.Message;
 import android.support.annotation.Nullable;
 import android.util.Log;
-import android.widget.Toast;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -152,15 +150,21 @@ public class WalkCheckThread extends Service {
                 if (state == 2) { // 걸을 때
                     // 잠금화면 실행
                     isWalking = true;
-                    startService(new Intent(WalkCheckThread.this, LockScreenService.class));
+                    //startService(new Intent(WalkCheckThread.this, LockScreenService.class));
+                    Intent intent = new Intent("com.escns.smombie.LOCK_SCREEN_ON");
+                    sendBroadcast(intent);
                 } else if (state == 1) { // 제자리일 때
                     //잠금화면 종료
                     isWalking = false;
-                    stopService(new Intent(WalkCheckThread.this, LockScreenService.class));
+                    //stopService(new Intent(WalkCheckThread.this, LockScreenService.class));
+                    Intent intent = new Intent("com.escns.smombie.LOCK_SCREEN_OFF");
+                    sendBroadcast(intent);
                 } else {
                     //잠금화면 작동안함
                     isWalking = false;
-                    stopService(new Intent(WalkCheckThread.this, LockScreenService.class));
+                    //stopService(new Intent(WalkCheckThread.this, LockScreenService.class));
+                    Intent intent = new Intent("com.escns.smombie.LOCK_SCREEN_OFF");
+                    sendBroadcast(intent);
                 }
             }
 
