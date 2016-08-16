@@ -35,6 +35,12 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
+
 
 public class TestActivity extends AppCompatActivity {
 
@@ -52,6 +58,9 @@ public class TestActivity extends AppCompatActivity {
     private boolean mBound = false; // WalkCheckThread Service가 제대로 동작하면 true 아니면 false
 
     boolean isProfileImageLoaded;
+
+    private Retrofit mRetrofit;
+    private ApiService mApiService;
 
     Handler handler = new Handler() {
 
@@ -226,6 +235,39 @@ public class TestActivity extends AppCompatActivity {
                     unbindService(mConnection);
                     stopService(new Intent(TestActivity.this, LockScreenService.class));
                 }
+            }
+        });
+
+        final TextView section1Text = (TextView) findViewById(R.id.section1Text);
+        final TextView section2Text = (TextView) findViewById(R.id.section2Text);
+        TextView section3Text = (TextView) findViewById(R.id.section3Text);
+
+        mRetrofit = new Retrofit.Builder().baseUrl(mApiService.API_URL).addConverterFactory(GsonConverterFactory.create()).build();
+        mApiService = mRetrofit.create(ApiService.class);
+
+        Call<Point> currentPoint = mApiService.getCurrentPoint(1);
+        currentPoint.enqueue(new Callback<Point>() {
+            @Override
+            public void onResponse(Call<Point> call, Response<Point> response) {
+                section1Text.setText(""+response.body().getPoint()+"m");
+            }
+
+            @Override
+            public void onFailure(Call<Point> call, Throwable t) {
+
+            }
+        });
+
+        Call<Point> goalPoint = mApiService.getGoalPoint(1);
+        goalPoint.enqueue(new Callback<Point>() {
+            @Override
+            public void onResponse(Call<Point> call, Response<Point> response) {
+                section2Text.setText(""+response.body().getPoint()+"m");
+            }
+
+            @Override
+            public void onFailure(Call<Point> call, Throwable t) {
+
             }
         });
     }
