@@ -15,21 +15,20 @@ import android.support.design.widget.NavigationView;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SwitchCompat;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.escns.smombie.Adapter.ItemMainAdpater;
+import com.escns.smombie.Item.ItemMain;
 import com.escns.smombie.View.CustomImageView;
 
-import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
@@ -50,24 +49,21 @@ public class TestActivity extends AppCompatActivity {
     private String fbId;
     private String fbName;
     private String fbEmail;
-
-    private CustomImageView profileImage;
-    private Bitmap bit;
+    private Bitmap profileImage;
+    private boolean isProfileImageLoaded;
 
     private WalkCheckThread mService;
     private boolean mBound = false; // WalkCheckThread Service가 제대로 동작하면 true 아니면 false
 
-    boolean isProfileImageLoaded;
-
     private Retrofit mRetrofit;
     private ApiService mApiService;
 
-    Handler handler = new Handler() {
+    private Handler handler = new Handler() {
 
         @Override
         public void handleMessage(Message msg) {
             Log.i("tag", "handleMessage");
-            profileImage.setImageBitmap(bit);
+            ((CustomImageView) findViewById(R.id.profile_view)).setImageBitmap(profileImage);
             isProfileImageLoaded=true;
         }
     };
@@ -80,7 +76,6 @@ public class TestActivity extends AppCompatActivity {
 
         initDrawer(); // 툴바 구현
         init();
-
     }
 
     /**
@@ -163,16 +158,15 @@ public class TestActivity extends AppCompatActivity {
      *  Initialize layout
      */
     public void init() {
-        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.id_stickynavlayout_innerscrollview);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        recyclerView.setAdapter(new CustomAdapter());
+
+        pref = getSharedPreferences("pref", MODE_PRIVATE);
 
         fbId = getIntent().getStringExtra("id");
         fbName = getIntent().getStringExtra("name");
         fbEmail = getIntent().getStringExtra("email");
 
-        profileImage = (CustomImageView) findViewById(R.id.profile_view);
-        //Glide.with(this).load("https://graph.facebook.com/" + fbId + "/picture?type=large").into(profileImage);
+        ((TextView) findViewById(R.id.profile_name)).setText(fbName);
+        ((TextView) findViewById(R.id.profile_email)).setText(fbEmail);
 
         Thread thread =  new Thread(new Runnable() {
             @Override
@@ -180,20 +174,15 @@ public class TestActivity extends AppCompatActivity {
                 while(!isProfileImageLoaded) {
                     try{
                         URL url = new URL("https://graph.facebook.com/" + fbId + "/picture?type=large"); // URL 주소를 이용해서 URL 객체 생성
-
-                        //  아래 코드는 웹에서 이미지를 가져온 뒤
-                        //  이미지 뷰에 지정할 Bitmap을 생성하는 과정
-                        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                        HttpURLConnection conn = (HttpURLConnection) url.openConnection();              //  아래 코드는 웹에서 이미지를 가져온 뒤
                         conn.setDoInput(true);
                         conn.connect();
-                        InputStream is = conn.getInputStream();
-                        bit = BitmapFactory.decodeStream(is);
+                        profileImage = BitmapFactory.decodeStream(conn.getInputStream());               //  이미지 뷰에 지정할 Bitmap을 생성하는 과정
 
                         Thread.sleep(100);
 
                         Log.i("tag", "get FB profile image");
-                        //profileImage.setImageBitmap(bit); // 페이스북 사진 입력
-                        handler.sendMessage(handler.obtainMessage());
+                        handler.sendMessage(handler.obtainMessage());                                   //profileImage.setImageBitmap(bit); // 페이스북 사진 입력
                     } catch (Exception e){
                         e.printStackTrace();
                     }
@@ -202,35 +191,19 @@ public class TestActivity extends AppCompatActivity {
         });
         thread.start();
 
-        TextView profileName = (TextView) findViewById(R.id.profile_name);
-        profileName.setText(fbName);
-        TextView profileEmail = (TextView) findViewById(R.id.profile_email);
-        profileEmail.setText(fbEmail);
-
-
-        pref = getSharedPreferences("pref", MODE_PRIVATE);
-
-        // Lock on 스위치
-        SwitchCompat swc = (SwitchCompat) findViewById(R.id.switchLock);
+        SwitchCompat swc = (SwitchCompat) findViewById(R.id.switch_lock);
         swc.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 
-                //isChecked = pref.getBoolean("switch", true);
-
                 if(isChecked) {
-                    // 화면이 꺼지고 켜질 때 Lock의 값이 초기화 되기 때문에
-                    // SharedPreferences을 사용하여 값을 파일에 저장시켜둔다
-                    pref.edit().putBoolean("switch", true);
-                    pref.edit().commit();
+                    pref.edit().putBoolean("switch", true).commit();
 
-                    Intent intent = new Intent("com.escns.smombie.service");
-                    intent.setPackage("com.escns.smombie");
+                    Intent intent = new Intent("com.escns.smombie.service").setPackage("com.escns.smombie");
                     bindService(intent, mConnection, Context.BIND_AUTO_CREATE); // 만보기 동작
                     startService(new Intent(TestActivity.this, LockScreenService.class));
                 } else {
-                    pref.edit().putBoolean("switch", false);
-                    pref.edit().commit();
+                    pref.edit().putBoolean("switch", false).commit();
 
                     unbindService(mConnection);
                     stopService(new Intent(TestActivity.this, LockScreenService.class));
@@ -240,7 +213,7 @@ public class TestActivity extends AppCompatActivity {
 
         final TextView section1Text = (TextView) findViewById(R.id.section1Text);
         final TextView section2Text = (TextView) findViewById(R.id.section2Text);
-        TextView section3Text = (TextView) findViewById(R.id.section3Text);
+        final TextView section3Text = (TextView) findViewById(R.id.section3Text);
 
         mRetrofit = new Retrofit.Builder().baseUrl(mApiService.API_URL).addConverterFactory(GsonConverterFactory.create()).build();
         mApiService = mRetrofit.create(ApiService.class);
@@ -249,7 +222,9 @@ public class TestActivity extends AppCompatActivity {
         currentPoint.enqueue(new Callback<Point>() {
             @Override
             public void onResponse(Call<Point> call, Response<Point> response) {
-                section1Text.setText(""+response.body().getPoint()+"m");
+                if(response!=null) {
+                    section1Text.setText(""+response.body().getPoint()+"m");
+                }
             }
 
             @Override
@@ -270,6 +245,29 @@ public class TestActivity extends AppCompatActivity {
 
             }
         });
+
+        final List<ItemMain> ItemMains = new ArrayList<>();
+        ItemMains.add(new ItemMain(true, "이벤트", R.drawable.icon1));
+        ItemMains.add(new ItemMain(false, R.drawable.test_image2));
+        ItemMains.add(new ItemMain(false, R.drawable.test_image1));
+        ItemMains.add(new ItemMain(false, R.drawable.test_image2));
+
+        ItemMains.add(new ItemMain(true, "제휴 서비스", R.drawable.icon2));
+        ItemMains.add(new ItemMain(false, R.drawable.test_image1));
+        ItemMains.add(new ItemMain(false, R.drawable.test_image2));
+        ItemMains.add(new ItemMain(false, R.drawable.test_image1));
+
+        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.id_stickynavlayout_innerscrollview);
+        final GridLayoutManager gridLayoutManager = new GridLayoutManager(this,2);
+        gridLayoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
+            @Override
+            public int getSpanSize(int position) {
+                if(ItemMains.get(position).isHeader()) return gridLayoutManager.getSpanCount();
+                return 1;
+            }
+        });
+        recyclerView.setLayoutManager(gridLayoutManager);
+        recyclerView.setAdapter(new ItemMainAdpater(ItemMains));
     }
 
     // ThreadService와 MainActivity를 연결 시켜줄 ServiceConnection
@@ -293,48 +291,4 @@ public class TestActivity extends AppCompatActivity {
     };
 
 
-    /**
-     * 메인 화면 하단의 ScrollView과 Item들을 연결해주는 Adapter. 추후 아이템 Layout에 따라 수정 필요
-     */
-    public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder> {
-
-        private List<String> mDatas = new ArrayList<String>();
-
-        public CustomAdapter() {
-            for (int i = 0; i < 50; i++)
-            {
-                mDatas.add("Test" + " -> " + i);
-                Log.i("tag", "CustomAdapter " + mDatas.get(i));
-            }
-        }
-
-        @Override
-        public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            View v = LayoutInflater.from(parent.getContext())
-                    .inflate(R.layout.item, parent, false);
-            ViewHolder viewHolder = new ViewHolder(v);
-            return viewHolder;
-        }
-
-        @Override
-        public void onBindViewHolder(ViewHolder holder, int position) {
-            Log.i("tag", "onBindViewHolder" + mDatas.get(position));
-            holder.tvNature.setText(mDatas.get(position));
-        }
-
-
-        @Override
-        public int getItemCount() {
-            return mDatas.size();
-        }
-
-        class ViewHolder extends RecyclerView.ViewHolder {
-            public TextView tvNature;
-
-            public ViewHolder(View itemView) {
-                super(itemView);
-                tvNature = (TextView) itemView.findViewById(R.id.id_info);
-            }
-        }
-    }
 }

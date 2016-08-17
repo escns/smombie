@@ -177,7 +177,7 @@ public class MainActivity extends AppCompatActivity {
         pref = getSharedPreferences("pref", MODE_PRIVATE);
 
         // Lock on 스위치
-        swc = (SwitchCompat) findViewById(R.id.switchLock);
+        swc = (SwitchCompat) findViewById(R.id.switch_lock);
         swc.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {

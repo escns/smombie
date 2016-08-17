@@ -39,7 +39,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Lock ON"
-                    android:id="@+id/switchLock"
+                    android:id="@+id/switch_lock"
                     android:layout_centerHorizontal="true"
                     android:layout_marginTop="200dp"/>
 
