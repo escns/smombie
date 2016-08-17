@@ -26,7 +26,11 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.escns.smombie.Adapter.ItemMainAdpater;
+import com.escns.smombie.DAO.Point;
+import com.escns.smombie.Interface.ApiService;
 import com.escns.smombie.Item.ItemMain;
+import com.escns.smombie.Manager.DBManager;
+import com.escns.smombie.Service.LockScreenService;
 import com.escns.smombie.View.CustomImageView;
 
 import java.net.HttpURLConnection;

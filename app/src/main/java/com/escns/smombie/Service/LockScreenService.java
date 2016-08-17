@@ -1,4 +1,4 @@
-package com.escns.smombie;
+package com.escns.smombie.Service;
 
 import android.app.Service;
 import android.content.Intent;
@@ -7,6 +7,8 @@ import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.telephony.TelephonyManager;
 import android.util.Log;
+
+import com.escns.smombie.Receiver.LockScreenReceiver;
 
 /**
  * Created by Administrator on 2016-08-04.

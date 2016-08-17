@@ -25,7 +25,7 @@
         </activity>
 
         <service
-            android:name=".WalkCheckService"
+            android:name=".Service.WalkCheckService"
             android:enabled="true">
             <intent-filter>
                 <action android:name="com.escns.smombie.service" />
@@ -33,14 +33,14 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </service>
-        <service android:name=".LockScreenService">
+        <service android:name=".Service.LockScreenService">
             <intent-filter>
                 <action android:name="LockScreenService" />
             </intent-filter>
         </service>
 
         <receiver
-            android:name=".LockScreenReceiver"
+            android:name=".Receiver.LockScreenReceiver"
             android:enabled="true"
             android:exported="false">
             <intent-filter android:priority="999">

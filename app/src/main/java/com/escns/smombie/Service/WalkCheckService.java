@@ -1,4 +1,4 @@
-package com.escns.smombie;
+package com.escns.smombie.Service;
 
 import android.app.Service;
 import android.content.Intent;
@@ -8,6 +8,9 @@ import android.os.IBinder;
 import android.os.Message;
 import android.support.annotation.Nullable;
 import android.util.Log;
+
+import com.escns.smombie.Manager.DBManager;
+import com.escns.smombie.Manager.GPSManager;
 
 import java.util.Timer;
 import java.util.TimerTask;

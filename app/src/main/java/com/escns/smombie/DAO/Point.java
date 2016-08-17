@@ -1,4 +1,4 @@
-package com.escns.smombie;
+package com.escns.smombie.DAO;
 
 import com.google.gson.annotations.SerializedName;
 

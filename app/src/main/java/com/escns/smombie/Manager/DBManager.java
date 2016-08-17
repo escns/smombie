@@ -1,4 +1,4 @@
-package com.escns.smombie;
+package com.escns.smombie.Manager;
 
 import android.content.Context;
 import android.database.Cursor;
@@ -6,6 +6,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 import com.escns.smombie.DAO.Step;
+import com.escns.smombie.R;
 
 import java.util.ArrayList;
 import java.util.List;

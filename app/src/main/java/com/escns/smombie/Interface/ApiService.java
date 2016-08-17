@@ -1,4 +1,6 @@
-package com.escns.smombie;
+package com.escns.smombie.Interface;
+
+import com.escns.smombie.DAO.Point;
 
 import retrofit2.Call;
 import retrofit2.http.GET;

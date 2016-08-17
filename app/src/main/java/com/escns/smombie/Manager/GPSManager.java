@@ -1,4 +1,4 @@
-package com.escns.smombie;
+package com.escns.smombie.Manager;
 
 import android.app.Activity;
 import android.content.Context;
