@@ -7,11 +7,6 @@ import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
-import android.graphics.Paint;
-import android.graphics.PorterDuff;
-import android.graphics.PorterDuffXfermode;
-import android.graphics.Rect;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
@@ -20,89 +15,74 @@ import android.support.design.widget.NavigationView;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SwitchCompat;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import java.io.InputStream;
+import com.escns.smombie.Adapter.ItemMainAdpater;
+import com.escns.smombie.Item.ItemMain;
+import com.escns.smombie.View.CustomImageView;
+
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 
-/**
- * Created by hyo99 on 2016-08-10.
- */
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
+
 
 public class MainActivity extends AppCompatActivity {
 
-    private TextView stepView;          // 화면에 출력되는 걸음 수
+    private SharedPreferences pref;         // 화면 꺼짐 및 이동 시 switch가 초기화되기 때문에 파일에 따로 저장하기 위한 객체
+    private DBManager dbManager;            // DB 선언
 
-    String fbId, fbName, fbEmail;                // 페이스북으로부터 id, 이름을 받아올 변수
-    Bitmap myBitmap;                    // 페이스북부터 사진을 받아올 객체
+    private String fbId;
+    private String fbName;
+    private String fbEmail;
+    private Bitmap profileImage;
+    private boolean isProfileImageLoaded;
 
-    ImageView headerPhoto;              // 사이드 메뉴에 사용자 이름,이메일
-    TextView headerName;                // 사이드 메뉴에 사용자 사진
+    //private WalkCheckService mService;
+    private boolean mBound = false; // WalkCheckService Service가 제대로 동작하면 true 아니면 false
 
-    private SharedPreferences pref;     // 화면 꺼짐 및 이동 시 switch가 초기화되기 때문에 파일에 따로 저장하기 위한 객체
-    private SwitchCompat swc;           // 화면에 출력되는 lock 스위치
+    private Retrofit mRetrofit;
+    private ApiService mApiService;
 
-    DBManager dbManager; // DB 선언
-    int StepCount=0; // 걸음 수
+    private Handler handler = new Handler() {
 
-    private WalkCheckThread mService;
-    private boolean mBound = false; // WalkCheckThread Service가 제대로 동작하면 true 아니면 false
-
-    /**
-     * UI thread에서 mHandler로 message를 보내면 logView를 갱신시켜준다.
-     */
-    private Handler mHandler = new Handler() {
+        @Override
         public void handleMessage(Message msg) {
-            StepCount = dbManager.printData(); // DB에서 걸음수 불러오기
-            stepView.setText("" + StepCount);
+            Log.i("tag", "handleMessage");
+            ((CustomImageView) findViewById(R.id.profile_view)).setImageBitmap(profileImage);
+            isProfileImageLoaded=true;
         }
     };
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // DB 객체화
-        dbManager = new DBManager(this, "RECORD_LIST", "(number INTEGER)");
-        // 테이블에 행이 하나도 없을 때 한 줄 추가
-        if (dbManager.getRowCount() == 0) {
-            dbManager.insertRow("(0)");
-        }
-
-        fbId = getIntent().getStringExtra("id");
-        fbName = getIntent().getStringExtra("name");
-        fbEmail = getIntent().getStringExtra("email");
-        Log.d("tag", "id : " + fbId);
-        Log.d("tag", "name : " + fbName);
-
         initDrawer(); // 툴바 구현
-        init(); // Lock 화면 구현
-    }
-
-    @Override
-    protected void onDestroy() {
-        if(mBound) {
-            //pref = getSharedPreferences("pref", MODE_PRIVATE);
-            //if(!pref.getBoolean("switch", true))
-            //unbindService(mConnection); // 만보기 끝
-            mBound = false;
-        }
-        super.onDestroy();
+        init();
     }
 
     /**
-     * 툴바를 구현하는 함수
+     *  Initialize toolbar and navigation drawer
      */
     public void initDrawer() {
+
         // Navigation Drawer에 필요한 Component들 생성
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         DrawerLayout drawerLayout = (DrawerLayout) findViewById(R.id.drawerLayout);
@@ -125,6 +105,7 @@ public class MainActivity extends AppCompatActivity {
 
         // 생성한 DrawerToggle을 drawerLayout에 장착
         drawerLayout.setDrawerListener(drawerToggle);
+
         // Arrow 애니메이션을 위한 설정
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
@@ -134,6 +115,10 @@ public class MainActivity extends AppCompatActivity {
         navigationView.inflateMenu((R.menu.navigation_item));
         View HeaderLayout = navigationView.getHeaderView(0);
 
+        ImageView profileImageView = (ImageView) findViewById(R.id.profile_view);
+        //profileImageView.setClipToOutline(true);
+
+        /*
         // navigation_headr에 있는 사진과 정보
         headerName = (TextView) HeaderLayout.findViewById(R.id.header_name);
         headerPhoto = (ImageView) HeaderLayout.findViewById(R.id.header_photo);
@@ -165,130 +150,127 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
+         */
 
     }
 
     /**
-     * Lock 화면을 구현하는 함수
+     *  Initialize layout
      */
     public void init() {
-        stepView = (TextView) findViewById(R.id.stepView);
 
         pref = getSharedPreferences("pref", MODE_PRIVATE);
 
-        // Lock on 스위치
-        swc = (SwitchCompat) findViewById(R.id.switch_lock);
-        swc.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+        fbId = getIntent().getStringExtra("id");
+        fbName = getIntent().getStringExtra("name");
+        fbEmail = getIntent().getStringExtra("email");
 
-                //isChecked = pref.getBoolean("switch", true);
+        ((TextView) findViewById(R.id.profile_name)).setText(fbName);
+        ((TextView) findViewById(R.id.profile_email)).setText(fbEmail);
 
-                if(isChecked) {
-                    // 화면이 꺼지고 켜질 때 Lock의 값이 초기화 되기 때문에
-                    // SharedPreferences을 사용하여 값을 파일에 저장시켜둔다
-                    SharedPreferences.Editor editor = pref.edit();
-                    editor.putBoolean("switch", true);
-                    editor.commit();
-
-                    Intent intent = new Intent("com.escns.smombie.service");
-                    intent.setPackage("com.escns.smombie");
-                    bindService(intent, mConnection, Context.BIND_AUTO_CREATE); // 만보기 동작
-                } else {
-                    SharedPreferences.Editor editor = pref.edit();
-                    editor.putBoolean("switch", false);
-                    editor.commit();
-
-                    unbindService(mConnection);
-                }
-            }
-        });
-
-        StepCount = dbManager.printData(); // DB에서 걸음수 불러오기
-        stepView.setText("" + StepCount);
-
-
-        // UI 변경을 위한 Thread 생성 --> Because 서브쓰레드는 직접적으로 UI를 변경시킬 수 없다
         Thread thread =  new Thread(new Runnable() {
             @Override
             public void run() {
-                while(true) {
+                while(!isProfileImageLoaded) {
                     try{
                         URL url = new URL("https://graph.facebook.com/" + fbId + "/picture?type=large"); // URL 주소를 이용해서 URL 객체 생성
-
-                        //  아래 코드는 웹에서 이미지를 가져온 뒤
-                        //  이미지 뷰에 지정할 Bitmap을 생성하는 과정
-                        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                        HttpURLConnection conn = (HttpURLConnection) url.openConnection();              //  아래 코드는 웹에서 이미지를 가져온 뒤
                         conn.setDoInput(true);
                         conn.connect();
-                        InputStream is = conn.getInputStream();
-                        Bitmap bit = BitmapFactory.decodeStream(is);
-                        myBitmap = getRoundedCornerBitmap(bit);
+                        profileImage = BitmapFactory.decodeStream(conn.getInputStream());               //  이미지 뷰에 지정할 Bitmap을 생성하는 과정
 
                         Thread.sleep(100);
 
-                        headerName.setText(fbName);  // 페이스북 이름 입력
-                        headerPhoto.setImageBitmap(myBitmap); // 페이스북 사진 입력
-
+                        Log.i("tag", "get FB profile image");
+                        handler.sendMessage(handler.obtainMessage());                                   //profileImage.setImageBitmap(bit); // 페이스북 사진 입력
                     } catch (Exception e){
                         e.printStackTrace();
-                    }
-
-                    if(mBound) {
-                        // mHandler로 메시지를 보낸다.
-                        //step = mService.getStep();
-                        mHandler.sendMessage(mHandler.obtainMessage());
                     }
                 }
             }
         });
         thread.start();
+
+        SwitchCompat swc = (SwitchCompat) findViewById(R.id.switch_lock);
+        swc.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+
+                if(isChecked) {
+                    pref.edit().putBoolean("switch", true).commit();
+
+                    Intent intent = new Intent("com.escns.smombie.service").setPackage("com.escns.smombie");
+                    bindService(intent, mConnection, Context.BIND_AUTO_CREATE); // 만보기 동작
+                    startService(new Intent(MainActivity.this, LockScreenService.class));
+                } else {
+                    pref.edit().putBoolean("switch", false).commit();
+
+                    unbindService(mConnection);
+                    stopService(new Intent(MainActivity.this, LockScreenService.class));
+                }
+            }
+        });
+
+        final TextView section1Text = (TextView) findViewById(R.id.section1_text);
+        final TextView section2Text = (TextView) findViewById(R.id.section2_text);
+        final TextView section3Text = (TextView) findViewById(R.id.section3_text);
+
+        mRetrofit = new Retrofit.Builder().baseUrl(mApiService.API_URL).addConverterFactory(GsonConverterFactory.create()).build();
+        mApiService = mRetrofit.create(ApiService.class);
+
+        Call<Point> currentPoint = mApiService.getCurrentPoint(1);
+        currentPoint.enqueue(new Callback<Point>() {
+            @Override
+            public void onResponse(Call<Point> call, Response<Point> response) {
+                if(response!=null) {
+                    section1Text.setText(""+response.body().getPoint()+"m");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Point> call, Throwable t) {
+
+            }
+        });
+
+        Call<Point> goalPoint = mApiService.getGoalPoint(1);
+        goalPoint.enqueue(new Callback<Point>() {
+            @Override
+            public void onResponse(Call<Point> call, Response<Point> response) {
+                if(response!=null) {
+                    section2Text.setText("" + response.body().getPoint() + "m");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Point> call, Throwable t) {
+
+            }
+        });
+
+        final List<ItemMain> ItemMains = new ArrayList<>();
+        ItemMains.add(new ItemMain(true, "이벤트", R.drawable.title_icon_event));
+        ItemMains.add(new ItemMain(false, R.drawable.img_event1));
+        ItemMains.add(new ItemMain(false, R.drawable.img_event2));
+        ItemMains.add(new ItemMain(false, R.drawable.img_event1));
+
+        ItemMains.add(new ItemMain(true, "제휴 서비스", R.drawable.title_icon_service));
+        ItemMains.add(new ItemMain(false, R.drawable.img_event2));
+        ItemMains.add(new ItemMain(false, R.drawable.img_event2));
+        ItemMains.add(new ItemMain(false, R.drawable.img_event1));
+
+        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.id_stickynavlayout_innerscrollview);
+        final GridLayoutManager gridLayoutManager = new GridLayoutManager(this,2);
+        gridLayoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
+            @Override
+            public int getSpanSize(int position) {
+                if(ItemMains.get(position).isHeader()) return gridLayoutManager.getSpanCount();
+                return 1;
+            }
+        });
+        recyclerView.setLayoutManager(gridLayoutManager);
+        recyclerView.setAdapter(new ItemMainAdpater(ItemMains));
     }
-
-    /**
-     * 페이스북으로부터 받아온 사진을 편집해주는 함수
-     * @param bitmap
-     * @return
-     */
-    public static Bitmap getRoundedCornerBitmap(Bitmap bitmap) {
-
-        // 원 모양으로 편집
-        Bitmap output = Bitmap.createBitmap(bitmap.getWidth(), bitmap.getHeight(), Bitmap.Config.ARGB_8888);
-        Canvas canvas = new Canvas(output);
-        final int color = 0xff424242;
-        final Paint paint = new Paint();
-        final Rect rect = new Rect(0, 0, bitmap.getWidth(), bitmap.getHeight());
-        paint.setAntiAlias(true);
-        canvas.drawARGB(0, 0, 0, 0);
-        paint.setColor(color);
-        int size = (bitmap.getWidth()/2);
-        canvas.drawCircle(size, size, size, paint);
-        paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
-        canvas.drawBitmap(bitmap, rect, rect, paint);
-        return output;
-
-        /*
-        // 모서리를 라운딩으로 편집
-        Bitmap output = Bitmap.createBitmap(bitmap.getWidth(), bitmap.getHeight(), Bitmap.Config.ARGB_8888);
-        Canvas canvas = new Canvas(output);
-
-        final int color = 0xff424242;
-        final Paint paint = new Paint();
-        final Rect rect = new Rect(0, 0, bitmap.getWidth(), bitmap.getHeight());
-        final RectF rectF = new RectF(rect);
-        final float roundPx = 50; // 테두리 곡률 설정
-
-        paint.setAntiAlias(true);
-        canvas.drawARGB(0, 0, 0, 0);
-        paint.setColor(color);
-        canvas.drawRoundRect(rectF, roundPx, roundPx, paint);
-
-        paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
-        canvas.drawBitmap(bitmap, rect, rect, paint);
-
-        return output;
-         */
-        }
 
     // ThreadService와 MainActivity를 연결 시켜줄 ServiceConnection
     /** Defines callbacks for service binding, passed to bindService() */
@@ -297,8 +279,8 @@ public class MainActivity extends AppCompatActivity {
         // 리턴되는 Binder를 다시 Service로 꺼내서 ThreadSerivce내부의 함수 사용이 가능하다.
         @Override
         public void onServiceConnected(ComponentName className, IBinder service) {
-            WalkCheckThread.LocalBinder binder = (WalkCheckThread.LocalBinder) service;
-            mService = binder.getService();
+            //WalkCheckService.LocalBinder binder = (WalkCheckService.LocalBinder) service;
+            //mService = binder.getService();
             mBound = true;
             Log.d("tag", "onServiceConnected");
         }
@@ -309,4 +291,6 @@ public class MainActivity extends AppCompatActivity {
             Log.d("tag", "onServiceDisconnected");
         }
     };
+
+
 }

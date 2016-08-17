@@ -25,7 +25,7 @@
         </activity>
 
         <service
-            android:name=".WalkCheckThread"
+            android:name=".WalkCheckService"
             android:enabled="true">
             <intent-filter>
                 <action android:name="com.escns.smombie.service" />
@@ -67,7 +67,7 @@
             android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
             android:label="@string/app_name"
             android:theme="@android:style/Theme.Translucent.NoTitleBar"></activity>
-        <activity android:name=".TestActivity"></activity>
+        <activity android:name=".MainActivity"></activity>
     </application>
 
 </manifest>

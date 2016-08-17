@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.facebook.AccessToken;
@@ -29,13 +30,14 @@ import java.util.Arrays;
 
 public class LoginActivity extends Activity {
 
-    String fbId; // 페이스북 고유ID
-    String fbName; // 페이스북 이름
-    String fbEmail; // 페이스북 이메일
+    String mFbId;                           // 페이스북 ID
+    String mFbName;                         // 페이스북 이름
+    String mFbEmail;                        // 페이스북 이메일
 
-    LoginButton loginButton; // 페이스북 로그인 버튼
+    LoginButton mLoginButtonInvisible;      // 페이스북 로그인 버튼
+    ImageView mLoginButtonVisible;          // 커스텀 로그인 버튼
 
-    CallbackManager callbackManager; // 콜백
+    CallbackManager callbackManager;        // 콜백
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,23 +51,30 @@ public class LoginActivity extends Activity {
         // 로그인 응답을 처리할 콜백 관리자를 만듦
         callbackManager = CallbackManager.Factory.create();
 
-        loginButton = (LoginButton) findViewById(R.id.login_button);
+        mLoginButtonInvisible = (LoginButton) findViewById(R.id.login_button_invisible);
+        mLoginButtonVisible = (ImageView) findViewById(R.id.login_button_visible);
+
+        mLoginButtonVisible.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mLoginButtonInvisible.callOnClick();
+            }
+        });
 
         // 페이스북에서 제공할 데이터 권한
-        loginButton.setReadPermissions(Arrays.asList("public_profile","email"));
+        mLoginButtonInvisible.setReadPermissions(Arrays.asList("public_profile","email"));
 
         // 이미 로그인 상태면 loginButton 자동실행
         if(isLogin()) {
             com.facebook.login.LoginManager.getInstance().logOut();
-            loginButton.performClick();
+            mLoginButtonInvisible.performClick();
         }
 
-        // loginButton
-        loginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
+        mLoginButtonInvisible.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
             @Override
             public void onSuccess(LoginResult loginResult) {
                 Toast.makeText(getApplicationContext(), "Login", Toast.LENGTH_SHORT).show();
-                loginButton.setVisibility(View.INVISIBLE);
+                mLoginButtonInvisible.setVisibility(View.INVISIBLE);
 
                 //GraphRequest 클래스에는 지정된 액세스 토큰의 사용자 데이터를 가져오는 newMeRequest 메서드가 있다
                 GraphRequest request = GraphRequest.newMeRequest(
@@ -74,15 +83,14 @@ public class LoginActivity extends Activity {
                             public void onCompleted(JSONObject jsonObject, GraphResponse graphResponse) {
                                 try {
                                     Log.d("tag", "Input Profile Data");
-                                    fbId = jsonObject.getString("id");
-                                    fbName = jsonObject.getString("name");
-                                    fbEmail = jsonObject.getString("email");
+                                    mFbId = jsonObject.getString("id");
+                                    mFbName = jsonObject.getString("name");
+                                    mFbEmail = jsonObject.getString("email");
 
-                                    //Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-                                    Intent intent = new Intent(getApplicationContext(), TestActivity.class);
-                                    intent.putExtra("id", fbId);
-                                    intent.putExtra("name", fbName);
-                                    intent.putExtra("email", fbEmail);
+                                    Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                                    intent.putExtra("id", mFbId);
+                                    intent.putExtra("name", mFbName);
+                                    intent.putExtra("email", mFbEmail);
                                     startActivity(intent);
                                     finish();
 
@@ -110,18 +118,17 @@ public class LoginActivity extends Activity {
             }
         });
 
-        Button btn = (Button) findViewById(R.id.button_NoAccount);
-        btn.setOnClickListener(new View.OnClickListener() {
+        ((Button) findViewById(R.id.button_NoAccount)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 //Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-                Intent intent = new Intent(getApplicationContext(), TestActivity.class);
-                fbId = "12345";
-                fbName = "이름";
-                fbEmail = "이메일주소";
-                intent.putExtra("id", fbId);
-                intent.putExtra("name", fbName);
-                intent.putExtra("email",fbEmail);
+                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                mFbId = "12345";
+                mFbName = "이름";
+                mFbEmail = "이메일주소";
+                intent.putExtra("id", mFbId);
+                intent.putExtra("name", mFbName);
+                intent.putExtra("email", mFbEmail);
                 startActivity(intent);
                 finish();
             }

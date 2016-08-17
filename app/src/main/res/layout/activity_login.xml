@@ -3,26 +3,32 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/mainColor">
+    android:background="@drawable/bg_login">
+
+
+    <ImageView
+        android:id="@+id/login_button_visible"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/btn_facebook"
+        android:layout_gravity="center_horizontal"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_margin="20dp"/>
 
     <Button
         android:id="@+id/button_NoAccount"
         android:text="No Account"
         android:textSize="20sp"
-        android:background="@color/secondColor"
+        android:background="@color/second_color"
         android:layout_width="300dp"
         android:layout_height="40dp"
-        android:layout_marginBottom="20dp"
         android:layout_centerHorizontal="true"
-        android:layout_alignParentBottom="true"/>
+        android:layout_above="@id/login_button_visible"/>
 
     <com.facebook.login.widget.LoginButton
-        android:id="@+id/login_button"
-        android:layout_width="300dp"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:layout_centerHorizontal="true"
-        android:layout_above="@id/button_NoAccount"
-        android:layout_marginBottom="15dp"/>
+        android:id="@+id/login_button_invisible"
+        android:layout_width="1sp"
+        android:layout_height="1sp"/>
 
 </RelativeLayout>

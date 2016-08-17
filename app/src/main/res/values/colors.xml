@@ -8,13 +8,15 @@
     <color name="dark_emerald">#0abab5</color>
     <color name="light_emarald">#b0f9f6</color>
 
-    <color name="section1">#00c0e1</color>
-    <color name="section2">#59da9c</color>
-    <color name="section3">#7659ef</color>
+    <color name="main_color">#ff5722</color>
+    <color name="second_color">#ff7900</color>
+    <color name="third_color">#d86600</color>
 
-    <color name="mainColor">#ffa500</color>
-    <color name="secondColor">#ff7900</color>
-    <color name="thirdColor">#d86600</color>
+    <color name="section1">#f5722a</color>
+    <color name="section2">#20bc8e</color>
+    <color name="section3">#466bd6</color>
+    <color name="line_color">#a6a2a0</color>
+    <color name="border_color">#b2b2b2</color>
 
     <color name="white">#FFFFFF</color>
     <color name="black">#0e1315</color>

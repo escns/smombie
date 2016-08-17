@@ -19,7 +19,6 @@ public class GPSManager implements LocationListener
 {
     Context mContext;
     Activity mActivity;
-    WalkCheckThread wct;
 
     Location location; // 위치정보
     protected LocationManager locationManager;
@@ -50,10 +49,9 @@ public class GPSManager implements LocationListener
      * @param con MainActivity의 Context
      //* @param act MainActivity의 Activity
      */
-    public GPSManager (Context con, WalkCheckThread w)
+    public GPSManager (Context con)
     {
         mContext = con;
-        wct = w;
     }
 
     /**

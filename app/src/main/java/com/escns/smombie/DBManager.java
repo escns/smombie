@@ -4,7 +4,11 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.util.Log;
+
+import com.escns.smombie.DAO.Step;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by hyo99 on 2016-08-02.
@@ -18,13 +22,10 @@ public class DBManager extends SQLiteOpenHelper {
     /**
      * 생성자
      * @param context MainActivity의 Context
-     * @param name 테이블 이름
-     * @param property 테이블 속성
      */
-    public DBManager(Context context, String name, String property) {
-        super(context, "Record", null, 1); // Record.db 이란 이름의 데이터베이스파일 생성
-        TableName = name;
-        TableProperty = property;
+    public DBManager(Context context) {
+        super(context, context.getResources().getString(R.string.app_name), null, 1);
+        TableName = context.getResources().getString(R.string.app_name);        // app name의 DB table 생성
     }
 
     /**
@@ -34,7 +35,96 @@ public class DBManager extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         db.execSQL("CREATE TABLE "+ TableName +" "+ TableProperty); // 테이블 생성
+
+        StringBuffer sb = new StringBuffer();
+        sb.append(" CREATE TABLE TEST_TABLE ( ");
+        sb.append(" ID String PRIMARY KEY, ");
+        sb.append(" YEAR INTEGER, ");
+        sb.append(" MONTH INTEGER, ");
+        sb.append(" DAY INTEGER, ");
+        sb.append(" HOUR INTEGER, ");
+        sb.append(" DIST INTEGER, ");
+        sb.append(" STEPCNT INTEGER, ");
+        sb.append(" SUCCESSCNT INTEGER, ");
+        sb.append(" SUM INTEGER ");
+
+        db.execSQL(sb.toString());
     }
+
+    /**
+     * 파라미터로 받은 data를 DB에 저장
+     * @param data
+     */
+    public void inputStepData(Step data) {
+        SQLiteDatabase db = null;
+        try {
+            db = getWritableDatabase();
+
+            StringBuffer sb = new StringBuffer();
+            sb.append(" INSERT INTO ? ( ");
+            sb.append(" ID, YEAR, MONTH, DAY, HOUR, DIST, STEPCNT, SUCCESSCNT, SUM ) ");
+            sb.append(" VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ? ) ");
+
+            db.execSQL(sb.toString(),
+                    new Object[]{
+                            TableName,
+                            data.getmId(),
+                            data.getmYear(),
+                            data.getmMonth(),
+                            data.getmDay(),
+                            data.getmHour(),
+                            data.getmDist(),
+                            data.getmStepCnt(),
+                            data.getmSuccessCnt(),
+                            data.getmSum()
+                    });
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            db.close();
+        }
+    }
+
+    /**
+     * id 값에 해당하는 Step Data를 DB에서 찾아서 List 형식으로 반환
+     * @param id
+     * @return
+     */
+    public List<Step> getStepData(String id) {
+
+        SQLiteDatabase db = null;
+        List<Step> list = new ArrayList<>();
+        Step step = null;
+
+        try {
+            db = getReadableDatabase();
+
+            StringBuffer sb = new StringBuffer();
+            sb.append(" SELECT * FROM ?");
+            sb.append(" WHERE ID is ? ");
+
+            Cursor cursor = db.rawQuery(sb.toString(),
+                    new String[]{
+                            TableName,
+                            id
+                    });
+
+            while(cursor.moveToNext()) {
+                step = new Step(cursor.getString(0), cursor.getInt(1), cursor.getInt(2), cursor.getInt(3), cursor.getInt(4), cursor.getInt(5), cursor.getInt(6), cursor.getInt(7), cursor.getInt(8));
+                list.add(step);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            db.close();
+        }
+
+        return list;
+    }
+
+
 
     /**
      * onUpgrade
@@ -49,20 +139,6 @@ public class DBManager extends SQLiteOpenHelper {
     }
 
     /**
-     * 쿼리문을 입력받는 함수
-     * @param query 데이터베이스에 적용할 쿼리문
-     */
-    public void inputQuery(String query) {
-        SQLiteDatabase db = getWritableDatabase(); // 데이터베이스 불러오기 - 쓰기전용
-        db.execSQL(query); // 쿼리문 입력
-        db.close();
-        // 새 데이터 입력
-        // ex. _query = "INSERT INTO RECORD_LIST VALUES(0)"
-        // 기본 데이터 갱신
-        // ex. _query = "UPDATE RECORD_LIST SET number=3000 WHERE number<3000"
-    }
-
-    /**
      * 빈데이터의 행 하나를 추가하는 함수
      * @param query
      */
@@ -70,25 +146,6 @@ public class DBManager extends SQLiteOpenHelper {
         SQLiteDatabase db = getWritableDatabase(); // 데이터베이스 불러오기 - 쓰기전용
         db.execSQL("INSERT INTO "+ TableName +" VALUES"+ query); // 쿼리문 입력
         db.close();
-    }
-
-    /**
-     * 테이블에 있는 데이터들 출력
-     * @return 내부 데이터 반환
-     */
-    public int printData() {
-        SQLiteDatabase db = getReadableDatabase(); // 데이터베이스 불러오기 - 읽기전용
-        int num = 0; // 걸음 수
-
-        Cursor cursor; // 테이블 한줄한줄 읽어오기 위한 Cursor 클래스
-        cursor = db.rawQuery("SELECT * from "+ TableName, null); // RECORD_LIST 테이블 전부 콜
-        while(cursor.moveToNext()) { // 테이블이 끝 날때까지 동작하는 반복문
-            num = cursor.getInt(0); // 정수형 데이터 콜
-        }
-        cursor.close();
-        db.close();
-
-        return num;
     }
 
     /**
