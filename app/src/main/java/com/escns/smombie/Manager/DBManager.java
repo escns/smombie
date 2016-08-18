@@ -35,19 +35,20 @@ public class DBManager extends SQLiteOpenHelper {
      */
     @Override
     public void onCreate(SQLiteDatabase db) {
-        db.execSQL("CREATE TABLE "+ TableName +" "+ TableProperty); // 테이블 생성
+
+
 
         StringBuffer sb = new StringBuffer();
-        sb.append(" CREATE TABLE TEST_TABLE ( ");
-        sb.append(" ID String PRIMARY KEY, ");
+
+        sb.append(" CREATE TABLE "+TableName+" ( ");
+        sb.append(" _id INTEGER PRIMARY KEY AUTOINCREMENT, ");
+        sb.append(" USER_ID TEXT, ");
         sb.append(" YEAR INTEGER, ");
         sb.append(" MONTH INTEGER, ");
         sb.append(" DAY INTEGER, ");
         sb.append(" HOUR INTEGER, ");
         sb.append(" DIST INTEGER, ");
-        sb.append(" STEPCNT INTEGER, ");
-        sb.append(" SUCCESSCNT INTEGER, ");
-        sb.append(" SUM INTEGER ");
+        sb.append(" STEPCNT INTEGER ) ");
 
         db.execSQL(sb.toString());
     }
@@ -56,34 +57,33 @@ public class DBManager extends SQLiteOpenHelper {
      * 파라미터로 받은 data를 DB에 저장
      * @param data
      */
-    public void inputStepData(Step data) {
+    public void insertStepData(Step data) {
         SQLiteDatabase db = null;
         try {
             db = getWritableDatabase();
 
             StringBuffer sb = new StringBuffer();
-            sb.append(" INSERT INTO ? ( ");
-            sb.append(" ID, YEAR, MONTH, DAY, HOUR, DIST, STEPCNT, SUCCESSCNT, SUM ) ");
-            sb.append(" VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ? ) ");
+            sb.append(" INSERT INTO "+TableName+" ( ");
+            sb.append(" USER_ID, YEAR, MONTH, DAY, HOUR, DIST, STEPCNT ) ");
+            sb.append(" VALUES ( ?, ?, ?, ?, ?, ?, ? ) ");
 
             db.execSQL(sb.toString(),
                     new Object[]{
-                            TableName,
                             data.getmId(),
                             data.getmYear(),
                             data.getmMonth(),
                             data.getmDay(),
                             data.getmHour(),
                             data.getmDist(),
-                            data.getmStepCnt(),
-                            data.getmSuccessCnt(),
-                            data.getmSum()
+                            data.getmStepCnt()
                     });
 
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
-            db.close();
+            if(db!=null) {
+                db.close();
+            }
         }
     }
 
@@ -102,30 +102,29 @@ public class DBManager extends SQLiteOpenHelper {
             db = getReadableDatabase();
 
             StringBuffer sb = new StringBuffer();
-            sb.append(" SELECT * FROM ?");
-            sb.append(" WHERE ID is ? ");
+            sb.append(" SELECT * FROM "+TableName);
+            sb.append(" WHERE USER_ID is ? ");
 
             Cursor cursor = db.rawQuery(sb.toString(),
                     new String[]{
-                            TableName,
                             id
                     });
 
             while(cursor.moveToNext()) {
-                step = new Step(cursor.getString(0), cursor.getInt(1), cursor.getInt(2), cursor.getInt(3), cursor.getInt(4), cursor.getInt(5), cursor.getInt(6), cursor.getInt(7), cursor.getInt(8));
+                step = new Step(cursor.getString(0), cursor.getInt(1), cursor.getInt(2), cursor.getInt(3), cursor.getInt(4), cursor.getInt(5), cursor.getInt(6));
                 list.add(step);
             }
 
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
-            db.close();
+            if(db!=null) {
+                db.close();
+            }
         }
 
         return list;
     }
-
-
 
     /**
      * onUpgrade

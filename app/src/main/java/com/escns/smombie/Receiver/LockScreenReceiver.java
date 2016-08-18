@@ -68,7 +68,7 @@ public class LockScreenReceiver extends BroadcastReceiver {
     // BroadcastReceiver에 메시지가 왔을 때
     @Override
     public void onReceive(Context context, Intent intent) {
-        Log.d("Tag", "LockReceiver - onReceive"+intent.getAction());
+        Log.d("Tag", "LockReceiver - onReceive "+intent.getAction());
 
         mContext = context;
 
@@ -173,7 +173,7 @@ public class LockScreenReceiver extends BroadcastReceiver {
             }
         } else if(action.equals("com.escns.smombie.LOCK_SCREEN_OFF")) {
             isWalking=false;
-            if(mWindowManager!=null && isLock) {
+            if(mWindowManager!=null) {
                 mWindowManager.removeView(mLockScreenView);
                 mWindowManager = null;
                 isLock=false;

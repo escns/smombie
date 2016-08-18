@@ -13,10 +13,8 @@ public class Step {
     private int mHour;
     private int mDist;
     private int mStepCnt;
-    private int mSuccessCnt;
-    private int mSum;
 
-    public Step(String mId, int mYear, int mMonth, int mDay, int mHour, int mDist, int mStepCnt, int mSuccessCnt, int mSum) {
+    public Step(String mId, int mYear, int mMonth, int mDay, int mHour, int mDist, int mStepCnt) {
         this.mId = mId;
         this.mYear = mYear;
         this.mMonth = mMonth;
@@ -24,8 +22,6 @@ public class Step {
         this.mHour = mHour;
         this.mDist = mDist;
         this.mStepCnt = mStepCnt;
-        this.mSuccessCnt = mSuccessCnt;
-        this.mSum = mSum;
     }
 
     public String getmId() {
@@ -84,22 +80,6 @@ public class Step {
         this.mStepCnt = mStepCnt;
     }
 
-    public int getmSuccessCnt() {
-        return mSuccessCnt;
-    }
-
-    public void setmSuccessCnt(int mSuccessCnt) {
-        this.mSuccessCnt = mSuccessCnt;
-    }
-
-    public int getmSum() {
-        return mSum;
-    }
-
-    public void setmSum(int mSum) {
-        this.mSum = mSum;
-    }
-
     @Override
     public String toString() {
         return "Step{" +
@@ -110,8 +90,6 @@ public class Step {
                 ", mHour=" + mHour +
                 ", mDist=" + mDist +
                 ", mStepCnt=" + mStepCnt +
-                ", mSuccessCnt=" + mSuccessCnt +
-                ", mSum=" + mSum +
                 '}';
     }
 }

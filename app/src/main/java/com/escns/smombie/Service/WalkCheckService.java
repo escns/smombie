@@ -8,10 +8,14 @@ import android.os.IBinder;
 import android.os.Message;
 import android.support.annotation.Nullable;
 import android.util.Log;
+import android.widget.Toast;
 
+import com.escns.smombie.DAO.Step;
 import com.escns.smombie.Manager.DBManager;
 import com.escns.smombie.Manager.GPSManager;
 
+import java.util.Calendar;
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -28,6 +32,11 @@ public class WalkCheckService extends Service {
     private TimerTask myTimer;
     private Handler handler;
     private boolean isWalking = false;
+
+    private double mStartLon = 0.0;
+    private double mStartLat = 0.0;
+    private double mLastLon = 0.0;
+    private double mLastLat = 0.0;
 
     private final IBinder mBinder = new LocalBinder();
 
@@ -89,13 +98,35 @@ public class WalkCheckService extends Service {
                 int state = mGpsManager.getData();
 
                 if (state == 2) {                                                       // 걸을 때 잠금화면 실행
-                    isWalking = true;
+                    if(!isWalking) {
+                        mStartLon = mGpsManager.getmCurLon();
+                        mStartLat = mGpsManager.getmCurLat();
+                        isWalking = true;
+                    }
                     Intent intent = new Intent("com.escns.smombie.LOCK_SCREEN_ON");
                     sendBroadcast(intent);
                 } else {                                                                // 제자리일 때, GPS 작동 안할 때 잠금화면 종료
-                    isWalking = false;
+
                     Intent intent = new Intent("com.escns.smombie.LOCK_SCREEN_OFF");
                     sendBroadcast(intent);
+
+                    if(isWalking) {
+                        mLastLon = mGpsManager.getmCurLon();
+                        mLastLat = mGpsManager.getmCurLat();
+                        isWalking = false;
+
+                        double distance = mGpsManager.calculateDistance(mStartLon, mStartLat, mLastLon, mLastLat);
+
+                        Calendar calendar = Calendar.getInstance();
+                        Step step = new Step("hajaekwon", calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DATE), calendar.get(Calendar.HOUR), (int)distance, 0);
+                        mDbManager.insertStepData(step);
+
+                        List<Step> list = mDbManager.getStepData("hajaekwon");
+                        for(Step s : list) {
+                            Toast.makeText(getApplicationContext(), s.toString(), Toast.LENGTH_SHORT).show();
+                            Log.i("tag", s.toString());
+                        }
+                    }
                 }
             }
 

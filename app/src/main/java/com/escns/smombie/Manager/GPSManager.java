@@ -1,6 +1,5 @@
 package com.escns.smombie.Manager;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.location.Location;
@@ -18,16 +17,16 @@ import android.widget.Toast;
 public class GPSManager implements LocationListener
 {
     Context mContext;
-    Activity mActivity;
 
     Location location; // 위치정보
     protected LocationManager locationManager;
 
-    double curLon = 0.0; // 현재 경도
-    double curLat = 0.0; // 현재 위도
-    double lastLon = 0.0; // 이전 경도
-    double lastLat = 0.0; // 이전 위도
-    double distance = 0.0; // 사이 거리
+    double mCurLon = 0.0; // 현재 경도
+    double mCurLat = 0.0; // 현재 위도
+    double mLastLon = 0.0; // 이전 경도
+    double mLastLat = 0.0; // 이전 위도
+    double mDistance = 0.0; // 사이 거리
+
     long lastTime = System.currentTimeMillis(); // GPS가 갱신된 전시간
     long curTime = System.currentTimeMillis(); // GPS가 갱신된 현재시간
     long betweenTime; // GPS가 갱신되기까지 걸린 시간
@@ -61,8 +60,8 @@ public class GPSManager implements LocationListener
      */
     public void init(double a, double b)
     {
-        lastLon = a;
-        lastLat = b;
+        mLastLon = a;
+        mLastLat = b;
 
         lastTime = System.currentTimeMillis();
     }
@@ -73,34 +72,11 @@ public class GPSManager implements LocationListener
      */
     public boolean getLocation() {
 
-        /*
-        // API 23부터는 사용자에게 직접 권한을 요청해야하는 때문에 퍼미션을 체크한다
-        if ( ContextCompat.checkSelfPermission( mContext,
-                android.Manifest.permission.ACCESS_FINE_LOCATION ) != PackageManager.PERMISSION_GRANTED
-                && ContextCompat.checkSelfPermission( mContext,
-                android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED)
-        {
-            isAccessEnabled = true;
-        }
-        Log.d("tag", "isAccessEnabled : " + isAccessEnabled);
-        if(isAccessEnabled)
-        {
-            isAccessEnabled = false;
-            ActivityCompat.requestPermissions( mActivity, new String[] {  android.Manifest.permission.ACCESS_FINE_LOCATION  }, 2);
-            ActivityCompat.requestPermissions( mActivity, new String[] {  android.Manifest.permission.ACCESS_COARSE_LOCATION  }, 2);
-            Log.d("tag", "No Authority");
-            return 0;
-        }
-        Log.d("tag", "isAccessEnabled : " + isAccessEnabled);
-        */
-
         if (ContextCompat.checkSelfPermission( mContext,
                 android.Manifest.permission.ACCESS_FINE_LOCATION ) != PackageManager.PERMISSION_GRANTED) {
-
         }
 
         // 연결
-        //locationManager = (LocationManager) mActivity.getSystemService(mContext.LOCATION_SERVICE);
         locationManager = (LocationManager) mContext.getSystemService(mContext.LOCATION_SERVICE);
 
         // GPS 유무정보 가져오기
@@ -120,11 +96,10 @@ public class GPSManager implements LocationListener
             }
 
             if(location != null) {
-                lastLon = curLon;
-                lastLat = curLat;
-                curLon = location.getLongitude();
-                curLat = location.getLatitude();
-                //Toast.makeText(mContext, "값 받음", Toast.LENGTH_LONG).show();
+                mLastLon = mCurLon;
+                mLastLat = mCurLat;
+                mCurLon = location.getLongitude();
+                mCurLat = location.getLatitude();
                 return true;
             }
             else {
@@ -151,29 +126,20 @@ public class GPSManager implements LocationListener
 
         if( getLocation() ) {
 
-            //이동거리 구하기
-            //distance = (lon - mlon) + (lat - mlat);
-            double theta = lastLon - curLon;
-            distance = Math.sin(deg2rad(lastLat)) * Math.sin(deg2rad(curLat)) + Math.cos(deg2rad(lastLat))
-                    * Math.cos(deg2rad(curLat)) * Math.cos(deg2rad(theta));
-            distance = Math.acos(distance);
-            distance = rad2deg(distance);
+            mDistance = calculateDistance(mLastLon, mLastLat, mCurLon, mCurLat);
 
-            distance = distance * 60 * 1.1515;
-            distance = distance * 1.609344;    // 단위 mile 에서 km 변환.
-            distance = distance * 1000.0;      // 단위  km 에서 m 로 변환
             //distance = distance / 10;      // 오차 보정 --> 사용자설정
 
-            Log.d("tag", "이동거리(변환전) : " + distance);
+            Log.d("tag", "이동거리(변환전) : " + mDistance);
             // distance = cutPoint(distance);
-            Log.d("tag", "이동거리(변환후) : " + distance);
+            Log.d("tag", "이동거리(변환후) : " + mDistance);
 
             // 이동속도 구하기
-            if(distance == 0. || (lastLon==curLon)&&(lastLat==curLat)) {
+            if(mDistance == 0. || (mLastLon == mCurLon)&&(mLastLat == mCurLat)) {
                 speed = 0.;
             }
             else {
-                speed = (distance) / (double) betweenTime; // m/s
+                speed = (mDistance) / (double) betweenTime; // m/s
                 Log.d("tag", "이동속도(변환전) : " + speed);
                 // speed = cutPoint(speed);
                 Log.d("tag", "이동속도(변환후) : " + speed);
@@ -183,10 +149,10 @@ public class GPSManager implements LocationListener
 
             // 제자리일 때는 1, 걸을 때는 2를 반환
             if (speed < 0.5) {
-                Toast.makeText(mContext, "lon: " + curLon + " / lat: " + curLat + "\n제자리입니다 " + betweenTime, Toast.LENGTH_SHORT).show();
+                Toast.makeText(mContext, "lon: " + mCurLon + " / lat: " + mCurLat + "\n제자리입니다 " + betweenTime, Toast.LENGTH_SHORT).show();
                 return 1;
             } else {
-                Toast.makeText(mContext, "lon: " + curLon + " / lat: " + curLat + "\n" + speed + "m/s입니다 " + betweenTime, Toast.LENGTH_SHORT).show();
+                Toast.makeText(mContext, "lon: " + mCurLon + " / lat: " + mCurLat + "\n" + speed + "m/s입니다 " + betweenTime, Toast.LENGTH_SHORT).show();
                 return 2;
             }
         }
@@ -194,6 +160,21 @@ public class GPSManager implements LocationListener
             Toast.makeText(mContext, "GPS가 작동하지않습니다 " + betweenTime, Toast.LENGTH_SHORT).show();
             return 0;
         }
+    }
+
+    public double calculateDistance(double lastLon, double lastLat, double curLon, double curLat) {
+        //이동거리 구하기
+        double theta = lastLon - curLon;
+        double distance = Math.sin(deg2rad(lastLat)) * Math.sin(deg2rad(curLat)) + Math.cos(deg2rad(lastLat))
+                * Math.cos(deg2rad(curLat)) * Math.cos(deg2rad(theta));
+        distance = Math.acos(distance);
+        distance = rad2deg(distance);
+
+        distance = distance * 60 * 1.1515;
+        distance = distance * 1.609344;    // 단위 mile 에서 km 변환.
+        distance = distance * 1000.0;      // 단위  km 에서 m 로 변환
+
+        return distance;
     }
 
     /**
@@ -227,45 +208,6 @@ public class GPSManager implements LocationListener
         return Double.parseDouble(str);
     }
 
-    /**
-     * 현재 위치의 경도를 반환
-     * @return 경도
-     */
-    public double getLongitude() {
-        return curLon;
-    }
-
-    /**
-     * 현재 위치의 위도를 반환
-     * @return 위도
-     */
-    public double getLatitude() {
-        return curLat;
-    }
-
-    /**
-     * 걸은 거리를 반환
-     * @return 거리
-     */
-    public double getDistance() {
-        return distance;
-    }
-
-    /**
-     * 걸린 시간을 반환
-     * @return 시간
-     */
-    public double getTime() {
-        return betweenTime;
-    }
-
-    /**
-     * 속도를 반환
-     * @return 속도
-     */
-    public double getSpeed() {
-        return speed;
-    }
 
     /**
      * 위치정보가 갱신 될 때마다 호출되는 오버라이딩 함수
@@ -289,5 +231,21 @@ public class GPSManager implements LocationListener
     @Override
     public void onProviderDisabled(String s)
     {
+    }
+
+    public double getmCurLon() {
+        return mCurLon;
+    }
+
+    public void setmCurLon(double mCurLon) {
+        this.mCurLon = mCurLon;
+    }
+
+    public double getmCurLat() {
+        return mCurLat;
+    }
+
+    public void setmCurLat(double mCurLat) {
+        this.mCurLat = mCurLat;
     }
 }

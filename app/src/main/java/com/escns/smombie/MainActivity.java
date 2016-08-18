@@ -226,7 +226,7 @@ public class MainActivity extends AppCompatActivity {
         currentPoint.enqueue(new Callback<Point>() {
             @Override
             public void onResponse(Call<Point> call, Response<Point> response) {
-                if(response!=null) {
+                if(response.body()!=null) {
                     section1Text.setText(""+response.body().getPoint()+"m");
                 }
             }
@@ -241,7 +241,7 @@ public class MainActivity extends AppCompatActivity {
         goalPoint.enqueue(new Callback<Point>() {
             @Override
             public void onResponse(Call<Point> call, Response<Point> response) {
-                if(response!=null) {
+                if(response.body()!=null) {
                     section2Text.setText("" + response.body().getPoint() + "m");
                 }
             }
