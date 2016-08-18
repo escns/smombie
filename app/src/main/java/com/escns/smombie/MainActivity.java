@@ -1,5 +1,6 @@
 package com.escns.smombie;
 
+import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -20,10 +21,12 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SwitchCompat;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.escns.smombie.Adapter.ItemMainAdpater;
 import com.escns.smombie.DAO.Point;
@@ -47,14 +50,20 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class MainActivity extends AppCompatActivity {
 
+    public static Activity mExitAct;
+
+    DrawerLayout drawerLayout; // 메인화면에서의 화면
+    NavigationView navigationView; // Side 메뉴바
+
     private SharedPreferences pref;         // 화면 꺼짐 및 이동 시 switch가 초기화되기 때문에 파일에 따로 저장하기 위한 객체
-    private DBManager dbManager;            // DB 선언
 
     private String mFbId;
     private String mFbName;
     private String mFbEmail;
     private Bitmap mProfileImage;
     private boolean isProfileImageLoaded;
+
+    private double mbackPressedTime = 0; // 연속으로 두번 누르면 종료 시 사용하는 변수
 
     //private WalkCheckService mService;
     private boolean mBound = false; // WalkCheckService Service가 제대로 동작하면 true 아니면 false
@@ -72,7 +81,6 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -82,6 +90,20 @@ public class MainActivity extends AppCompatActivity {
         init();
     }
 
+    @Override
+    public void onBackPressed() {
+        double curTime = System.currentTimeMillis();
+        double intervalTime = curTime - mbackPressedTime;
+
+        if(intervalTime <= 2000) {
+            super.onBackPressed();
+        }
+        else {
+            mbackPressedTime = System.currentTimeMillis();
+            Toast.makeText(getApplicationContext(), "종료하실려면 한번 더 눌러주십시오", Toast.LENGTH_SHORT).show();
+        }
+    }
+
     /**
      *  Initialize toolbar and navigation drawer
      */
@@ -89,8 +111,8 @@ public class MainActivity extends AppCompatActivity {
 
         // Navigation Drawer에 필요한 Component들 생성
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        DrawerLayout drawerLayout = (DrawerLayout) findViewById(R.id.drawerLayout);
-        NavigationView navigationView = (NavigationView) findViewById(R.id.navigation_view);
+        drawerLayout = (DrawerLayout) findViewById(R.id.drawerLayout);
+        navigationView = (NavigationView) findViewById(R.id.navigation_view);
 
         // 기존의 ActionBar를 대체하기 위한 toolbar 설정
         setSupportActionBar(toolbar);
@@ -119,42 +141,57 @@ public class MainActivity extends AppCompatActivity {
         navigationView.inflateMenu((R.menu.navigation_item));
         View HeaderLayout = navigationView.getHeaderView(0);
 
-        ImageView profileImageView = (ImageView) findViewById(R.id.profile_view);
-        //profileImageView.setClipToOutline(true);
 
-        /*
-        // navigation_headr에 있는 사진과 정보
-        headerName = (TextView) HeaderLayout.findViewById(R.id.header_name);
-        headerPhoto = (ImageView) HeaderLayout.findViewById(R.id.header_photo);
+        // LoginActivity로부터 페이스북 프로필정보 받아오기
+        mFbId = getIntent().getStringExtra("id");
+        mFbName = getIntent().getStringExtra("name");
+        mFbEmail = getIntent().getStringExtra("email");
+
 
         // 추가한 코드...아래
-
         // 사이드메뉴에 있는 item들을 클릭 시 동작
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(MenuItem item) {
+
+                Log.d("tag", "Click item in side Menu");
+
                 int id = item.getItemId();
 
+                Intent intent;
                 switch(id) {
+                    case R.id.drawer_Home: // 홈
+                        drawerLayout.closeDrawer(navigationView);
+                        return true;
+
                     case R.id.drawer_menu1 : // 히스토리
+                        intent = new Intent(getApplicationContext(), HistoryActivity.class);
+                        intent.putExtra("id", mFbId);
+                        intent.putExtra("name", mFbName);
+                        intent.putExtra("email",mFbEmail);
+                        startActivity(intent);
+                        drawerLayout.closeDrawer(navigationView);
                         return true;
+
                     case R.id.drawer_menu2 : // 설정
+                        drawerLayout.closeDrawer(navigationView);
                         return true;
+
                     case R.id.drawer_menu3 : // 내정보
+                        drawerLayout.closeDrawer(navigationView);
                         return true;
+
                     case R.id.drawer_menu4 : // 로그아웃
                         com.facebook.login.LoginManager.getInstance().logOut();
-                        Intent intent = new Intent(getApplicationContext(), StartActivity.class);
+                        intent = new Intent(getApplicationContext(), StartActivity.class);
                         startActivity(intent);
                         finish();
-
                         return true;
                 }
-                return false;
 
+                return false;
             }
         });
-         */
 
     }
 
@@ -163,11 +200,9 @@ public class MainActivity extends AppCompatActivity {
      */
     public void init() {
 
-        pref = getSharedPreferences("pref", MODE_PRIVATE);
+        mExitAct = MainActivity.this; // 다른 Activity에서 MainActivity를 종료하기 위함
 
-        mFbId = getIntent().getStringExtra("id");
-        mFbName = getIntent().getStringExtra("name");
-        mFbEmail = getIntent().getStringExtra("email");
+        pref = getSharedPreferences("pref", MODE_PRIVATE);
 
         ((TextView) findViewById(R.id.profile_name)).setText(mFbName);
         ((TextView) findViewById(R.id.profile_email)).setText(mFbEmail);
@@ -184,6 +219,10 @@ public class MainActivity extends AppCompatActivity {
                         mProfileImage = BitmapFactory.decodeStream(conn.getInputStream());               //  이미지 뷰에 지정할 Bitmap을 생성하는 과정
 
                         Thread.sleep(100);
+
+                        ((CustomImageView) findViewById(R.id.header_photo)).setImageBitmap(mProfileImage);
+                        ((TextView) findViewById(R.id.header_name)).setText(mFbName);
+                        ((TextView) findViewById(R.id.header_email)).setText(mFbEmail);
 
                         Log.i("tag", "get FB profile image");
                         handler.sendMessage(handler.obtainMessage());                                   //profileImage.setImageBitmap(bit); // 페이스북 사진 입력

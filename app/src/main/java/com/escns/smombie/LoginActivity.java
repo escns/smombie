@@ -81,7 +81,7 @@ public class LoginActivity extends Activity {
         mLoginButtonInvisible.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
             @Override
             public void onSuccess(LoginResult loginResult) {
-                Toast.makeText(getApplicationContext(), "Login", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), "환영합니다", Toast.LENGTH_SHORT).show();
                 mLoginButtonInvisible.setVisibility(View.INVISIBLE);
 
                 //GraphRequest 클래스에는 지정된 액세스 토큰의 사용자 데이터를 가져오는 newMeRequest 메서드가 있다

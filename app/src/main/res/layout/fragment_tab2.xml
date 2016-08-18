@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout="@+id/layoutTab2">
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:layout_weight="3"
+        app:srcCompat="@drawable/aqua"
+        android:id="@+id/imageView"
+        android:scaleType="fitXY"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:layout_weight="1"
+        android:id="@+id/linearLayout">
+
+        <ImageView
+            android:id="@+id/tab2_button1"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:layout_marginRight="40dp"
+            android:src="@drawable/buttonimage"/>
+
+
+        <ImageView
+            android:id="@+id/tab2_button2"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:src="@drawable/buttonimage" />
+    </LinearLayout>
+
+    <RelativeLayout
+        android:id="@+id/tab2_charLayout1"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="2"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_above="@+id/imageView"
+        android:layout_below="@+id/linearLayout">
+
+        <com.github.mikephil.charting.charts.HorizontalBarChart
+            android:id="@+id/tab2_chart1"
+            android:layout_width="250dp"
+            android:layout_height="150dp"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true" />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/tab2_charLayout2"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="2"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_above="@+id/imageView"
+        android:layout_below="@+id/linearLayout">
+
+        <com.github.mikephil.charting.charts.HorizontalBarChart
+            android:id="@+id/tab2_chart2"
+            android:layout_width="250dp"
+            android:layout_height="250dp"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true" />
+
+    </RelativeLayout>
+
+</RelativeLayout>

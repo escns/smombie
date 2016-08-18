@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="150dp"
     android:orientation="vertical"
@@ -12,16 +13,21 @@
         android:orientation="vertical"
         android:background="@drawable/header_background">
 
-        <ImageView
+        <com.escns.smombie.View.CustomImageView
             android:text="TextView"
-            android:src="@drawable/newicon"
+            android:id="@+id/header_photo"
+            android:src="@drawable/img_profile"
+            android:scaleType="fitXY"
             android:layout_width="60dp"
             android:layout_height="60dp"
-            android:id="@+id/header_photo"
             android:layout_marginTop="25dp"
             android:layout_marginLeft="15dp"
             android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true" />
+            android:layout_alignParentStart="true"
+            app:customImageViewType="circle"
+            app:customImageViewBorder="true"
+            app:customImageViewBorderWidth="4"
+            app:customImageViewBorderColor="@color/third_color"/>
 
         <TextView
             android:id="@+id/header_name"
@@ -34,6 +40,17 @@
             android:layout_below="@+id/header_photo"
             android:layout_alignLeft="@+id/header_photo"
             android:layout_alignStart="@+id/header_photo" />
+
+        <TextView
+            android:id="@+id/header_email"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="사용자 이메일"
+            android:textSize="13dp"
+            android:textColor="#FFFFFF"
+            android:layout_below="@+id/header_name"
+            android:layout_alignLeft="@+id/header_name"
+            android:layout_alignStart="@+id/header_name" />
 
     </RelativeLayout>
 </LinearLayout>

@@ -2,7 +2,8 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <group android:id="@+id/drawer_Group1"
         android:checkableBehavior="all">
-        <item android:title="홈" android:id="@+id/drawer_Home"/>
+        <item android:title="홈"
+            android:id="@+id/drawer_Home"/>
     </group>
     <group android:id="@+id/drawer_Group2"
         android:checkableBehavior="all">

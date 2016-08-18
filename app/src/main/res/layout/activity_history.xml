@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/activity_history"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    android:orientation="vertical">
+
+    <include layout="@layout/toolbar"></include>
+
+    <android.support.v4.widget.DrawerLayout
+        android:id="@+id/drawerLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <android.support.design.widget.CoordinatorLayout
+            android:id="@+id/coordinator_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <!-- 만약 프래그먼트로 작업시에는 이 부분이 Frame이 되야됨 -->
+
+
+            <android.support.design.widget.TabLayout
+                android:id="@+id/tab_layout"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:background="@color/blue_grey"
+                style="@style/MyCustomTabLayout"
+                app:tabMode="fixed"
+                app:tabGravity="fill"/>
+
+
+            <android.support.v4.view.ViewPager
+                android:id="@+id/tab_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="50dp"
+                app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+
+
+            <!-- 만약 프래그먼트로 작업시에는 이 부분이 Frame이 되야됨 -->
+        </android.support.design.widget.CoordinatorLayout>
+
+        <android.support.design.widget.NavigationView
+            android:id="@+id/navigation_view"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="start"
+            android:background="#ffffff"
+            app:headerLayout="@layout/navigation_header"
+            app:itemIconTint="#ff1b6bae"
+            app:itemTextColor="#333"
+            app:theme="@style/NavigationDrawerStyle" />
+    </android.support.v4.widget.DrawerLayout>
+
+</LinearLayout>
