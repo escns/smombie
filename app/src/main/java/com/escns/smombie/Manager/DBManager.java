@@ -39,8 +39,6 @@ public class DBManager extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
 
-
-
         StringBuffer sb = new StringBuffer();
 
         sb.append(" CREATE TABLE "+ RECORD_TABLE +" ( ");
