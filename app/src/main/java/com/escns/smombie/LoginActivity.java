@@ -18,6 +18,7 @@ import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
+import com.squareup.picasso.Picasso;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -34,6 +35,7 @@ public class LoginActivity extends Activity {
     String mFbName;                         // 페이스북 이름
     String mFbEmail;                        // 페이스북 이메일
 
+    ImageView mLoginBackground;
     LoginButton mLoginButtonInvisible;      // 페이스북 로그인 버튼
     ImageView mLoginButtonVisible;          // 커스텀 로그인 버튼
 
@@ -43,10 +45,16 @@ public class LoginActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+
         // 페이스북 sdk 초기화
         FacebookSdk.sdkInitialize(getApplicationContext());
 
         setContentView(R.layout.activity_login);
+
+
+        mLoginBackground = (ImageView) findViewById(R.id.login_background);
+        Picasso.with(this).load(R.drawable.bg_login).fit().into(mLoginBackground);
+
 
         // 로그인 응답을 처리할 콜백 관리자를 만듦
         callbackManager = CallbackManager.Factory.create();

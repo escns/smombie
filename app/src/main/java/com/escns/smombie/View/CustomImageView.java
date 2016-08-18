@@ -75,6 +75,7 @@ public class CustomImageView extends ImageView {
      */
     @Override
     protected void onDraw(Canvas canvas) {
+        //super.onDraw(canvas);
 
         Drawable drawable = getDrawable();
 
