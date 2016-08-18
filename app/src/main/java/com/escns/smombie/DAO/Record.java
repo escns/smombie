@@ -4,7 +4,7 @@ package com.escns.smombie.DAO;
  * Created by Administrator on 2016-08-17.
  */
 
-public class Step {
+public class Record {
 
     private String mId;
     private int mYear;
@@ -14,7 +14,7 @@ public class Step {
     private int mDist;
     private int mStepCnt;
 
-    public Step(String mId, int mYear, int mMonth, int mDay, int mHour, int mDist, int mStepCnt) {
+    public Record(String mId, int mYear, int mMonth, int mDay, int mHour, int mDist, int mStepCnt) {
         this.mId = mId;
         this.mYear = mYear;
         this.mMonth = mMonth;
@@ -82,7 +82,7 @@ public class Step {
 
     @Override
     public String toString() {
-        return "Step{" +
+        return "Record {" +
                 "mId='" + mId + '\'' +
                 ", mYear=" + mYear +
                 ", mMonth=" + mMonth +

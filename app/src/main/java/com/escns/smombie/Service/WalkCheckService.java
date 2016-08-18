@@ -10,7 +10,7 @@ import android.support.annotation.Nullable;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.escns.smombie.DAO.Step;
+import com.escns.smombie.DAO.Record;
 import com.escns.smombie.Manager.DBManager;
 import com.escns.smombie.Manager.GPSManager;
 
@@ -118,11 +118,11 @@ public class WalkCheckService extends Service {
                         double distance = mGpsManager.calculateDistance(mStartLon, mStartLat, mLastLon, mLastLat);
 
                         Calendar calendar = Calendar.getInstance();
-                        Step step = new Step("hajaekwon", calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DATE), calendar.get(Calendar.HOUR), (int)distance, 0);
-                        mDbManager.insertStepData(step);
+                        Record record = new Record("hajaekwon", calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DATE), calendar.get(Calendar.HOUR), (int)distance, 0);
+                        mDbManager.insertRecord(record);
 
-                        List<Step> list = mDbManager.getStepData("hajaekwon");
-                        for(Step s : list) {
+                        List<Record> list = mDbManager.getRecord("hajaekwon");
+                        for(Record s : list) {
                             Toast.makeText(getApplicationContext(), s.toString(), Toast.LENGTH_SHORT).show();
                             Log.i("tag", s.toString());
                         }

@@ -50,10 +50,10 @@ public class MainActivity extends AppCompatActivity {
     private SharedPreferences pref;         // 화면 꺼짐 및 이동 시 switch가 초기화되기 때문에 파일에 따로 저장하기 위한 객체
     private DBManager dbManager;            // DB 선언
 
-    private String fbId;
-    private String fbName;
-    private String fbEmail;
-    private Bitmap profileImage;
+    private String mFbId;
+    private String mFbName;
+    private String mFbEmail;
+    private Bitmap mProfileImage;
     private boolean isProfileImageLoaded;
 
     //private WalkCheckService mService;
@@ -67,7 +67,7 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void handleMessage(Message msg) {
             Log.i("tag", "handleMessage");
-            ((CustomImageView) findViewById(R.id.profile_view)).setImageBitmap(profileImage);
+            ((CustomImageView) findViewById(R.id.profile_view)).setImageBitmap(mProfileImage);
             isProfileImageLoaded=true;
         }
     };
@@ -165,23 +165,23 @@ public class MainActivity extends AppCompatActivity {
 
         pref = getSharedPreferences("pref", MODE_PRIVATE);
 
-        fbId = getIntent().getStringExtra("id");
-        fbName = getIntent().getStringExtra("name");
-        fbEmail = getIntent().getStringExtra("email");
+        mFbId = getIntent().getStringExtra("id");
+        mFbName = getIntent().getStringExtra("name");
+        mFbEmail = getIntent().getStringExtra("email");
 
-        ((TextView) findViewById(R.id.profile_name)).setText(fbName);
-        ((TextView) findViewById(R.id.profile_email)).setText(fbEmail);
+        ((TextView) findViewById(R.id.profile_name)).setText(mFbName);
+        ((TextView) findViewById(R.id.profile_email)).setText(mFbEmail);
 
         Thread thread =  new Thread(new Runnable() {
             @Override
             public void run() {
                 while(!isProfileImageLoaded) {
                     try{
-                        URL url = new URL("https://graph.facebook.com/" + fbId + "/picture?type=large"); // URL 주소를 이용해서 URL 객체 생성
+                        URL url = new URL("https://graph.facebook.com/" + mFbId + "/picture?type=large"); // URL 주소를 이용해서 URL 객체 생성
                         HttpURLConnection conn = (HttpURLConnection) url.openConnection();              //  아래 코드는 웹에서 이미지를 가져온 뒤
                         conn.setDoInput(true);
                         conn.connect();
-                        profileImage = BitmapFactory.decodeStream(conn.getInputStream());               //  이미지 뷰에 지정할 Bitmap을 생성하는 과정
+                        mProfileImage = BitmapFactory.decodeStream(conn.getInputStream());               //  이미지 뷰에 지정할 Bitmap을 생성하는 과정
 
                         Thread.sleep(100);
 
