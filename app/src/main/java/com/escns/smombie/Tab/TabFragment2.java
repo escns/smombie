@@ -12,6 +12,7 @@ import com.escns.smombie.R;
 import com.github.mikephil.charting.charts.HorizontalBarChart;
 import com.github.mikephil.charting.components.AxisBase;
 import com.github.mikephil.charting.components.XAxis;
+import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.BarData;
 import com.github.mikephil.charting.data.BarDataSet;
 import com.github.mikephil.charting.data.BarEntry;
@@ -45,14 +46,28 @@ public class TabFragment2 extends Fragment {
         chart1 = (HorizontalBarChart) rootView.findViewById(R.id.tab2_chart1);
         chart2 = (HorizontalBarChart) rootView.findViewById(R.id.tab2_chart2);
 
-        //chartOne();
+        chartOne();
+        chartTwo();
 
         buttonOne = (ImageView) rootView.findViewById(R.id.tab2_button1);
         buttonOne.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                layout1.setVisibility(View.VISIBLE);
+                layout2.setVisibility(View.INVISIBLE);
             }
         });
+
+        buttonTwo = (ImageView) rootView.findViewById(R.id.tab2_button2);
+        buttonTwo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                layout1.setVisibility(View.INVISIBLE);
+                layout2.setVisibility(View.VISIBLE);
+            }
+        });
+
+        buttonOne.callOnClick();
 
         return rootView;
     }
@@ -62,23 +77,49 @@ public class TabFragment2 extends Fragment {
      */
     public void chartOne() {
         List<BarEntry> entries = new ArrayList<>();
-        entries.add(new BarEntry(20.000f, 0));
-        entries.add(new BarEntry(40.000f, 1));
+        entries.add(new BarEntry(0, 3.00f));
+        entries.add(new BarEntry(1, 0.00f));
+        entries.add(new BarEntry(2, 6.00f));
 
         BarDataSet set = new BarDataSet(entries, "이동거리");
 
         BarData data = new BarData(set);
-        data.setBarWidth(0.5f); // set custom bar width
+        data.setBarWidth(1.0f); // set custom bar width
         data.setValueTextSize(10f);
 
         initAxisOne();
 
         chart1.setData(data);
         chart1.setFitBars(true); // make the x-axis fit exactly all bars
-        //chart1.setTouchEnabled(false); // 차트의 막대 선택 여부
-        //chart1.setScaleEnabled(false); // 차트의 x,y축 확대 여부
+        chart1.setTouchEnabled(false); // 차트의 막대 선택 여부
+        chart1.setScaleEnabled(false); // 차트의 x,y축 확대 여부
         chart1.setDescription(""); // 차트 우측하단의 설명문구
         chart1.invalidate(); // refresh
+    }
+
+    /**
+     * 남자평균을 기준으로 하는 HorizontalBarChart
+     */
+    public void chartTwo() {
+        List<BarEntry> entries = new ArrayList<>();
+        entries.add(new BarEntry(0, 5.00f));
+        entries.add(new BarEntry(1, 0.00f));
+        entries.add(new BarEntry(2, 16.00f));
+
+        BarDataSet set = new BarDataSet(entries, "이동거리");
+
+        BarData data = new BarData(set);
+        data.setBarWidth(1.0f); // set custom bar width
+        data.setValueTextSize(10f);
+
+        initAxisTwo();
+
+        chart2.setData(data);
+        chart2.setFitBars(true); // make the x-axis fit exactly all bars
+        chart2.setTouchEnabled(false); // 차트의 막대 선택 여부
+        chart2.setScaleEnabled(false); // 차트의 x,y축 확대 여부
+        chart2.setDescription(""); // 차트 우측하단의 설명문구
+        chart2.invalidate(); // refresh
     }
 
     /**
@@ -86,33 +127,28 @@ public class TabFragment2 extends Fragment {
      */
     public void initAxisOne() {
 
-        final String[] xProperties = new String[] {"남자평균", "나"};
-        AxisValueFormatter formatter = new AxisValueFormatter() {
-            @Override
-            public String getFormattedValue(float value, AxisBase axis) {
-                return xProperties[(int) value];
-            }
-
-            // we don't draw numbers, so no decimal digits needed
-            @Override
-            public int getDecimalDigits() {  return 0; }
-        };
-
         XAxis xAxis = chart1.getXAxis();
-        xAxis.setValueFormatter(formatter);
-        xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
-        xAxis.setDrawGridLines(false);
-        xAxis.setAxisLineWidth(3f);
-        xAxis.setTextSize(10f);
-        xAxis.setGranularity(1f); // minimum axis-step (interval) is 1
+        xAxis.setEnabled(false);
 
-        //YAxis leftYAxis = chart1.getAxisLeft();
-        //leftYAxis.setDrawGridLines(false);
-        //leftYAxis.setDrawLabels(false);
-        //leftYAxis.setEnabled(false);
-//
-        //YAxis rightYAxis = chart1.getAxisRight();
-        //rightYAxis.setEnabled(false);
+        YAxis leftYAxis = chart1.getAxisLeft();
+        leftYAxis.setEnabled(false);
 
+        YAxis rightYAxis = chart1.getAxisRight();
+        rightYAxis.setEnabled(false);
+    }
+
+    /**
+     * 남자평균을 기준으로 하는 HorizontalBarChart의 가로축
+     */
+    public void initAxisTwo() {
+
+        XAxis xAxis = chart2.getXAxis();
+        xAxis.setEnabled(false);
+
+        YAxis leftYAxis = chart2.getAxisLeft();
+        leftYAxis.setEnabled(false);
+
+        YAxis rightYAxis = chart2.getAxisRight();
+        rightYAxis.setEnabled(false);
     }
 }

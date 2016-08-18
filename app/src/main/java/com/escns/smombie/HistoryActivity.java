@@ -142,7 +142,6 @@ public class HistoryActivity extends AppCompatActivity {
      */
     public void init() {
 
-
         // 사이드 메뉴에서 프로필 사진,이름,이메일을 입력
         Thread thread = new Thread(new Runnable() {
             @Override
@@ -178,17 +177,15 @@ public class HistoryActivity extends AppCompatActivity {
         //Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         //setSupportActionBar(toolbar);
 
-        TabLayout tabLayout =
-                (TabLayout) findViewById(R.id.tab_layout);
+        TabLayout tabLayout = (TabLayout) findViewById(R.id.tab_layout);
 
         tabLayout.addTab(tabLayout.newTab().setText("날짜별"));//setIcon(android.R.drawable.ic_dialog_email));
         tabLayout.addTab(tabLayout.newTab().setText("관계별"));//setIcon(android.R.drawable.ic_dialog_dialer));
         tabLayout.addTab(tabLayout.newTab().setText("성과별"));//setIcon(android.R.drawable.ic_dialog_map));
         //tabLayout.addTab(tabLayout.newTab().setIcon(android.R.drawable.ic_dialog_info));
 
-        final ViewPager viewPager =
-                (ViewPager) findViewById(R.id.tab_view);
-        final PagerAdapter adapter = new TabPagerAdapter(getSupportFragmentManager());
+        final ViewPager viewPager = (ViewPager) findViewById(R.id.tab_view);
+        final PagerAdapter adapter = new TabPagerAdapter(getSupportFragmentManager(), tabLayout.getTabCount());
         viewPager.setAdapter(adapter);
 
         viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));

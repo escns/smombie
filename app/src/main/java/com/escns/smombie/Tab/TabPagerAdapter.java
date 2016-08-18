@@ -10,8 +10,11 @@ import android.support.v4.app.FragmentPagerAdapter;
 
 public class TabPagerAdapter extends FragmentPagerAdapter {
 
-    public TabPagerAdapter(FragmentManager fm) {
+    int tabCount;
+
+    public TabPagerAdapter(FragmentManager fm, int numberOfTabs) {
         super(fm);
+        this.tabCount = numberOfTabs;
     }
 
     @Override
@@ -34,19 +37,7 @@ public class TabPagerAdapter extends FragmentPagerAdapter {
 
     @Override
     public int getCount() {
-        return 3;
+        return tabCount;
     }
 
-    @Override
-    public CharSequence getPageTitle(int position) {
-        switch (position) {
-            case 0:
-                return "SECTION 1";
-            case 1:
-                return "SECTION 2";
-            case 2:
-                return "SECTION 3";
-        }
-        return null;
-    }
 }

@@ -97,10 +97,10 @@ public class TabFragment1 extends Fragment {
      */
     public void chartOne() {
         List<BarEntry> entries = new ArrayList<>();
-        entries.add(new BarEntry(0f, 20f));
-        entries.add(new BarEntry(1f, 10f));
-        entries.add(new BarEntry(2f, 40f));
-        entries.add(new BarEntry(3f, 50f));
+        entries.add(new BarEntry(0, 2.0f));
+        entries.add(new BarEntry(1, 1.0f));
+        entries.add(new BarEntry(2, 3.0f));
+        entries.add(new BarEntry(3, 5.0f));
 
         BarDataSet set = new BarDataSet(entries, "이동거리");
 
@@ -123,13 +123,13 @@ public class TabFragment1 extends Fragment {
      */
     public void chartTwo() {
         List<BarEntry> entries = new ArrayList<>();
-        entries.add(new BarEntry(0f, 20f));
-        entries.add(new BarEntry(1f, 10f));
-        entries.add(new BarEntry(2f, 40f));
-        entries.add(new BarEntry(3f, 50f));
-        entries.add(new BarEntry(4f, 40f));
-        entries.add(new BarEntry(5f, 30f));
-        entries.add(new BarEntry(6f, 50f));
+        entries.add(new BarEntry(0, 20.000f));
+        entries.add(new BarEntry(1, 10.000f));
+        entries.add(new BarEntry(2, 40.000f));
+        entries.add(new BarEntry(3, 50.000f));
+        entries.add(new BarEntry(4, 40.000f));
+        entries.add(new BarEntry(5, 30.000f));
+        entries.add(new BarEntry(6, 50.000f));
 
         BarDataSet set = new BarDataSet(entries, "이동거리");
 
@@ -152,9 +152,9 @@ public class TabFragment1 extends Fragment {
      */
     public void chartThree() {
         List<BarEntry> entries = new ArrayList<>();
-        entries.add(new BarEntry(0f, 20f));
-        entries.add(new BarEntry(1f, 10f));
-        entries.add(new BarEntry(2f, 30f));
+        entries.add(new BarEntry(0, 20.000f));
+        entries.add(new BarEntry(1, 10.000f));
+        entries.add(new BarEntry(2, 30.000f));
 
         BarDataSet set = new BarDataSet(entries, "이동거리");
 
