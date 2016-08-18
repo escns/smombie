@@ -205,7 +205,6 @@ public class MainActivity extends AppCompatActivity {
         pref = getSharedPreferences("pref", MODE_PRIVATE);
 
         ((TextView) findViewById(R.id.profile_name)).setText(mFbName);
-        ((TextView) findViewById(R.id.profile_email)).setText(mFbEmail);
 
         Thread thread =  new Thread(new Runnable() {
             @Override

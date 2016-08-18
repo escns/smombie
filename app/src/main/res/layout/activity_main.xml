@@ -73,15 +73,9 @@
                                 android:id="@+id/profile_name"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="hajaekwon"
-                                android:layout_marginRight="8sp"/>
-
-                            <TextView
-                                android:id="@+id/profile_email"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="hazxz@naver.com"
-                                android:layout_marginRight="8sp"/>
+                                android:text="UserName"
+                                android:textSize="14dp"
+                                android:textStyle="bold"/>
 
                         </LinearLayout>
 
