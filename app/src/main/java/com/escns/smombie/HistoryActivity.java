@@ -5,6 +5,8 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
@@ -18,6 +20,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
+import com.escns.smombie.Setting.Conf;
 import com.escns.smombie.Tab.TabPagerAdapter;
 import com.escns.smombie.View.CustomImageView;
 
@@ -30,14 +33,24 @@ import java.net.URL;
 
 public class HistoryActivity extends AppCompatActivity {
 
-    DrawerLayout drawerLayout; // 메인화면에서의 화면
-    NavigationView navigationView; // Side 메뉴바
+    DrawerLayout drawerLayout;       // 메인화면에서의 화면
+    NavigationView navigationView;   // Side 메뉴바
 
-    private String mFbId;                // 페이스북 ID
-    private String mFbName;              // 페이스북 이름
-    private String mFbEmail;             // 페이스북 이메일
+    private Conf conf;      // 페이스북 개인정보
+
     private Bitmap mProfileImage;                 // 페이스북으로부터 사진을 받아올 객체
 
+    private View HeaderLayout;
+
+    private Handler handler = new Handler() {
+
+        @Override
+        public void handleMessage(Message msg) {
+            ((CustomImageView) findViewById(R.id.header_profile)).setImageBitmap(mProfileImage);
+            ((TextView) findViewById(R.id.header_name)).setText(conf.mFbName);
+            ((TextView) findViewById(R.id.header_email)).setText(conf.mFbEmail);
+        }
+    };
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -83,11 +96,7 @@ public class HistoryActivity extends AppCompatActivity {
 
         // Drawer 내부의 메뉴들을 성정
         navigationView.inflateMenu((R.menu.navigation_item));
-        View HeaderLayout = navigationView.getHeaderView(0);
-
-        mFbId = getIntent().getStringExtra("id");
-        mFbName = getIntent().getStringExtra("name");
-        mFbEmail = getIntent().getStringExtra("email");
+        HeaderLayout = navigationView.getHeaderView(0);
 
         // 추가한 코드...아래
 
@@ -138,13 +147,15 @@ public class HistoryActivity extends AppCompatActivity {
      */
     public void init() {
 
+        conf = Conf.getInstance();
+
         // 사이드 메뉴에서 프로필 사진,이름,이메일을 입력
         Thread thread = new Thread(new Runnable() {
             @Override
             public void run() {
                 while (true) {
                     try {
-                        URL url = new URL("https://graph.facebook.com/" + mFbId + "/picture?type=large"); // URL 주소를 이용해서 URL 객체 생성
+                        URL url = new URL("https://graph.facebook.com/" + conf.mFbId + "/picture?type=large"); // URL 주소를 이용해서 URL 객체 생성
                         HttpURLConnection conn = (HttpURLConnection) url.openConnection();              //  아래 코드는 웹에서 이미지를 가져온 뒤
                         conn.setDoInput(true);
                         conn.connect();
@@ -152,9 +163,8 @@ public class HistoryActivity extends AppCompatActivity {
 
                         Thread.sleep(100);
 
-                        ((CustomImageView) findViewById(R.id.header_profile)).setImageBitmap(mProfileImage);
-                        ((TextView) findViewById(R.id.header_name)).setText(mFbName);
-                        ((TextView) findViewById(R.id.header_email)).setText(mFbEmail);
+                        Message message = handler.obtainMessage();
+                        handler.sendMessage(message);
 
                     } catch (Exception e) {
                         e.printStackTrace();

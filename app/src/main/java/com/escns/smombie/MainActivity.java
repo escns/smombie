@@ -188,9 +188,6 @@ public class MainActivity extends AppCompatActivity {
 
                     case R.id.drawer_menu1 : // 히스토리
                         intent = new Intent(getApplicationContext(), HistoryActivity.class);
-                        intent.putExtra("id", conf.mFbId);
-                        intent.putExtra("name", conf.mFbName);
-                        intent.putExtra("email",conf.mFbEmail);
                         startActivity(intent);
                         drawerLayout.closeDrawer(navigationView);
                         return true;
