@@ -1,24 +1,51 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-    <group android:id="@+id/drawer_Group1"
-        android:checkableBehavior="all">
-        <item android:title="홈"
-            android:id="@+id/drawer_Home"/>
+    <group
+        android:id="@+id/drawer_Group1"
+        android:checkableBehavior="single">
+        <item
+            android:id="@+id/drawer_Home"
+            android:icon="@drawable/sidemenu_icon_home"
+            android:title="홈" />
     </group>
-    <group android:id="@+id/drawer_Group2"
-        android:checkableBehavior="all">
+    <group
+        android:id="@+id/drawer_Group2"
+        android:checkableBehavior="single">
         <item
-            android:title="히스토리"
-            android:id="@+id/drawer_menu1"/>
+            android:id="@+id/drawer_menu1"
+            android:icon="@drawable/sidemenu_icon_history"
+            android:title="히스토리" />
+    </group>
+    <group
+        android:id="@+id/drawer_Group3"
+        android:checkableBehavior="single">
         <item
-            android:title="설정"
-            android:id="@+id/drawer_menu2"/>
+            android:id="@+id/drawer_menu2"
+            android:icon="@drawable/sidemenu_icon_set"
+            android:title="설정" />
+    </group>
+    <group
+        android:id="@+id/drawer_Group4"
+        android:checkableBehavior="single">
         <item
-            android:title="내정보"
-            android:id="@+id/drawer_menu3"/>
+            android:id="@+id/drawer_menu3"
+            android:icon="@drawable/sidemenu_icon_myinfo"
+            android:title="내정보" />
+    </group>
+    <group
+        android:id="@+id/drawer_Group5"
+        android:checkableBehavior="single">
         <item
-            android:title="로그아웃"
-            android:id="@+id/drawer_menu4"/>]
+            android:id="@+id/drawer_menu4"
+            android:icon="@drawable/sidemenu_icon_logout"
+            android:title="로그아웃" />
+    </group>
+    <group
+        android:id="@+id/drawer_Group6"
+        android:checkableBehavior="none">
+        <item
+            android:id="@+id/drawer_menu5"
+            android:title="" />
     </group>
 
 </menu>

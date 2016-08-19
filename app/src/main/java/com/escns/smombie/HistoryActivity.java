@@ -43,12 +43,11 @@ public class HistoryActivity extends AppCompatActivity {
     private View HeaderLayout;
 
     private Handler handler = new Handler() {
-
         @Override
         public void handleMessage(Message msg) {
-            ((CustomImageView) findViewById(R.id.header_profile)).setImageBitmap(mProfileImage);
-            ((TextView) findViewById(R.id.header_name)).setText(conf.mFbName);
-            ((TextView) findViewById(R.id.header_email)).setText(conf.mFbEmail);
+            ((CustomImageView)HeaderLayout.findViewById(R.id.header_profile)).setImageBitmap(mProfileImage);
+            ((TextView)HeaderLayout.findViewById(R.id.header_name)).setText(conf.mFbName);
+            ((TextView)HeaderLayout.findViewById(R.id.header_email)).setText(conf.mFbEmail);
         }
     };
 
