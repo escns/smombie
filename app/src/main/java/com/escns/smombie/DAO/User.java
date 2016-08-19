@@ -16,9 +16,11 @@ public class User {
     private int mReword;
     private int mSuccessCnt;
     private int mFailCnt;
+    private int mAvgDist;
 
 
-    public User(String mId, String mName, String mEmail, String mGender, int mAge, int mPoint, int mGoal, int mReword, int mSuccessCnt, int mFailCnt) {
+
+    public User(String mId, String mName, String mEmail, String mGender, int mAge, int mPoint, int mGoal, int mReword, int mSuccessCnt, int mFailCnt, int mAvgDist) {
         this.mId = mId;
         this.mName = mName;
         this.mEmail = mEmail;
@@ -29,6 +31,7 @@ public class User {
         this.mReword = mReword;
         this.mSuccessCnt = mSuccessCnt;
         this.mFailCnt = mFailCnt;
+        this.mAvgDist = mAvgDist;
     }
 
     public String getmId() {
@@ -111,6 +114,14 @@ public class User {
         this.mFailCnt = mFailCnt;
     }
 
+    public int getmAvgDist() {
+        return mFailCnt;
+    }
+
+    public void setmAvgDist(int mAvgDist) {
+        this.mAvgDist = mAvgDist;
+    }
+
     @Override
     public String toString() {
         return "User{" +
@@ -124,6 +135,7 @@ public class User {
                 ", mReword=" + mReword +
                 ", mSuccessCnt=" + mSuccessCnt +
                 ", mFailCnt=" + mFailCnt +
+                ", mAvgDist=" + mAvgDist +
                 '}';
     }
 }

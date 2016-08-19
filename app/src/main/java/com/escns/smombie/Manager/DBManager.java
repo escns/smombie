@@ -67,7 +67,8 @@ public class DBManager extends SQLiteOpenHelper {
         sb.append(" GOAL INTEGER, ");
         sb.append(" REWORD INTEGER, ");
         sb.append(" SUCCESSCNT INTEGER, ");
-        sb.append(" FAILCNT INTEGER ) ");
+        sb.append(" FAILCNT INTEGER, ");
+        sb.append(" AVGDIST INTEGER ) ");
 
         db.execSQL(sb.toString());
     }
@@ -168,8 +169,8 @@ public class DBManager extends SQLiteOpenHelper {
             StringBuffer sb = new StringBuffer();
 
             sb.append(" INSERT INTO "+ USER_TABLE +" ( ");
-            sb.append(" USER_ID, NAME, EMAIL, GENDER, AGE, POINT, GOAL, REWORD, SUCCESSCNT, FAILCNT ) ");
-            sb.append(" VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) ");
+            sb.append(" USER_ID, NAME, EMAIL, GENDER, AGE, POINT, GOAL, REWORD, SUCCESSCNT, FAILCNT, AVGDIST ) ");
+            sb.append(" VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) ");
 
             db.execSQL(sb.toString(),
                     new Object[]{
@@ -182,7 +183,8 @@ public class DBManager extends SQLiteOpenHelper {
                             data.getmGoal(),
                             data.getmReword(),
                             data.getmSuccessCnt(),
-                            data.getmFailCnt()
+                            data.getmFailCnt(),
+                            data.getmAvgDist()
                     });
 
         } catch (Exception e) {
@@ -215,6 +217,7 @@ public class DBManager extends SQLiteOpenHelper {
             sb.append(" REWORD = ? ,");
             sb.append(" SUCCESSCNT = ? ,");
             sb.append(" FAILCNT = ? ");
+            sb.append(" AVGDIST = ? ");
             sb.append(" WHERE USER_ID = ? ");
 
             db.execSQL(sb.toString(),
@@ -254,7 +257,7 @@ public class DBManager extends SQLiteOpenHelper {
                     });
 
             while(cursor.moveToNext()) {
-                user = new User(cursor.getString(0), cursor.getString(1), cursor.getString(2), cursor.getString(3), cursor.getInt(4), cursor.getInt(5), cursor.getInt(6), cursor.getInt(7), cursor.getInt(8), cursor.getInt(9));
+                user = new User(cursor.getString(0), cursor.getString(1), cursor.getString(2), cursor.getString(3), cursor.getInt(4), cursor.getInt(5), cursor.getInt(6), cursor.getInt(7), cursor.getInt(8), cursor.getInt(9), cursor.getInt(10));
             }
 
         } catch (Exception e) {
