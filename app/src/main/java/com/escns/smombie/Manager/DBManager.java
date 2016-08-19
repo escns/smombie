@@ -6,6 +6,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 import com.escns.smombie.DAO.Record;
+import com.escns.smombie.DAO.User;
 import com.escns.smombie.R;
 
 import java.util.ArrayList;
@@ -39,23 +40,48 @@ public class DBManager extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
 
-        StringBuffer sb = new StringBuffer();
+        StringBuffer sb1 = new StringBuffer();
+        StringBuffer sb2 = new StringBuffer();
 
-        sb.append(" CREATE TABLE "+ RECORD_TABLE +" ( ");
-        sb.append(" _id INTEGER PRIMARY KEY AUTOINCREMENT, ");
-        sb.append(" USER_ID TEXT, ");
-        sb.append(" YEAR INTEGER, ");
-        sb.append(" MONTH INTEGER, ");
-        sb.append(" DAY INTEGER, ");
-        sb.append(" HOUR INTEGER, ");
-        sb.append(" DIST INTEGER, ");
-        sb.append(" STEPCNT INTEGER ) ");
+        sb1.append(" CREATE TABLE "+ RECORD_TABLE +" ( ");
+        sb1.append(" _id INTEGER PRIMARY KEY AUTOINCREMENT, ");
+        sb1.append(" USER_ID TEXT, ");
+        sb1.append(" YEAR INTEGER, ");
+        sb1.append(" MONTH INTEGER, ");
+        sb1.append(" DAY INTEGER, ");
+        sb1.append(" HOUR INTEGER, ");
+        sb1.append(" DIST INTEGER, ");
+        sb1.append(" STEPCNT INTEGER ) ");
 
-        db.execSQL(sb.toString());
+        db.execSQL(sb1.toString());
+
+        sb2.append(" CREATE TABLE "+ USER_TABLE +" ( ");
+        sb2.append(" USER_ID TEXT PRIMARY KEY AUTOINCREMENT, ");
+        sb2.append(" NAME TEXT, ");
+        sb2.append(" EMAIL TEXT, ");
+        sb2.append(" GENDER TEXT, ");
+        sb2.append(" AGE INTEGER, ");
+        sb2.append(" POINT INTEGER, ");
+        sb2.append(" SUCCESS INTEGER, ");
+        sb2.append(" FAIL INTEGER ) ");
+
+        db.execSQL(sb2.toString());
     }
 
     /**
-     * 파라미터로 받은 data를 DB에 저장
+     * onUpgrade
+     * @param db SQLite에서 데이터베이스를 쓰기위한 파라미터
+     * @param oldVersion
+     * @param newVersion
+     */
+    @Override
+    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+        //db.execSQL("DROP TABLE IF EXISTS RECORD_LIST"); // 테이블 삭제 - 초기화
+        //onCreate(db); // RECORD_LIST 테이블 다시 생성
+    }
+
+    /**
+     * 파라미터로 받은 data를 Record테이블에 저장
      * @param data
      */
     public void insertRecord(Record data) {
@@ -89,7 +115,7 @@ public class DBManager extends SQLiteOpenHelper {
     }
 
     /**
-     * id 값에 해당하는 Record Data를 DB에서 찾아서 List 형식으로 반환
+     * id 값에 해당하는 Data를 Record테이블에서 찾아서 List 형식으로 반환
      * @param id
      * @return
      */
@@ -128,17 +154,85 @@ public class DBManager extends SQLiteOpenHelper {
     }
 
     /**
-     * onUpgrade
-     * @param db SQLite에서 데이터베이스를 쓰기위한 파라미터
-     * @param oldVersion
-     * @param newVersion
+     * 파라미터로 받은 data를 User테이블에 저장
+     * @param data
      */
-    @Override
-    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        //db.execSQL("DROP TABLE IF EXISTS RECORD_LIST"); // 테이블 삭제 - 초기화
-        //onCreate(db); // RECORD_LIST 테이블 다시 생성
+    public void insertUser(User data) {
+
+        SQLiteDatabase db = null;
+        try {
+            db = getWritableDatabase();
+
+            StringBuffer sb = new StringBuffer();
+            sb.append(" INSERT INTO "+ USER_TABLE +" ( ");
+            sb.append(" USER_ID, NAME, EMAIL, GENDER, AGE, POINT, SUCCESS, FAIL ) ");
+            sb.append(" VALUES ( ?, ?, ?, ?, ?, ?, ?, ? ) ");
+
+            db.execSQL(sb.toString(),
+                    new Object[]{
+                            data.getmId(),
+                            data.getmName(),
+                            data.getmEmail(),
+                            data.getmGender(),
+                            data.getmAge(),
+                            data.getmPoint(),
+                            data.getmMissonSuccess(),
+                            data.getmMissonFail()
+                    });
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if(db!=null) {
+                db.close();
+            }
+        }
     }
 
+    /**
+     * id 값에 해당하는 Data를 User테이블에서 찾아서 List 형식으로 반환
+     * @param id
+     * @return
+     */
+    public List<User> getUser(String id) {
+
+        SQLiteDatabase db = null;
+        List<User> list = new ArrayList<>();
+        User user = null;
+
+        try {
+            db = getReadableDatabase();
+
+            StringBuffer sb = new StringBuffer();
+            sb.append(" SELECT * FROM "+ USER_TABLE);
+            sb.append(" WHERE USER_ID is ? ");
+
+            Cursor cursor = db.rawQuery(sb.toString(),
+                    new String[]{
+                            id
+                    });
+
+            while(cursor.moveToNext()) {
+                user = new User(cursor.getString(0), cursor.getString(1), cursor.getString(2), cursor.getString(3), cursor.getInt(4), cursor.getInt(5), cursor.getInt(6), cursor.getInt(7));
+                list.add(user);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if(db!=null) {
+                db.close();
+            }
+        }
+
+        return list;
+    }
+
+
+
+
+
+    //////////////////////////////////////////////////////////////////////////////////////////////
     /**
      * 빈데이터의 행 하나를 추가하는 함수
      * @param query
