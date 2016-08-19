@@ -22,6 +22,7 @@ import android.widget.TextView;
 import com.escns.smombie.DAO.User;
 import com.escns.smombie.Manager.DBManager;
 import com.escns.smombie.R;
+import com.escns.smombie.View.ClockView;
 import com.github.mikephil.charting.animation.Easing;
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.data.PieData;
@@ -170,7 +171,9 @@ public class LockScreenReceiver extends BroadcastReceiver {
         final ImageView button_lock = (ImageView) mLockScreenView.findViewById(R.id.button_lock);
         final ImageView button_unlock = (ImageView) mLockScreenView.findViewById(R.id.button_unlock);
         final int offsetLeft = ((RelativeLayout.LayoutParams)button_lock.getLayoutParams()).leftMargin;
-        final int offsetRight = ((RelativeLayout.LayoutParams)button_unlock.getLayoutParams()).leftMargin;
+        //final int offsetRight = ((RelativeLayout.LayoutParams)button_unlock.getLayoutParams()).leftMargin;
+        //final int offsetLeft = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 50, mContext.getResources().getDisplayMetrics());
+        final int offsetRight = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 50, mContext.getResources().getDisplayMetrics());
 
         button_lock.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -179,17 +182,16 @@ public class LockScreenReceiver extends BroadcastReceiver {
                 switch(event.getAction())
                 {
                     case MotionEvent.ACTION_DOWN:
-                        layoutParams.height = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 60, mContext.getResources().getDisplayMetrics());
-                        layoutParams.width = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 60, mContext.getResources().getDisplayMetrics());
-                        button_lock.setLayoutParams(layoutParams);
-                        button_unlock.setImageResource(R.drawable.key_unlock);
+                        //layoutParams.height = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 60, mContext.getResources().getDisplayMetrics());
+                        button_lock.setImageResource(R.drawable.btn_key_tap);
+                        button_unlock.setImageResource(R.drawable.btn_unlock);
                         break;
                     case MotionEvent.ACTION_MOVE:
 
                         int x_cord = (int)event.getRawX();
-                        int btnWidth = button_lock.getWidth()/2;
+                        int btnWidth = button_lock.getWidth();
 
-                        if(x_cord>windowWidth - button_unlock.getWidth() - offsetRight) {
+                        if(x_cord>windowWidth - btnWidth- offsetRight) {
                             mWindowManager.removeView(mLockScreenView);
                             isLock=false;
                             break;
@@ -197,18 +199,17 @@ public class LockScreenReceiver extends BroadcastReceiver {
                         if(x_cord - btnWidth - offsetLeft < 0) {x_cord=offsetLeft+btnWidth;}
 
                         // 왼쪽 margin 값을 터치 위치로 변경함으로써 마치 움직이는 것처럼 보인다
-                        layoutParams.leftMargin = x_cord - btnWidth;
+                        layoutParams.leftMargin = x_cord - btnWidth - offsetLeft;
 
                         // 변경된 파라미터를 적용
                         button_lock.setLayoutParams(layoutParams);
                         break;
                     case MotionEvent.ACTION_UP:
                         if(isLock) {
-                            layoutParams.height = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 80, mContext.getResources().getDisplayMetrics());
-                            layoutParams.width = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 80, mContext.getResources().getDisplayMetrics());
                             layoutParams.leftMargin = offsetLeft;
                             button_lock.setLayoutParams(layoutParams);
-                            button_unlock.setImageResource(R.drawable.key_lock);
+                            button_lock.setImageResource(R.drawable.btn_key);
+                            button_unlock.setImageResource(R.drawable.btn_lock);
                         }
                         break;
                     default:
@@ -218,6 +219,13 @@ public class LockScreenReceiver extends BroadcastReceiver {
             }
         });
 
+        ClockView clockView = new ClockView((TextView)mLockScreenView.findViewById(R.id.clock_ampm), (TextView)mLockScreenView.findViewById(R.id.clock_time), (TextView)mLockScreenView.findViewById(R.id.clock_date));
+
+        drawChart();
+
+    }
+
+    private void drawChart() {
         mChart = (PieChart) mLockScreenView.findViewById(R.id.pie_chart);
         mChart.setUsePercentValues(true);
         mChart.setDescription("");
@@ -268,7 +276,6 @@ public class LockScreenReceiver extends BroadcastReceiver {
         mChart.setEntryLabelColor(Color.WHITE);
         //mChart.setEntryLabelTypeface(mTfRegular);
         mChart.setEntryLabelTextSize(12f);
-
     }
 
     private void setData(int count, float range) {
@@ -344,5 +351,4 @@ public class LockScreenReceiver extends BroadcastReceiver {
         return s;
 
     }
-
 }

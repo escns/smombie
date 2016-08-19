@@ -14,8 +14,8 @@
         android:background="@drawable/header_background">
 
         <com.escns.smombie.View.CustomImageView
+            android:id="@+id/header_profile"
             android:text="TextView"
-            android:id="@+id/header_photo"
             android:src="@drawable/img_profile"
             android:scaleType="fitXY"
             android:layout_width="60dp"
@@ -37,9 +37,9 @@
             android:textSize="13dp"
             android:textColor="#FFFFFF"
             android:layout_marginTop="10dp"
-            android:layout_below="@+id/header_photo"
-            android:layout_alignLeft="@+id/header_photo"
-            android:layout_alignStart="@+id/header_photo" />
+            android:layout_below="@+id/header_profile"
+            android:layout_alignLeft="@+id/header_profile"
+            android:layout_alignStart="@+id/header_profile" />
 
         <TextView
             android:id="@+id/header_email"
