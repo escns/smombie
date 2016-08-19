@@ -52,38 +52,49 @@ public class TabFragment1 extends Fragment {
         chart2 = (BarChart) rootView.findViewById(R.id.tab1_chart2);
         chart3 = (BarChart) rootView.findViewById(R.id.tab1_chart3);
 
+        buttonOne = (ImageView) rootView.findViewById(R.id.tab1_button1);
+        buttonTwo = (ImageView) rootView.findViewById(R.id.tab1_button2);
+        buttonThree = (ImageView) rootView.findViewById(R.id.tab1_button3);
+
         chartOne();
         chartTwo();
         chartThree();
 
-        buttonOne = (ImageView) rootView.findViewById(R.id.tab1_button1);
         buttonOne.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 layout1.setVisibility(View.VISIBLE);
                 layout2.setVisibility(View.INVISIBLE);
                 layout3.setVisibility(View.INVISIBLE);
+                buttonOne.setImageResource(R.drawable.bg_round_blue_day);
+                buttonTwo.setImageResource(R.drawable.bg_round_gray_week);
+                buttonThree.setImageResource(R.drawable.bg_round_gray_month);
+
 
             }
         });
 
-        buttonTwo = (ImageView) rootView.findViewById(R.id.tab1_button2);
         buttonTwo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 layout1.setVisibility(View.INVISIBLE);
                 layout2.setVisibility(View.VISIBLE);
                 layout3.setVisibility(View.INVISIBLE);
+                buttonOne.setImageResource(R.drawable.bg_round_gray_day);
+                buttonTwo.setImageResource(R.drawable.bg_round_blue_week);
+                buttonThree.setImageResource(R.drawable.bg_round_gray_month);
             }
         });
 
-        buttonThree = (ImageView) rootView.findViewById(R.id.tab1_button3);
         buttonThree.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 layout1.setVisibility(View.INVISIBLE);
                 layout2.setVisibility(View.INVISIBLE);
                 layout3.setVisibility(View.VISIBLE);
+                buttonOne.setImageResource(R.drawable.bg_round_gray_day);
+                buttonTwo.setImageResource(R.drawable.bg_round_gray_week);
+                buttonThree.setImageResource(R.drawable.bg_round_blue_month);
             }
         });
 
