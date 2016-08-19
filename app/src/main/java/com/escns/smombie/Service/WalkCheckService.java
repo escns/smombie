@@ -11,6 +11,8 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.escns.smombie.DAO.Record;
+import com.escns.smombie.DAO.User;
+import com.escns.smombie.MainActivity;
 import com.escns.smombie.Manager.DBManager;
 import com.escns.smombie.Manager.GPSManager;
 
@@ -32,6 +34,7 @@ public class WalkCheckService extends Service {
     private TimerTask myTimer;
     private Handler handler;
     private boolean isWalking = false;
+    private Handler mHandlerMain;
 
     private double mStartLon = 0.0;
     private double mStartLat = 0.0;
@@ -39,6 +42,9 @@ public class WalkCheckService extends Service {
     private double mLastLat = 0.0;
 
     private final IBinder mBinder = new LocalBinder();
+
+    public WalkCheckService() {
+    }
 
     /**
      * 다른 프로세스들도 Service에 접근이 가능하게 해주는 Binder를 리턴해주기 위한 Binder 생성
@@ -60,12 +66,6 @@ public class WalkCheckService extends Service {
         return mBinder;
     }
 
-    /**
-     * WalkCheckService 생성자
-     */
-    public WalkCheckService() {
-        Log.d("tag", "WalkCheckService");
-    }
 
     /**
      *  GPSManager를 이용하여 이동을 확인
@@ -121,10 +121,17 @@ public class WalkCheckService extends Service {
                         Record record = new Record("hajaekwon", calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DATE), calendar.get(Calendar.HOUR), (int)distance, 0);
                         mDbManager.insertRecord(record);
 
+                        mDbManager.updateUser(new User("hajaekwon", "hajaekwon", "hazxz@naver.com", "남자",  26, (int)distance, 1000, 0, 1, 0));
+
+                        Message message = mHandlerMain.obtainMessage();
+                        message.what = MainActivity.UPDATE_SECTION;
+                        mHandlerMain.sendMessage(message);
+
                         List<Record> list = mDbManager.getRecord("hajaekwon");
                         for(Record s : list) {
                             Toast.makeText(getApplicationContext(), s.toString(), Toast.LENGTH_SHORT).show();
                             Log.i("tag", s.toString());
+                            Toast.makeText(getBaseContext(), s.toString(), Toast.LENGTH_SHORT).show();
                         }
                     }
                 }

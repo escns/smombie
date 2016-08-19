@@ -4,6 +4,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 import com.escns.smombie.DAO.Record;
 import com.escns.smombie.DAO.User;
@@ -40,32 +41,35 @@ public class DBManager extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
 
-        StringBuffer sb1 = new StringBuffer();
-        StringBuffer sb2 = new StringBuffer();
+        StringBuffer sb = new StringBuffer();
 
-        sb1.append(" CREATE TABLE "+ RECORD_TABLE +" ( ");
-        sb1.append(" _id INTEGER PRIMARY KEY AUTOINCREMENT, ");
-        sb1.append(" USER_ID TEXT, ");
-        sb1.append(" YEAR INTEGER, ");
-        sb1.append(" MONTH INTEGER, ");
-        sb1.append(" DAY INTEGER, ");
-        sb1.append(" HOUR INTEGER, ");
-        sb1.append(" DIST INTEGER, ");
-        sb1.append(" STEPCNT INTEGER ) ");
+        sb.append(" CREATE TABLE "+ RECORD_TABLE +" ( ");
+        sb.append(" _id INTEGER PRIMARY KEY AUTOINCREMENT, ");
+        sb.append(" USER_ID TEXT, ");
+        sb.append(" YEAR INTEGER, ");
+        sb.append(" MONTH INTEGER, ");
+        sb.append(" DAY INTEGER, ");
+        sb.append(" HOUR INTEGER, ");
+        sb.append(" DIST INTEGER, ");
+        sb.append(" STEPCNT INTEGER ) ");
 
-        db.execSQL(sb1.toString());
+        db.execSQL(sb.toString());
 
-        sb2.append(" CREATE TABLE "+ USER_TABLE +" ( ");
-        sb2.append(" USER_ID TEXT PRIMARY KEY AUTOINCREMENT, ");
-        sb2.append(" NAME TEXT, ");
-        sb2.append(" EMAIL TEXT, ");
-        sb2.append(" GENDER TEXT, ");
-        sb2.append(" AGE INTEGER, ");
-        sb2.append(" POINT INTEGER, ");
-        sb2.append(" SUCCESS INTEGER, ");
-        sb2.append(" FAIL INTEGER ) ");
+        sb = new StringBuffer();
 
-        db.execSQL(sb2.toString());
+        sb.append(" CREATE TABLE "+ USER_TABLE +" ( ");
+        sb.append(" USER_ID TEXT PRIMARY KEY, ");
+        sb.append(" NAME TEXT, ");
+        sb.append(" EMAIL TEXT, ");
+        sb.append(" GENDER TEXT, ");
+        sb.append(" AGE INTEGER, ");
+        sb.append(" POINT INTEGER, ");
+        sb.append(" GOAL INTEGER, ");
+        sb.append(" REWORD INTEGER, ");
+        sb.append(" SUCCESSCNT INTEGER, ");
+        sb.append(" FAILCNT INTEGER ) ");
+
+        db.execSQL(sb.toString());
     }
 
     /**
@@ -157,28 +161,67 @@ public class DBManager extends SQLiteOpenHelper {
      * 파라미터로 받은 data를 User테이블에 저장
      * @param data
      */
-    public void insertUser(User data) {
+    public void updateUser(User data) {
 
         SQLiteDatabase db = null;
+        User user =  null;
+
         try {
-            db = getWritableDatabase();
+            db = getReadableDatabase();
 
             StringBuffer sb = new StringBuffer();
-            sb.append(" INSERT INTO "+ USER_TABLE +" ( ");
-            sb.append(" USER_ID, NAME, EMAIL, GENDER, AGE, POINT, SUCCESS, FAIL ) ");
-            sb.append(" VALUES ( ?, ?, ?, ?, ?, ?, ?, ? ) ");
+            sb.append(" SELECT * FROM "+ USER_TABLE);
+            sb.append(" WHERE USER_ID is ? ");
 
-            db.execSQL(sb.toString(),
-                    new Object[]{
-                            data.getmId(),
-                            data.getmName(),
-                            data.getmEmail(),
-                            data.getmGender(),
-                            data.getmAge(),
-                            data.getmPoint(),
-                            data.getmMissonSuccess(),
-                            data.getmMissonFail()
+            Cursor cursor = db.rawQuery(sb.toString(),
+                    new String[]{
+                            data.getmId()
                     });
+
+            while(cursor.moveToNext()) {
+                user = new User(cursor.getString(0), cursor.getString(1), cursor.getString(2), cursor.getString(3), cursor.getInt(4), cursor.getInt(5), cursor.getInt(6), cursor.getInt(7), cursor.getInt(8), cursor.getInt(9));
+            }
+            if(user==null) {
+                Log.i("tag", "INSERT USER");
+                sb = new StringBuffer();
+                sb.append(" INSERT INTO "+ USER_TABLE +" ( ");
+                sb.append(" USER_ID, NAME, EMAIL, GENDER, AGE, POINT, GOAL, REWORD, SUCCESSCNT, FAILCNT ) ");
+                sb.append(" VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) ");
+
+                db.execSQL(sb.toString(),
+                        new Object[]{
+                                data.getmId(),
+                                data.getmName(),
+                                data.getmEmail(),
+                                data.getmGender(),
+                                data.getmAge(),
+                                data.getmPoint(),
+                                data.getmGoal(),
+                                data.getmReword(),
+                                data.getmSuccessCnt(),
+                                data.getmFailCnt()
+                        });
+            } else {
+                Log.i("tag", "UPDATE USER");
+                sb = new StringBuffer();
+                sb.append(" UPDATE "+ USER_TABLE +" SET");
+                sb.append(" POINT = ? ,");
+                sb.append(" GOAL = ? ,");
+                sb.append(" REWORD = ? ,");
+                sb.append(" SUCCESSCNT = ? ,");
+                sb.append(" FAILCNT = ? ");
+                sb.append(" WHERE USER_ID = ? ");
+
+                db.execSQL(sb.toString(),
+                        new Object[]{
+                                user.getmPoint()+data.getmPoint(),
+                                user.getmReword()+data.getmReword(),
+                                user.getmGoal()+data.getmGoal(),
+                                user.getmSuccessCnt()+data.getmSuccessCnt(),
+                                user.getmFailCnt()+data.getmFailCnt(),
+                                data.getmId()
+                        });
+            }
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -189,15 +232,9 @@ public class DBManager extends SQLiteOpenHelper {
         }
     }
 
-    /**
-     * id 값에 해당하는 Data를 User테이블에서 찾아서 List 형식으로 반환
-     * @param id
-     * @return
-     */
-    public List<User> getUser(String id) {
+    public User getUser(String id) {
 
         SQLiteDatabase db = null;
-        List<User> list = new ArrayList<>();
         User user = null;
 
         try {
@@ -213,8 +250,7 @@ public class DBManager extends SQLiteOpenHelper {
                     });
 
             while(cursor.moveToNext()) {
-                user = new User(cursor.getString(0), cursor.getString(1), cursor.getString(2), cursor.getString(3), cursor.getInt(4), cursor.getInt(5), cursor.getInt(6), cursor.getInt(7));
-                list.add(user);
+                user = new User(cursor.getString(0), cursor.getString(1), cursor.getString(2), cursor.getString(3), cursor.getInt(4), cursor.getInt(5), cursor.getInt(6), cursor.getInt(7), cursor.getInt(8), cursor.getInt(9));
             }
 
         } catch (Exception e) {
@@ -225,9 +261,8 @@ public class DBManager extends SQLiteOpenHelper {
             }
         }
 
-        return list;
+        return user;
     }
-
 
 
 

@@ -12,18 +12,23 @@ public class User {
     private String mGender;
     private int mAge;
     private int mPoint;
-    private int mMissonSuccess;
-    private int mMissonFail;
+    private int mGoal;
+    private int mReword;
+    private int mSuccessCnt;
+    private int mFailCnt;
 
-    public User(String mId, String mName, String mEmail, String mGender, int mAge, int mPoint, int mMissonSuccess, int mMissonFail) {
+
+    public User(String mId, String mName, String mEmail, String mGender, int mAge, int mPoint, int mGoal, int mReword, int mSuccessCnt, int mFailCnt) {
         this.mId = mId;
         this.mName = mName;
         this.mEmail = mEmail;
         this.mGender = mGender;
         this.mAge = mAge;
         this.mPoint = mPoint;
-        this.mMissonSuccess = mMissonSuccess;
-        this.mMissonFail = mMissonFail;
+        this.mGoal = mGoal;
+        this.mReword = mReword;
+        this.mSuccessCnt = mSuccessCnt;
+        this.mFailCnt = mFailCnt;
     }
 
     public String getmId() {
@@ -74,34 +79,51 @@ public class User {
         this.mPoint = mPoint;
     }
 
-    public int getmMissonSuccess() {
-        return mMissonSuccess;
+    public int getmGoal() {
+        return mGoal;
     }
 
-    public void setmMissonSuccess(int mMissonSuccess) {
-        this.mMissonSuccess = mMissonSuccess;
+    public void setmGoal(int mGoal) {
+        this.mGoal = mGoal;
     }
 
-    public int getmMissonFail() {
-        return mMissonFail;
+    public int getmReword() {
+        return mReword;
     }
 
-    public void setmMissonFail(int mMissonFail) {
-        this.mMissonFail = mMissonFail;
+    public void setmReword(int mReword) {
+        this.mReword = mReword;
+    }
+
+    public int getmSuccessCnt() {
+        return mSuccessCnt;
+    }
+
+    public void setmSuccessCnt(int mSuccessCnt) {
+        this.mSuccessCnt = mSuccessCnt;
+    }
+
+    public int getmFailCnt() {
+        return mFailCnt;
+    }
+
+    public void setmFailCnt(int mFailCnt) {
+        this.mFailCnt = mFailCnt;
     }
 
     @Override
     public String toString() {
-        return "Record {" +
+        return "User{" +
                 "mId='" + mId + '\'' +
-                ", mName=" + mName +
-                ", mEmail=" + mEmail +
-                ", mGender=" + mGender +
+                ", mName='" + mName + '\'' +
+                ", mEmail='" + mEmail + '\'' +
+                ", mGender='" + mGender + '\'' +
                 ", mAge=" + mAge +
                 ", mPoint=" + mPoint +
-                ", mMissonSuccess=" + mMissonSuccess +
-                ", mMissonFail=" + mMissonFail +
+                ", mGoal=" + mGoal +
+                ", mReword=" + mReword +
+                ", mSuccessCnt=" + mSuccessCnt +
+                ", mFailCnt=" + mFailCnt +
                 '}';
     }
-
 }

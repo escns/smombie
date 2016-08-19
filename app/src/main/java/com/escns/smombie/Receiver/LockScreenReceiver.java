@@ -17,7 +17,10 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
+import com.escns.smombie.DAO.User;
+import com.escns.smombie.Manager.DBManager;
 import com.escns.smombie.R;
 import com.github.mikephil.charting.animation.Easing;
 import com.github.mikephil.charting.charts.PieChart;
@@ -215,7 +218,7 @@ public class LockScreenReceiver extends BroadcastReceiver {
             }
         });
 
-        mChart = (PieChart) mLockScreenView.findViewById(R.id.pieChart);
+        mChart = (PieChart) mLockScreenView.findViewById(R.id.pie_chart);
         mChart.setUsePercentValues(true);
         mChart.setDescription("");
         //mChart.setExtraOffsets(5, 10, 5, 5);
@@ -224,8 +227,8 @@ public class LockScreenReceiver extends BroadcastReceiver {
 
         //mChart.setCenterTextTypeface(mTfLight);
         //mChart.setCenterText(generateCenterSpannableText());
-        mChart.setCenterText("75%");
-        mChart.setCenterTextSize(25f);
+        //mChart.setCenterText("75%");
+        //mChart.setCenterTextSize(25f);
 
         mChart.setDrawHoleEnabled(true);
         mChart.setHoleColor(Color.WHITE);
@@ -233,15 +236,22 @@ public class LockScreenReceiver extends BroadcastReceiver {
         //mChart.setTransparentCircleColor(Color.WHITE);
         //mChart.setTransparentCircleAlpha(110);
 
-        mChart.setHoleRadius(40f);
+        mChart.setHoleRadius(70f);
         //mChart.setTransparentCircleRadius(61f);
 
-        mChart.setDrawCenterText(true);
+        TextView centerText = (TextView) mLockScreenView.findViewById(R.id.pie_chart_center);
+        centerText.setText("75%");
 
-        mChart.setRotationAngle(0);
+        /*
+        mChart.setDrawCenterText(true);
+        mChart.setCenterTextSize(40f);
+        mChart.setCenterTextColor(R.color.third_color);
+        */
+
+        //mChart.setRotationAngle(0);
         // enable rotation of the chart by touch
-        mChart.setRotationEnabled(true);
-        mChart.setHighlightPerTapEnabled(true);
+        //mChart.setRotationEnabled(true);
+        //mChart.setHighlightPerTapEnabled(true);
 
         // mChart.setUnit(" €");
         // mChart.setDrawUnitsInChart(true);
@@ -276,9 +286,10 @@ public class LockScreenReceiver extends BroadcastReceiver {
 
         // NOTE: The order of the entries when being added to the entries array determines their position around the center of
         // the chart.
-        for (int i = 0; i < count ; i++) {
-            entries.add(new PieEntry((float) ((Math.random() * mult) + mult / 5), mParties[i % mParties.length]));
-        }
+        User user = new DBManager(mContext).getUser("hajaekwon");
+        //entries.add(new PieEntry((float) (50), "진행률"));
+        entries.add(new PieEntry((float) (user.getmPoint()), "진행률"));
+        entries.add(new PieEntry((float) (user.getmGoal()), "목표치"));
 
         PieDataSet dataSet = new PieDataSet(entries, "Election Results");
         dataSet.setSliceSpace(3f);

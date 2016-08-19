@@ -24,12 +24,12 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.CompoundButton;
-import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.escns.smombie.Adapter.ItemMainAdpater;
 import com.escns.smombie.DAO.Point;
+import com.escns.smombie.DAO.User;
 import com.escns.smombie.Interface.ApiService;
 import com.escns.smombie.Item.ItemMain;
 import com.escns.smombie.Manager.DBManager;
@@ -50,12 +50,16 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class MainActivity extends AppCompatActivity {
 
+    public final static int UPDATE_PROFILE_IMAGE = 1;
+    public final static int UPDATE_SECTION = 2;
+
     public static Activity mExitAct;
 
     DrawerLayout drawerLayout; // 메인화면에서의 화면
     NavigationView navigationView; // Side 메뉴바
 
     private SharedPreferences pref;         // 화면 꺼짐 및 이동 시 switch가 초기화되기 때문에 파일에 따로 저장하기 위한 객체
+    private DBManager mDbManager;            // DB 선언
 
     private String mFbId;
     private String mFbName;
@@ -75,9 +79,15 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public void handleMessage(Message msg) {
-            Log.i("tag", "handleMessage");
-            ((CustomImageView) findViewById(R.id.profile_view)).setImageBitmap(mProfileImage);
-            isProfileImageLoaded=true;
+            if(msg.what==UPDATE_PROFILE_IMAGE) {
+                ((CustomImageView) findViewById(R.id.profile_view)).setImageBitmap(mProfileImage);
+                isProfileImageLoaded=true;
+            } else if(msg.what == UPDATE_SECTION) {
+                User user = mDbManager.getUser("hajaekwon");
+                ((TextView) findViewById(R.id.section1_text)).setText(user.getmPoint());
+                ((TextView) findViewById(R.id.section2_text)).setText(user.getmGoal());
+                ((TextView) findViewById(R.id.section3_text)).setText(user.getmReword());
+            }
         }
     };
 
@@ -203,6 +213,7 @@ public class MainActivity extends AppCompatActivity {
         mExitAct = MainActivity.this; // 다른 Activity에서 MainActivity를 종료하기 위함
 
         pref = getSharedPreferences("pref", MODE_PRIVATE);
+        mDbManager = new DBManager(this);
 
         ((TextView) findViewById(R.id.profile_name)).setText(mFbName);
 
@@ -219,12 +230,10 @@ public class MainActivity extends AppCompatActivity {
 
                         Thread.sleep(100);
 
-                        ((CustomImageView) findViewById(R.id.header_photo)).setImageBitmap(mProfileImage);
-                        ((TextView) findViewById(R.id.header_name)).setText(mFbName);
-                        ((TextView) findViewById(R.id.header_email)).setText(mFbEmail);
-
                         Log.i("tag", "get FB profile image");
-                        handler.sendMessage(handler.obtainMessage());                                   //profileImage.setImageBitmap(bit); // 페이스북 사진 입력
+                        Message message = handler.obtainMessage();
+                        message.what = UPDATE_PROFILE_IMAGE;
+                        handler.sendMessage(message);                                   //profileImage.setImageBitmap(bit); // 페이스북 사진 입력
                     } catch (Exception e){
                         e.printStackTrace();
                     }
@@ -239,6 +248,8 @@ public class MainActivity extends AppCompatActivity {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 
                 if(isChecked) {
+                    mDbManager.updateUser(new User("hajaekwon", "hajaekwon", "hazxz@naver.com", "남자",  26, (int)100, 1000, 0, 1, 0));
+
                     pref.edit().putBoolean("switch", true).commit();
 
                     Intent intent = new Intent("com.escns.smombie.service").setPackage("com.escns.smombie");
