@@ -18,6 +18,7 @@
             android:id="@+id/coordinator_layout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:background="@color/white"
             android:orientation="vertical">
 
             <!-- 만약 프래그먼트로 작업시에는 이 부분이 Frame이 되야됨 -->
@@ -27,7 +28,7 @@
                 android:id="@+id/tab_layout"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
-                android:background="@color/blue_grey"
+                android:background="@color/white"
                 style="@style/MyCustomTabLayout"
                 app:tabMode="fixed"
                 app:tabGravity="fill"/>

@@ -3,12 +3,14 @@ package com.escns.smombie;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.multidex.MultiDex;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.escns.smombie.Manager.DBManager;
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
@@ -31,9 +33,13 @@ import java.util.Arrays;
 
 public class LoginActivity extends Activity {
 
-    String mFbId;                           // 페이스북 ID
-    String mFbName;                         // 페이스북 이름
-    String mFbEmail;                        // 페이스북 이메일
+    private DBManager mDbManger;
+
+    private String mFbId;           // 페이스북 ID
+    private String mFbName;         // 페이스북 이름
+    private String mFbEmail;        // 페이스북 이메일
+    private String mFbGender;       // 페이스북 성별
+    private int mFbAge;          // 페이스북 나이
 
     ImageView mLoginBackground;
     LoginButton mLoginButtonInvisible;      // 페이스북 로그인 버튼
@@ -45,12 +51,14 @@ public class LoginActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-
         // 페이스북 sdk 초기화
         FacebookSdk.sdkInitialize(getApplicationContext());
+        MultiDex.install(this);
 
         setContentView(R.layout.activity_login);
 
+        // DB 생성
+        mDbManger = new DBManager(this);
 
         mLoginBackground = (ImageView) findViewById(R.id.login_background);
         Picasso.with(this).load(R.drawable.bg_login).fit().into(mLoginBackground);
@@ -88,12 +96,34 @@ public class LoginActivity extends Activity {
                 GraphRequest request = GraphRequest.newMeRequest(
                         loginResult.getAccessToken(), new GraphRequest.GraphJSONObjectCallback() {
                             @Override
-                            public void onCompleted(JSONObject jsonObject, GraphResponse graphResponse) {
+                            public void onCompleted(JSONObject object, GraphResponse graphResponse) {
                                 try {
                                     Log.d("tag", "Input Profile Data");
-                                    mFbId = jsonObject.getString("id");
-                                    mFbName = jsonObject.getString("name");
-                                    mFbEmail = jsonObject.getString("email");
+
+                                    String strAge, strRAge;
+                                    mFbId = object.getString("id");
+                                    mFbName = object.getString("name");
+                                    mFbEmail = object.getString("email");
+                                    mFbGender = object.getString("gender");
+                                    strAge = object.getString("birthday");
+                                    strRAge = strAge.replace("/","");
+                                    mFbAge = 2016 - (Integer.parseInt(strRAge)%10000);
+
+                                    Log.d("tag", "User ID : " + mFbId);
+                                    Log.d("tag", "User Name : " + mFbName);
+                                    Log.d("tag", "User Email : " + mFbEmail);
+                                    Log.d("tag", "User Gender : " + mFbGender);
+                                    Log.d("tag", "User Age : " + mFbAge);
+
+                                    /*
+                                    if( mDbManger.getRowCount("USER_TABLE") == 0) {
+
+
+                                        User data = new User(mFbId, mFbName, mFbEmail, mFbGender, mFbAge, 0, 0, 0);
+
+                                        mDbManger.insertUser(data);
+                                    }
+                                    */
 
                                     Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                                     intent.putExtra("id", mFbId);
@@ -108,7 +138,7 @@ public class LoginActivity extends Activity {
                             }
                         });
                 Bundle parameters = new Bundle();
-                parameters.putString("fields", "id,name,email,picture.type(large)");
+                parameters.putString("fields", "id,name,gender,birthday,email,picture.type(large)");
                 request.setParameters(parameters);
                 request.executeAsync();
             }
