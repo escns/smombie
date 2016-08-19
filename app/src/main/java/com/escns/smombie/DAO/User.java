@@ -17,7 +17,6 @@ public class User {
     private int mSuccessCnt;
     private int mFailCnt;
 
-
     public User(String mId, String mName, String mEmail, String mGender, int mAge, int mPoint, int mGoal, int mReword, int mSuccessCnt, int mFailCnt) {
         this.mId = mId;
         this.mName = mName;

@@ -5,6 +5,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.os.Handler;
+import android.os.Message;
 import android.text.SpannableString;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.RelativeSizeSpan;
@@ -32,13 +34,28 @@ import com.github.mikephil.charting.data.PieEntry;
 import com.github.mikephil.charting.formatter.PercentFormatter;
 import com.github.mikephil.charting.utils.ColorTemplate;
 
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
+
+import static com.escns.smombie.MainActivity.UPDATE_PROFILE_IMAGE;
 
 /**
  * Created by Administrator on 2016-08-04.
  */
 
 public class LockScreenReceiver extends BroadcastReceiver {
+
+    private static final int UPDATE_TEMPERATURE = 1;
+    private static final String APPID = "b76dfb8d442f6f47dd42d7b0ce572408";
+    private String baseURL = "http://api.openweathermap.org/data/2.5/weather?";
 
     private Context mContext;
 
@@ -48,13 +65,32 @@ public class LockScreenReceiver extends BroadcastReceiver {
     private WindowManager mWindowManager;           // 최상단에 뷰를 그릴 WindowManager
     private View mLockScreenView;                   // 최상단 뷰
 
+    private ImageView mTemperatureIcon;
+    private TextView mTemperatureText;
+    private boolean isTemperatureLoaded;
+    private String mTemperature;
+
     int windowWidth;                                // 전체 윈도우 너비
     int windowHeight;                               // 전체 윈도우 높이
+    double lat = 37;
+    double lon = 126;
 
     private static boolean isLock;                  // lock의 상태
     private static boolean isWalking;
 
     private PieChart mChart;
+
+    private Handler handler = new Handler() {
+
+        @Override
+        public void handleMessage(Message msg) {
+            if(msg.what==UPDATE_TEMPERATURE) {
+                mTemperatureText.setText(""+(int)(Double.parseDouble(mTemperature)));
+                mTemperatureIcon.setImageResource(R.drawable.icon_weather);
+                isTemperatureLoaded=true;
+            }
+        }
+    };
 
 
     /**
@@ -74,42 +110,9 @@ public class LockScreenReceiver extends BroadcastReceiver {
         // 어떤 메시지인지 확인
         if(action.equals(intent.ACTION_SCREEN_OFF)) {
             if(isWalking) {
-                // lock이 활성화 된 상태라면 지우고 다시
-                if(mWindowManager!=null && isLock) {
-                    mWindowManager.removeView(mLockScreenView);
-                    mWindowManager = null;
-                }
 
-                isLock = true;
+                drawLockScreen(context);
 
-                mWindowManager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);                      // WindowManager 객체 생성
-                LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);   // Layout을 가져오기 위해 LayoutInflater 객체 생성
-                mLockScreenView = (View) inflater.inflate(R.layout.lockscreen_test, null);                                   // LayoutInflater를 이용하여 R.layout.lockscreen을 불러온다
-
-                initTest();
-
-            /*
-            mViewPager = (LockViewPager) mLockScreenView.findViewById(R.id.viewPager);      // R.layout.lockscreen 내부의 ViewPager 객체 생성
-            mPagerAdapter = new myPagerAdapter(context);                                    // adapter 생성
-            mViewPager.setAdapter(mPagerAdapter);
-            mViewPager.setCurrentItem(0);
-            //mViewPager.setPageTransformer(true, new ZoomOutPageTransformer());            // 옵션으로 ViewPager에 페이지 체인지 애니메이션을 줄 수 있다
-            */
-
-                mParams = new WindowManager.LayoutParams(                                       // View의 파라미터 결정
-                        WindowManager.LayoutParams.TYPE_SYSTEM_ERROR,                           // 최상단 뷰로 설정
-                        WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN                     // 풀 스크린으로 설정
-                );
-                mParams.screenOrientation=12;                                                   // 반드시 세로
-
-                //mParams.verticalMargin = 30.0f;
-
-                //mParams.flags |= WindowManager.LayoutParams.TYPE_SYSTEM_OVERLAY;
-
-                windowHeight = mWindowManager.getDefaultDisplay().getHeight();
-                windowWidth = mWindowManager.getDefaultDisplay().getWidth();
-
-                mWindowManager.addView(mLockScreenView, mParams);
             }
         } else if(action.equals("com.escns.smombie.CALL_STATE_RINGING")) {
             if(mWindowManager!=null && isLock) {
@@ -130,35 +133,7 @@ public class LockScreenReceiver extends BroadcastReceiver {
 
             if(!isLock) {
                 isWalking=true;
-
-                // lock이 활성화 된 상태라면 지우고 다시
-                if(mWindowManager!=null && isLock) {
-                    mWindowManager.removeView(mLockScreenView);
-                    mWindowManager = null;
-                }
-
-                isLock = true;
-
-                mWindowManager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);                      // WindowManager 객체 생성
-                LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);   // Layout을 가져오기 위해 LayoutInflater 객체 생성
-                mLockScreenView = (View) inflater.inflate(R.layout.lockscreen_test, null);                              // LayoutInflater를 이용하여 R.layout.lockscreen을 불러온다
-
-                initTest();
-
-                mParams = new WindowManager.LayoutParams(                                       // View의 파라미터 결정
-                        WindowManager.LayoutParams.TYPE_SYSTEM_ERROR,                           // 최상단 뷰로 설정
-                        WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN                    // 풀 스크린으로 설정
-                );
-                mParams.screenOrientation=12;                                                   // 반드시 세로
-
-                //mParams.verticalMargin = 30.0f;
-
-                //mParams.flags |= WindowManager.LayoutParams.TYPE_SYSTEM_OVERLAY;
-
-                windowHeight = mWindowManager.getDefaultDisplay().getHeight();
-                windowWidth = mWindowManager.getDefaultDisplay().getWidth();
-
-                mWindowManager.addView(mLockScreenView, mParams);
+                drawLockScreen(context);
             }
         } else if(action.equals("com.escns.smombie.LOCK_SCREEN_OFF")) {
             isWalking=false;
@@ -168,6 +143,75 @@ public class LockScreenReceiver extends BroadcastReceiver {
                 isLock=false;
             }
         }
+    }
+
+    private void drawLockScreen(Context context) {
+
+        // lock이 활성화 된 상태라면 지우고 다시
+        if(mWindowManager!=null && isLock) {
+            mWindowManager.removeView(mLockScreenView);
+            mWindowManager = null;
+        }
+
+        isLock = true;
+
+        mWindowManager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);                      // WindowManager 객체 생성
+        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);   // Layout을 가져오기 위해 LayoutInflater 객체 생성
+        mLockScreenView = (View) inflater.inflate(R.layout.lockscreen_test, null);                                   // LayoutInflater를 이용하여 R.layout.lockscreen을 불러온다
+
+        initTest();
+
+            /*
+            mViewPager = (LockViewPager) mLockScreenView.findViewById(R.id.viewPager);      // R.layout.lockscreen 내부의 ViewPager 객체 생성
+            mPagerAdapter = new myPagerAdapter(context);                                    // adapter 생성
+            mViewPager.setAdapter(mPagerAdapter);
+            mViewPager.setCurrentItem(0);
+            //mViewPager.setPageTransformer(true, new ZoomOutPageTransformer());            // 옵션으로 ViewPager에 페이지 체인지 애니메이션을 줄 수 있다
+            */
+
+        mParams = new WindowManager.LayoutParams(                                       // View의 파라미터 결정
+                WindowManager.LayoutParams.TYPE_SYSTEM_ERROR,                           // 최상단 뷰로 설정
+                WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN                     // 풀 스크린으로 설정
+        );
+        mParams.screenOrientation=12;                                                   // 반드시 세로
+
+        //mParams.verticalMargin = 30.0f;
+
+        //mParams.flags |= WindowManager.LayoutParams.TYPE_SYSTEM_OVERLAY;
+
+        windowHeight = mWindowManager.getDefaultDisplay().getHeight();
+        windowWidth = mWindowManager.getDefaultDisplay().getWidth();
+
+        mTemperatureIcon = (ImageView)mLockScreenView.findViewById(R.id.temperature_icon);
+        mTemperatureText = (TextView)mLockScreenView.findViewById(R.id.temperature_text);
+
+        Thread thread =  new Thread(new Runnable() {
+            @Override
+            public void run() {
+                while(!isTemperatureLoaded) {
+                    try{
+
+                        String line  = getStringFromUrl(baseURL+"lat="+lat+"&lon="+lon+"&APPID="+APPID);
+
+                        JSONObject object = new JSONObject(line);
+
+                        Thread.sleep(100);
+
+                        object = object.getJSONObject("main");
+                        mTemperature = object.getString("temp");
+
+                        Message message = handler.obtainMessage();
+                        message.what = UPDATE_PROFILE_IMAGE;
+                        handler.sendMessage(message);
+                    } catch (Exception e){
+                        e.printStackTrace();
+                    }
+                }
+            }
+        });
+        thread.start();
+
+        mWindowManager.addView(mLockScreenView, mParams);
     }
 
     public void initTest() {
@@ -355,4 +399,50 @@ public class LockScreenReceiver extends BroadcastReceiver {
         return s;
 
     }
+
+
+    public  String getStringFromUrl(String url) throws UnsupportedOperationException, UnsupportedEncodingException {
+
+        // 입력 스트림을 euc-kr를 사용해서 읽은 후  이를 사용해서
+        // 라인단위로 데이터를 읽을수 있는 BufferReader를 생성한다
+        BufferedReader br = new BufferedReader(new InputStreamReader(getInputStreamFromUrl(url),"UTF-8"));   //(new InputStreamReader(url,"UTF-8"));
+
+        //읽은 데이터를 저장할 StringBuffer를 생성한다
+        StringBuffer sb = new StringBuffer();
+
+        try{
+            //라인 단위로 읽은 데이터를 임시 저장할 자열 변수
+            String line = null;
+
+            //라인 단위로 데이터를 읽어서 StringBuffer에 저장한다
+            while ((line = br.readLine()) != null){
+                sb.append(line);
+                Log.e("TTL",line);
+            }
+        }catch (IOException e){
+            e.printStackTrace();
+        }
+
+        return  sb.toString();
+
+    }
+
+    //url 커넥션
+    public  static InputStream getInputStreamFromUrl(String url){
+        InputStream contentStream = null;
+
+        try{
+            URL reauestURL  = new URL(url);
+            HttpURLConnection conn = (HttpURLConnection) reauestURL.openConnection();
+            if(conn.getResponseCode() == HttpURLConnection.HTTP_OK){
+                contentStream = conn.getInputStream();
+            }
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+        return  contentStream;
+    }
+
 }
