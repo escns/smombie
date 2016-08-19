@@ -10,90 +10,121 @@
         android:layout_height="0dp"
         android:layout_weight="1"
         android:orientation="horizontal"
-        android:id="@+id/clockLayout"
-        android:background="@color/main_color">
+        android:id="@+id/clockLayout">
 
-        <LinearLayout
+        <ImageView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="horizontal">
+            android:src="@drawable/bg_lock"
+            android:scaleType="fitXY"/>
 
-            <RelativeLayout
-                android:layout_width="0dp"
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:padding="25dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_weight="2"
-                android:gravity="center">
+                android:orientation="horizontal"
+                android:gravity="bottom">
 
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical">
+                <RelativeLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="3"
+                    android:gravity="bottom">
 
                     <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:gravity="center">
+                        android:orientation="vertical">
 
-                        <ImageView
-                            android:id="@+id/lockScreenWeatherIcon"
-                            android:layout_width="40dp"
-                            android:layout_height="40dp"
-                            android:src="@drawable/icon_sunny"/>
-
-                        <TextView
-                            android:id="@+id/lockScreenWeatherText"
+                        <LinearLayout
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginLeft="15dp"
-                            android:text="32'"
-                            android:textSize="30sp"
-                            style="@style/sectionText"/>
+                            android:orientation="horizontal"
+                            android:gravity="center">
+
+                            <ImageView
+                                android:id="@+id/lockScreenWeatherIcon"
+                                android:layout_width="50sp"
+                                android:layout_height="50sp"
+                                android:src="@drawable/icon_weather"/>
+
+                            <LinearLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginLeft="25dp"
+                                android:orientation="horizontal"
+                                android:gravity="top">
+
+                                <TextView
+                                    android:id="@+id/lockScreenWeatherText"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="32"
+                                    android:textSize="40sp"
+                                    style="@style/sectionText"/>
+
+                                <ImageView
+                                    android:layout_width="25sp"
+                                    android:layout_height="25sp"
+                                    android:src="@drawable/icon_temperature"/>
+
+                            </LinearLayout>
+
+
+
+                        </LinearLayout>
+
+                        <TextView
+                            android:id="@+id/clock_date"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="8월 16일 화요일"
+                            android:textSize="20sp"
+                            android:textColor="@color/white"
+                            android:layout_marginTop="15dp" />
 
                     </LinearLayout>
 
+                </RelativeLayout>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="2"
+                    android:gravity="bottom"
+                    android:orientation="vertical">
+
                     <TextView
-                        android:id="@+id/lockScreenDate"
+                        android:id="@+id/clock_ampm"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="2016년 8월 16일"
+                        android:text="AM"
                         android:textSize="25sp"
+                        android:layout_gravity="right"
                         style="@style/sectionText"/>
+
+                    <TextView
+                        android:id="@+id/clock_time"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="4:08"
+                        android:textSize="50sp"
+                        android:textColor="@color/white"
+                        android:layout_gravity="right" />
+
 
                 </LinearLayout>
 
-            </RelativeLayout>
-
-            <RelativeLayout
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:gravity="center">
-
-                <DigitalClock
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="PM\n10:18"
-                    android:textSize="30dp"
-                    android:textColor="@color/white"
-                    android:textStyle="bold"
-                    android:gravity="center"
-                    android:layout_centerVertical="true"
-                    android:layout_centerHorizontal="true"
-                    android:id="@+id/textView"/>
-
-            </RelativeLayout>
-
-        </LinearLayout>
-
-
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="10dp"
-            android:layout_alignParentBottom="true"
-            android:background="@color/second_color">
+            </LinearLayout>
 
         </RelativeLayout>
+
+
 
     </RelativeLayout>
 
@@ -137,25 +168,33 @@
         android:gravity="center">
 
         <RelativeLayout
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="80dp"
-            android:background="@color/main_color">
+            android:paddingLeft="40dp"
+            android:paddingRight="40dp">
 
             <ImageView
-                android:id="@+id/button_lock"
-                android:layout_width="80dp"
-                android:layout_height="80dp"
-                android:src="@drawable/lock_button"
-                android:layout_marginLeft="40dp"
-                android:layout_centerVertical="true"/>
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:src="@drawable/bg_lock_btn"
+                android:scaleType="fitXY"/>
 
             <ImageView
                 android:id="@+id/button_unlock"
-                android:layout_width="110dp"
+                android:layout_width="60dp"
                 android:layout_height="60dp"
-                android:src="@drawable/key_lock"
+                android:src="@drawable/btn_lock"
                 android:layout_alignParentRight="true"
-                android:layout_marginRight="40dp"
+                android:layout_marginRight="10dp"
+                android:layout_centerVertical="true"/>
+
+            <ImageView
+                android:id="@+id/button_lock"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:src="@drawable/btn_key"
+                android:layout_alignParentLeft="true"
+                android:layout_marginLeft="10dp"
                 android:layout_centerVertical="true"/>
 
         </RelativeLayout>
