@@ -150,7 +150,7 @@ public class GPSManager implements LocationListener
             // 제자리일 때는 1, 걸을 때는 2를 반환
             if (speed < 0.5) {
                 Toast.makeText(mContext, "lon: " + mCurLon + " / lat: " + mCurLat + "\n제자리입니다 " + betweenTime, Toast.LENGTH_SHORT).show();
-                return 2;
+                return 1;
             } else {
                 Toast.makeText(mContext, "lon: " + mCurLon + " / lat: " + mCurLat + "\n" + speed + "m/s입니다 " + betweenTime, Toast.LENGTH_SHORT).show();
                 return 2;
@@ -158,7 +158,7 @@ public class GPSManager implements LocationListener
         }
         else { // GPS 정보를 받아오지 못할 때 0을 반환
             Toast.makeText(mContext, "GPS가 작동하지않습니다 " + betweenTime, Toast.LENGTH_SHORT).show();
-            return 2;
+            return 0;
         }
     }
 

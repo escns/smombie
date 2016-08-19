@@ -27,6 +27,7 @@ import android.widget.TextView;
 
 import com.escns.smombie.Adapter.ItemMainAdpater;
 import com.escns.smombie.DAO.Point;
+import com.escns.smombie.DAO.User;
 import com.escns.smombie.Interface.ApiService;
 import com.escns.smombie.Item.ItemMain;
 import com.escns.smombie.Manager.DBManager;
@@ -47,8 +48,11 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class MainActivity extends AppCompatActivity {
 
+    public final static int UPDATE_PROFILE_IMAGE = 1;
+    public final static int UPDATE_SECTION = 2;
+
     private SharedPreferences pref;         // 화면 꺼짐 및 이동 시 switch가 초기화되기 때문에 파일에 따로 저장하기 위한 객체
-    private DBManager dbManager;            // DB 선언
+    private DBManager mDBManager;            // DB 선언
 
     private String mFbId;
     private String mFbName;
@@ -66,9 +70,16 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public void handleMessage(Message msg) {
-            Log.i("tag", "handleMessage");
-            ((CustomImageView) findViewById(R.id.profile_view)).setImageBitmap(mProfileImage);
-            isProfileImageLoaded=true;
+            if(msg.what==UPDATE_PROFILE_IMAGE) {
+                ((CustomImageView) findViewById(R.id.profile_view)).setImageBitmap(mProfileImage);
+                isProfileImageLoaded=true;
+            } else if(msg.what == UPDATE_SECTION) {
+                User user = mDBManager.getUser("hajaekwon");
+                ((TextView) findViewById(R.id.section1_text)).setText(user.getmPoint());
+                ((TextView) findViewById(R.id.section2_text)).setText(user.getmGoal());
+                ((TextView) findViewById(R.id.section3_text)).setText(user.getmReword());
+            }
+
         }
     };
 
@@ -164,6 +175,7 @@ public class MainActivity extends AppCompatActivity {
     public void init() {
 
         pref = getSharedPreferences("pref", MODE_PRIVATE);
+        mDBManager = new DBManager(this);
 
         mFbId = getIntent().getStringExtra("id");
         mFbName = getIntent().getStringExtra("name");
@@ -186,7 +198,9 @@ public class MainActivity extends AppCompatActivity {
                         Thread.sleep(100);
 
                         Log.i("tag", "get FB profile image");
-                        handler.sendMessage(handler.obtainMessage());                                   //profileImage.setImageBitmap(bit); // 페이스북 사진 입력
+                        Message message = handler.obtainMessage();
+                        message.what = UPDATE_PROFILE_IMAGE;
+                        handler.sendMessage(message);                                   //profileImage.setImageBitmap(bit); // 페이스북 사진 입력
                     } catch (Exception e){
                         e.printStackTrace();
                     }

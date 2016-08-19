@@ -6,6 +6,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 import com.escns.smombie.DAO.Record;
+import com.escns.smombie.DAO.User;
 import com.escns.smombie.R;
 
 import java.util.ArrayList;
@@ -50,6 +51,18 @@ public class DBManager extends SQLiteOpenHelper {
         sb.append(" HOUR INTEGER, ");
         sb.append(" DIST INTEGER, ");
         sb.append(" STEPCNT INTEGER ) ");
+
+        db.execSQL(sb.toString());
+
+        sb = new StringBuffer();
+
+        sb.append(" CREATE TABLE "+ USER_TABLE +" ( ");
+        sb.append(" USER_ID TEXT PRIMARY KEY, ");
+        sb.append(" POINT INTEGER, ");
+        sb.append(" GOAL INTEGER, ");
+        sb.append(" REWORD INTEGER, ");
+        sb.append(" SUCCESSCNT INTEGER, ");
+        sb.append(" TOTAL INTEGER ) ");
 
         db.execSQL(sb.toString());
     }
@@ -125,6 +138,102 @@ public class DBManager extends SQLiteOpenHelper {
         }
 
         return list;
+    }
+
+    /**
+     *
+     * @param data
+     */
+    public void updateUser(User data) {
+        SQLiteDatabase db = null;
+        User user =  null;
+
+        try {
+            db = getReadableDatabase();
+
+            StringBuffer sb = new StringBuffer();
+            sb.append(" SELECT * FROM "+ USER_TABLE);
+            sb.append(" WHERE USER_ID is ? ");
+
+            Cursor cursor = db.rawQuery(sb.toString(),
+                    new String[]{
+                            data.getmId()
+                    });
+
+            while(cursor.moveToNext()) {
+                user = new User(cursor.getString(0), cursor.getInt(1), cursor.getInt(2), cursor.getInt(3), cursor.getInt(4), cursor.getInt(5));
+            }
+            if(user==null) {
+                sb = new StringBuffer();
+                sb.append(" INSERT INTO "+ USER_TABLE +" ( ");
+                sb.append(" USER_ID, POINT, GOAL, REWORD, SUCCESSCNT, TOTAL ) ");
+                sb.append(" VALUES ( ?, ?, ?, ?, ?, ? ) ");
+
+                db.execSQL(sb.toString(),
+                        new Object[]{
+                                data.getmId(),
+                                data.getmPoint(),
+                                data.getmGoal(),
+                                data.getmReword(),
+                                data.getmSuccessCnt(),
+                                data.getmTotal()
+                        });
+            } else {
+                sb = new StringBuffer();
+                sb.append(" UPDATE "+ USER_TABLE +" SET");
+                sb.append(" POINT = ? ,");
+                sb.append(" SUCCESSCNT = ? ,");
+                sb.append(" TOTAL = ? ");
+                sb.append(" WHERE USER_ID = ? ");
+
+                db.execSQL(sb.toString(),
+                        new Object[]{
+                                user.getmPoint()+data.getmPoint(),
+                                user.getmSuccessCnt()+data.getmSuccessCnt(),
+                                user.getmTotal()+1,
+                                data.getmId()
+                        });
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if(db!=null) {
+                db.close();
+            }
+        }
+    }
+
+    public User getUser(String id) {
+
+        SQLiteDatabase db = null;
+        User user = null;
+
+        try {
+            db = getReadableDatabase();
+
+            StringBuffer sb = new StringBuffer();
+            sb.append(" SELECT * FROM "+ USER_TABLE);
+            sb.append(" WHERE USER_ID is ? ");
+
+            Cursor cursor = db.rawQuery(sb.toString(),
+                    new String[]{
+                            id
+                    });
+
+            while(cursor.moveToNext()) {
+                user = new User(cursor.getString(0), cursor.getInt(1), cursor.getInt(2), cursor.getInt(3), cursor.getInt(4), cursor.getInt(5));
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if(db!=null) {
+                db.close();
+            }
+        }
+
+        return user;
     }
 
     /**

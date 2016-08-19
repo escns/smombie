@@ -11,6 +11,8 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.escns.smombie.DAO.Record;
+import com.escns.smombie.DAO.User;
+import com.escns.smombie.MainActivity;
 import com.escns.smombie.Manager.DBManager;
 import com.escns.smombie.Manager.GPSManager;
 
@@ -32,6 +34,7 @@ public class WalkCheckService extends Service {
     private TimerTask myTimer;
     private Handler handler;
     private boolean isWalking = false;
+    private Handler mHandlerMain;
 
     private double mStartLon = 0.0;
     private double mStartLat = 0.0;
@@ -63,8 +66,9 @@ public class WalkCheckService extends Service {
     /**
      * WalkCheckService 생성자
      */
-    public WalkCheckService() {
+    public WalkCheckService(Handler handlerMain) {
         Log.d("tag", "WalkCheckService");
+        mHandlerMain = handlerMain;
     }
 
     /**
@@ -121,10 +125,17 @@ public class WalkCheckService extends Service {
                         Record record = new Record("hajaekwon", calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DATE), calendar.get(Calendar.HOUR), (int)distance, 0);
                         mDbManager.insertRecord(record);
 
+                        mDbManager.updateUser(new User("hajaekwon", (int)distance, 1000, 1, 100, 20000));
+
+                        Message message = mHandlerMain.obtainMessage();
+                        message.what = MainActivity.UPDATE_SECTION;
+                        mHandlerMain.sendMessage(message);
+
                         List<Record> list = mDbManager.getRecord("hajaekwon");
                         for(Record s : list) {
                             Toast.makeText(getApplicationContext(), s.toString(), Toast.LENGTH_SHORT).show();
                             Log.i("tag", s.toString());
+                            Toast.makeText(getBaseContext(), s.toString(), Toast.LENGTH_SHORT).show();
                         }
                     }
                 }
