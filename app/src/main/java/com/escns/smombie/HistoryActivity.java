@@ -1,7 +1,5 @@
 package com.escns.smombie;
 
-import android.app.ActionBar;
-import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -18,14 +16,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ImageView;
-import android.widget.TabHost;
 import android.widget.TextView;
 
 import com.escns.smombie.Tab.TabPagerAdapter;
 import com.escns.smombie.View.CustomImageView;
 
-import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
@@ -157,7 +152,7 @@ public class HistoryActivity extends AppCompatActivity {
 
                         Thread.sleep(100);
 
-                        ((CustomImageView) findViewById(R.id.header_photo)).setImageBitmap(mProfileImage);
+                        ((CustomImageView) findViewById(R.id.header_profile)).setImageBitmap(mProfileImage);
                         ((TextView) findViewById(R.id.header_name)).setText(mFbName);
                         ((TextView) findViewById(R.id.header_email)).setText(mFbEmail);
 

@@ -67,6 +67,8 @@ public class MainActivity extends AppCompatActivity {
     private Bitmap mProfileImage;
     private boolean isProfileImageLoaded;
 
+    private View HeaderLayout;
+
     private double mbackPressedTime = 0; // 연속으로 두번 누르면 종료 시 사용하는 변수
 
     //private WalkCheckService mService;
@@ -81,6 +83,9 @@ public class MainActivity extends AppCompatActivity {
         public void handleMessage(Message msg) {
             if(msg.what==UPDATE_PROFILE_IMAGE) {
                 ((CustomImageView) findViewById(R.id.profile_view)).setImageBitmap(mProfileImage);
+                ((CustomImageView)HeaderLayout.findViewById(R.id.header_profile)).setImageBitmap(mProfileImage);
+                ((TextView)HeaderLayout.findViewById(R.id.header_name)).setText(mFbName);
+                ((TextView)HeaderLayout.findViewById(R.id.header_email)).setText(mFbEmail);
                 isProfileImageLoaded=true;
             } else if(msg.what == UPDATE_SECTION) {
                 User user = mDbManager.getUser("hajaekwon");
@@ -149,7 +154,7 @@ public class MainActivity extends AppCompatActivity {
 
         // Drawer 내부의 메뉴들을 성정
         navigationView.inflateMenu((R.menu.navigation_item));
-        View HeaderLayout = navigationView.getHeaderView(0);
+        HeaderLayout = navigationView.getHeaderView(0);
 
 
         // LoginActivity로부터 페이스북 프로필정보 받아오기
