@@ -28,7 +28,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.escns.smombie.Adapter.ItemMainAdpater;
-import com.escns.smombie.DAO.Point;
 import com.escns.smombie.DAO.User;
 import com.escns.smombie.Interface.ApiService;
 import com.escns.smombie.Item.ItemMain;
@@ -41,9 +40,6 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
@@ -51,7 +47,8 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class MainActivity extends AppCompatActivity {
 
     public final static int UPDATE_PROFILE_IMAGE = 1;
-    public final static int UPDATE_SECTION = 2;
+
+    public final static int DEFAULT_GOAL = 1000;
 
     public static Activity mExitAct;
 
@@ -61,9 +58,12 @@ public class MainActivity extends AppCompatActivity {
     private SharedPreferences pref;         // 화면 꺼짐 및 이동 시 switch가 초기화되기 때문에 파일에 따로 저장하기 위한 객체
     private DBManager mDbManager;            // DB 선언
 
-    private String mFbId;
-    private String mFbName;
-    private String mFbEmail;
+    private String mFbId;           // 페이스북 ID
+    private String mFbName;         // 페이스북 이름
+    private String mFbEmail;        // 페이스북 이메일
+    private String mFbGender;       // 페이스북 성별
+    private int mFbAge;             // 페이스북 나이
+
     private Bitmap mProfileImage;
     private boolean isProfileImageLoaded;
 
@@ -84,14 +84,10 @@ public class MainActivity extends AppCompatActivity {
             if(msg.what==UPDATE_PROFILE_IMAGE) {
                 ((CustomImageView) findViewById(R.id.profile_view)).setImageBitmap(mProfileImage);
                 ((CustomImageView)HeaderLayout.findViewById(R.id.header_profile)).setImageBitmap(mProfileImage);
+                ((TextView)findViewById(R.id.user_email)).setText(mFbEmail);
                 ((TextView)HeaderLayout.findViewById(R.id.header_name)).setText(mFbName);
                 ((TextView)HeaderLayout.findViewById(R.id.header_email)).setText(mFbEmail);
                 isProfileImageLoaded=true;
-            } else if(msg.what == UPDATE_SECTION) {
-                User user = mDbManager.getUser("hajaekwon");
-                ((TextView) findViewById(R.id.section1_text)).setText(user.getmPoint());
-                ((TextView) findViewById(R.id.section2_text)).setText(user.getmGoal());
-                ((TextView) findViewById(R.id.section3_text)).setText(user.getmReword());
             }
         }
     };
@@ -103,6 +99,27 @@ public class MainActivity extends AppCompatActivity {
 
         initDrawer(); // 툴바 구현
         init();
+    }
+
+    @Override
+    protected void onResume() {
+        User user = mDbManager.getUser(mFbId);
+        int Point, Goal, Reword;
+        if(user==null) {
+            mDbManager.insertUser(new User(mFbId, mFbName, mFbEmail, mFbGender, mFbAge, 0, DEFAULT_GOAL, 0, 0, 0));
+            Point = 0;
+            Goal = DEFAULT_GOAL;
+            Reword = 0;
+        } else {
+            Point = user.getmPoint();
+            Goal = user.getmGoal();
+            Reword = user.getmReword();
+        }
+
+        ((TextView) findViewById(R.id.section1_text)).setText(""+Point);
+        ((TextView) findViewById(R.id.section2_text)).setText(""+Goal);
+        ((TextView) findViewById(R.id.section3_text)).setText(""+Reword);
+        super.onResume();
     }
 
     @Override
@@ -155,13 +172,6 @@ public class MainActivity extends AppCompatActivity {
         // Drawer 내부의 메뉴들을 성정
         navigationView.inflateMenu((R.menu.navigation_item));
         HeaderLayout = navigationView.getHeaderView(0);
-
-
-        // LoginActivity로부터 페이스북 프로필정보 받아오기
-        mFbId = getIntent().getStringExtra("id");
-        mFbName = getIntent().getStringExtra("name");
-        mFbEmail = getIntent().getStringExtra("email");
-
 
         // 추가한 코드...아래
         // 사이드메뉴에 있는 item들을 클릭 시 동작
@@ -220,7 +230,12 @@ public class MainActivity extends AppCompatActivity {
         pref = getSharedPreferences("pref", MODE_PRIVATE);
         mDbManager = new DBManager(this);
 
-        ((TextView) findViewById(R.id.profile_name)).setText(mFbName);
+        // LoginActivity로부터 페이스북 프로필정보 받아오기
+        mFbId = getIntent().getStringExtra("id");
+        mFbName = getIntent().getStringExtra("name");
+        mFbEmail = getIntent().getStringExtra("email");
+        mFbGender = getIntent().getStringExtra("gender");
+        mFbAge = getIntent().getIntExtra("age", 0);
 
         Thread thread =  new Thread(new Runnable() {
             @Override
@@ -253,7 +268,6 @@ public class MainActivity extends AppCompatActivity {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 
                 if(isChecked) {
-                    mDbManager.updateUser(new User("hajaekwon", "hajaekwon", "hazxz@naver.com", "남자",  26, (int)100, 1000, 0, 1, 0));
 
                     pref.edit().putBoolean("switch", true).commit();
 
@@ -269,13 +283,10 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        final TextView section1Text = (TextView) findViewById(R.id.section1_text);
-        final TextView section2Text = (TextView) findViewById(R.id.section2_text);
-        final TextView section3Text = (TextView) findViewById(R.id.section3_text);
-
         mRetrofit = new Retrofit.Builder().baseUrl(mApiService.API_URL).addConverterFactory(GsonConverterFactory.create()).build();
         mApiService = mRetrofit.create(ApiService.class);
 
+        /*
         Call<Point> currentPoint = mApiService.getCurrentPoint(1);
         currentPoint.enqueue(new Callback<Point>() {
             @Override
@@ -305,6 +316,7 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
+        */
 
         final List<ItemMain> ItemMains = new ArrayList<>();
         ItemMains.add(new ItemMain(true, "이벤트", R.drawable.title_icon_event));

@@ -12,7 +12,6 @@ import android.widget.Toast;
 
 import com.escns.smombie.DAO.Record;
 import com.escns.smombie.DAO.User;
-import com.escns.smombie.MainActivity;
 import com.escns.smombie.Manager.DBManager;
 import com.escns.smombie.Manager.GPSManager;
 
@@ -122,10 +121,6 @@ public class WalkCheckService extends Service {
                         mDbManager.insertRecord(record);
 
                         mDbManager.updateUser(new User("hajaekwon", "hajaekwon", "hazxz@naver.com", "남자",  26, (int)distance, 1000, 0, 1, 0));
-
-                        Message message = mHandlerMain.obtainMessage();
-                        message.what = MainActivity.UPDATE_SECTION;
-                        mHandlerMain.sendMessage(message);
 
                         List<Record> list = mDbManager.getRecord("hajaekwon");
                         for(Record s : list) {

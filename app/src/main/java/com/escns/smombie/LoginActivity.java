@@ -98,8 +98,6 @@ public class LoginActivity extends Activity {
                             @Override
                             public void onCompleted(JSONObject object, GraphResponse graphResponse) {
                                 try {
-                                    Log.d("tag", "Input Profile Data");
-
                                     String strAge, strRAge;
                                     mFbId = object.getString("id");
                                     mFbName = object.getString("name");
@@ -115,20 +113,12 @@ public class LoginActivity extends Activity {
                                     Log.d("tag", "User Gender : " + mFbGender);
                                     Log.d("tag", "User Age : " + mFbAge);
 
-                                    /*
-                                    if( mDbManger.getRowCount("USER_TABLE") == 0) {
-
-
-                                        User data = new User(mFbId, mFbName, mFbEmail, mFbGender, mFbAge, 0, 0, 0);
-
-                                        mDbManger.insertUser(data);
-                                    }
-                                    */
-
                                     Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                                     intent.putExtra("id", mFbId);
                                     intent.putExtra("name", mFbName);
                                     intent.putExtra("email", mFbEmail);
+                                    intent.putExtra("gender", mFbGender);
+                                    intent.putExtra("age", mFbAge);
                                     startActivity(intent);
                                     finish();
 
@@ -171,8 +161,6 @@ public class LoginActivity extends Activity {
                 finish();
             }
         });
-
-
     }
 
     /**
