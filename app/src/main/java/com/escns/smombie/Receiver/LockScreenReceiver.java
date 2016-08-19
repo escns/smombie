@@ -22,6 +22,7 @@ import android.widget.TextView;
 import com.escns.smombie.DAO.User;
 import com.escns.smombie.Manager.DBManager;
 import com.escns.smombie.R;
+import com.escns.smombie.Setting.Conf;
 import com.escns.smombie.View.ClockView;
 import com.github.mikephil.charting.animation.Easing;
 import com.github.mikephil.charting.charts.PieChart;
@@ -40,6 +41,8 @@ import java.util.ArrayList;
 public class LockScreenReceiver extends BroadcastReceiver {
 
     private Context mContext;
+
+    private Conf conf;
 
     private WindowManager.LayoutParams mParams;     // 최상단에 그려질 뷰의 파라미터
     private WindowManager mWindowManager;           // 최상단에 뷰를 그릴 WindowManager
@@ -64,6 +67,7 @@ public class LockScreenReceiver extends BroadcastReceiver {
         Log.d("Tag", "LockReceiver - onReceive "+intent.getAction());
 
         mContext = context;
+        conf = Conf.getInstance();
 
         String action = intent.getAction();
 
@@ -293,7 +297,7 @@ public class LockScreenReceiver extends BroadcastReceiver {
 
         // NOTE: The order of the entries when being added to the entries array determines their position around the center of
         // the chart.
-        User user = new DBManager(mContext).getUser("hajaekwon");
+        User user = new DBManager(mContext).getUser(conf.mFbId);
         //entries.add(new PieEntry((float) (50), "진행률"));
         entries.add(new PieEntry((float) (user.getmPoint()), "진행률"));
         entries.add(new PieEntry((float) (user.getmGoal()), "목표치"));

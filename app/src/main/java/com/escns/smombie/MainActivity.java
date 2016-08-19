@@ -33,6 +33,7 @@ import com.escns.smombie.Interface.ApiService;
 import com.escns.smombie.Item.ItemMain;
 import com.escns.smombie.Manager.DBManager;
 import com.escns.smombie.Service.LockScreenService;
+import com.escns.smombie.Setting.Conf;
 import com.escns.smombie.View.CustomImageView;
 
 import java.net.HttpURLConnection;
@@ -58,11 +59,7 @@ public class MainActivity extends AppCompatActivity {
     private SharedPreferences pref;         // 화면 꺼짐 및 이동 시 switch가 초기화되기 때문에 파일에 따로 저장하기 위한 객체
     private DBManager mDbManager;            // DB 선언
 
-    private String mFbId;           // 페이스북 ID
-    private String mFbName;         // 페이스북 이름
-    private String mFbEmail;        // 페이스북 이메일
-    private String mFbGender;       // 페이스북 성별
-    private int mFbAge;             // 페이스북 나이
+    private Conf conf;
 
     private Bitmap mProfileImage;
     private boolean isProfileImageLoaded;
@@ -84,9 +81,9 @@ public class MainActivity extends AppCompatActivity {
             if(msg.what==UPDATE_PROFILE_IMAGE) {
                 ((CustomImageView) findViewById(R.id.profile_view)).setImageBitmap(mProfileImage);
                 ((CustomImageView)HeaderLayout.findViewById(R.id.header_profile)).setImageBitmap(mProfileImage);
-                ((TextView)findViewById(R.id.user_email)).setText(mFbEmail);
-                ((TextView)HeaderLayout.findViewById(R.id.header_name)).setText(mFbName);
-                ((TextView)HeaderLayout.findViewById(R.id.header_email)).setText(mFbEmail);
+                ((TextView)findViewById(R.id.user_email)).setText(conf.mFbEmail);
+                ((TextView)HeaderLayout.findViewById(R.id.header_name)).setText(conf.mFbName);
+                ((TextView)HeaderLayout.findViewById(R.id.header_email)).setText(conf.mFbEmail);
                 isProfileImageLoaded=true;
             }
         }
@@ -103,10 +100,10 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onResume() {
-        User user = mDbManager.getUser(mFbId);
+        User user = mDbManager.getUser(conf.mFbId);
         int Point, Goal, Reword;
         if(user==null) {
-            mDbManager.insertUser(new User(mFbId, mFbName, mFbEmail, mFbGender, mFbAge, 0, DEFAULT_GOAL, 0, 0, 0));
+            mDbManager.insertUser(new User(conf.mFbId, conf.mFbName, conf.mFbEmail, conf.mFbGender, conf.mFbAge, 0, DEFAULT_GOAL, 0, 0, 0));
             Point = 0;
             Goal = DEFAULT_GOAL;
             Reword = 0;
@@ -191,9 +188,9 @@ public class MainActivity extends AppCompatActivity {
 
                     case R.id.drawer_menu1 : // 히스토리
                         intent = new Intent(getApplicationContext(), HistoryActivity.class);
-                        intent.putExtra("id", mFbId);
-                        intent.putExtra("name", mFbName);
-                        intent.putExtra("email",mFbEmail);
+                        intent.putExtra("id", conf.mFbId);
+                        intent.putExtra("name", conf.mFbName);
+                        intent.putExtra("email",conf.mFbEmail);
                         startActivity(intent);
                         drawerLayout.closeDrawer(navigationView);
                         return true;
@@ -230,19 +227,21 @@ public class MainActivity extends AppCompatActivity {
         pref = getSharedPreferences("pref", MODE_PRIVATE);
         mDbManager = new DBManager(this);
 
+        conf = Conf.getInstance();
+
         // LoginActivity로부터 페이스북 프로필정보 받아오기
-        mFbId = getIntent().getStringExtra("id");
-        mFbName = getIntent().getStringExtra("name");
-        mFbEmail = getIntent().getStringExtra("email");
-        mFbGender = getIntent().getStringExtra("gender");
-        mFbAge = getIntent().getIntExtra("age", 0);
+        conf.mFbId = getIntent().getStringExtra("id");
+        conf.mFbName = getIntent().getStringExtra("name");
+        conf.mFbEmail = getIntent().getStringExtra("email");
+        conf.mFbGender = getIntent().getStringExtra("gender");
+        conf.mFbAge = getIntent().getIntExtra("age", 0);
 
         Thread thread =  new Thread(new Runnable() {
             @Override
             public void run() {
                 while(!isProfileImageLoaded) {
                     try{
-                        URL url = new URL("https://graph.facebook.com/" + mFbId + "/picture?type=large"); // URL 주소를 이용해서 URL 객체 생성
+                        URL url = new URL("https://graph.facebook.com/" + conf.mFbId + "/picture?type=large"); // URL 주소를 이용해서 URL 객체 생성
                         HttpURLConnection conn = (HttpURLConnection) url.openConnection();              //  아래 코드는 웹에서 이미지를 가져온 뒤
                         conn.setDoInput(true);
                         conn.connect();
