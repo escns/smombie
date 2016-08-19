@@ -196,7 +196,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_marginLeft="6sp"
                                 android:layout_centerVertical="true"
-                                android:text="Goal"
+                                android:text="Reword"
                                 android:textSize="15sp"
                                 android:layout_toRightOf="@id/section3_image"
                                 style="@style/sectionText"/>
