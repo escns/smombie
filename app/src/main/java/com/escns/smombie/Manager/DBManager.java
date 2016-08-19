@@ -157,11 +157,49 @@ public class DBManager extends SQLiteOpenHelper {
         return list;
     }
 
+    public void insertUser(User data) {
+        Log.i("tag", "INSERT USER");
+
+        SQLiteDatabase db = null;
+
+        try {
+            db = getReadableDatabase();
+
+            StringBuffer sb = new StringBuffer();
+
+            sb.append(" INSERT INTO "+ USER_TABLE +" ( ");
+            sb.append(" USER_ID, NAME, EMAIL, GENDER, AGE, POINT, GOAL, REWORD, SUCCESSCNT, FAILCNT ) ");
+            sb.append(" VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) ");
+
+            db.execSQL(sb.toString(),
+                    new Object[]{
+                            data.getmId(),
+                            data.getmName(),
+                            data.getmEmail(),
+                            data.getmGender(),
+                            data.getmAge(),
+                            data.getmPoint(),
+                            data.getmGoal(),
+                            data.getmReword(),
+                            data.getmSuccessCnt(),
+                            data.getmFailCnt()
+                    });
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if(db!=null) {
+                db.close();
+            }
+        }
+    }
+
     /**
      * 파라미터로 받은 data를 User테이블에 저장
      * @param data
      */
     public void updateUser(User data) {
+        Log.i("tag", "UPDATE USER");
 
         SQLiteDatabase db = null;
         User user =  null;
@@ -170,58 +208,24 @@ public class DBManager extends SQLiteOpenHelper {
             db = getReadableDatabase();
 
             StringBuffer sb = new StringBuffer();
-            sb.append(" SELECT * FROM "+ USER_TABLE);
-            sb.append(" WHERE USER_ID is ? ");
 
-            Cursor cursor = db.rawQuery(sb.toString(),
-                    new String[]{
+            sb.append(" UPDATE "+ USER_TABLE +" SET");
+            sb.append(" POINT = ? ,");
+            sb.append(" GOAL = ? ,");
+            sb.append(" REWORD = ? ,");
+            sb.append(" SUCCESSCNT = ? ,");
+            sb.append(" FAILCNT = ? ");
+            sb.append(" WHERE USER_ID = ? ");
+
+            db.execSQL(sb.toString(),
+                    new Object[]{
+                            user.getmPoint()+data.getmPoint(),
+                            user.getmReword()+data.getmReword(),
+                            user.getmGoal()+data.getmGoal(),
+                            user.getmSuccessCnt()+data.getmSuccessCnt(),
+                            user.getmFailCnt()+data.getmFailCnt(),
                             data.getmId()
                     });
-
-            while(cursor.moveToNext()) {
-                user = new User(cursor.getString(0), cursor.getString(1), cursor.getString(2), cursor.getString(3), cursor.getInt(4), cursor.getInt(5), cursor.getInt(6), cursor.getInt(7), cursor.getInt(8), cursor.getInt(9));
-            }
-            if(user==null) {
-                Log.i("tag", "INSERT USER");
-                sb = new StringBuffer();
-                sb.append(" INSERT INTO "+ USER_TABLE +" ( ");
-                sb.append(" USER_ID, NAME, EMAIL, GENDER, AGE, POINT, GOAL, REWORD, SUCCESSCNT, FAILCNT ) ");
-                sb.append(" VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) ");
-
-                db.execSQL(sb.toString(),
-                        new Object[]{
-                                data.getmId(),
-                                data.getmName(),
-                                data.getmEmail(),
-                                data.getmGender(),
-                                data.getmAge(),
-                                data.getmPoint(),
-                                data.getmGoal(),
-                                data.getmReword(),
-                                data.getmSuccessCnt(),
-                                data.getmFailCnt()
-                        });
-            } else {
-                Log.i("tag", "UPDATE USER");
-                sb = new StringBuffer();
-                sb.append(" UPDATE "+ USER_TABLE +" SET");
-                sb.append(" POINT = ? ,");
-                sb.append(" GOAL = ? ,");
-                sb.append(" REWORD = ? ,");
-                sb.append(" SUCCESSCNT = ? ,");
-                sb.append(" FAILCNT = ? ");
-                sb.append(" WHERE USER_ID = ? ");
-
-                db.execSQL(sb.toString(),
-                        new Object[]{
-                                user.getmPoint()+data.getmPoint(),
-                                user.getmReword()+data.getmReword(),
-                                user.getmGoal()+data.getmGoal(),
-                                user.getmSuccessCnt()+data.getmSuccessCnt(),
-                                user.getmFailCnt()+data.getmFailCnt(),
-                                data.getmId()
-                        });
-            }
 
         } catch (Exception e) {
             e.printStackTrace();
