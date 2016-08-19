@@ -25,14 +25,12 @@
         android:layout_marginTop="10dp"
         android:id="@+id/linearLayout">
 
-
         <ImageView
             android:id="@+id/tab1_button1"
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:layout_marginRight="30dp"
             android:src="@drawable/bg_round_gray_day"/>
-
 
         <ImageView
             android:id="@+id/tab1_button2"

@@ -46,24 +46,29 @@ public class TabFragment2 extends Fragment {
         chart1 = (HorizontalBarChart) rootView.findViewById(R.id.tab2_chart1);
         chart2 = (HorizontalBarChart) rootView.findViewById(R.id.tab2_chart2);
 
+        buttonOne = (ImageView) rootView.findViewById(R.id.tab2_button1);
+        buttonTwo = (ImageView) rootView.findViewById(R.id.tab2_button2);
+
         chartOne();
         chartTwo();
 
-        buttonOne = (ImageView) rootView.findViewById(R.id.tab2_button1);
         buttonOne.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 layout1.setVisibility(View.VISIBLE);
                 layout2.setVisibility(View.INVISIBLE);
+                buttonOne.setImageResource(R.drawable.bg_round_blue_gender);
+                buttonTwo.setImageResource(R.drawable.bg_round_gray_age);
             }
         });
 
-        buttonTwo = (ImageView) rootView.findViewById(R.id.tab2_button2);
         buttonTwo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 layout1.setVisibility(View.INVISIBLE);
                 layout2.setVisibility(View.VISIBLE);
+                buttonOne.setImageResource(R.drawable.bg_round_gray_gender);
+                buttonTwo.setImageResource(R.drawable.bg_round_blue_age);
             }
         });
 

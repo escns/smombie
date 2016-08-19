@@ -22,21 +22,21 @@
         android:layout_height="wrap_content"
         android:gravity="center_horizontal"
         android:layout_weight="1"
+        android:layout_marginTop="10dp"
         android:id="@+id/linearLayout">
 
         <ImageView
             android:id="@+id/tab2_button1"
-            android:layout_width="70dp"
-            android:layout_height="70dp"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
             android:layout_marginRight="40dp"
-            android:src="@drawable/buttonimage"/>
-
+            android:src="@drawable/bg_round_gray_gender"/>
 
         <ImageView
             android:id="@+id/tab2_button2"
-            android:layout_width="70dp"
-            android:layout_height="70dp"
-            android:src="@drawable/buttonimage" />
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:src="@drawable/bg_round_gray_age" />
     </LinearLayout>
 
     <RelativeLayout
