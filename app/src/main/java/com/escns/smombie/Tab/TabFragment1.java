@@ -63,6 +63,7 @@ public class TabFragment1 extends Fragment {
                 layout1.setVisibility(View.VISIBLE);
                 layout2.setVisibility(View.INVISIBLE);
                 layout3.setVisibility(View.INVISIBLE);
+
             }
         });
 

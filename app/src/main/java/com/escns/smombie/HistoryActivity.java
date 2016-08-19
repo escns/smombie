@@ -183,9 +183,9 @@ public class HistoryActivity extends AppCompatActivity {
         tabLayout.addTab(tabLayout.newTab().setText("날짜별"));//setIcon(android.R.drawable.ic_dialog_email));
         tabLayout.addTab(tabLayout.newTab().setText("관계별"));//setIcon(android.R.drawable.ic_dialog_dialer));
         tabLayout.addTab(tabLayout.newTab().setText("성과별"));//setIcon(android.R.drawable.ic_dialog_map));
-        tabLayout.setTabTextColors(Color.rgb(200,200,200)/*getResources().getColor(R.color.tab_menu)*/, getResources().getColor(R.color.tab_menuSelect));
+        tabLayout.setTabTextColors(getResources().getColor(R.color.tab_menu), getResources().getColor(R.color.tab_menuSelect));
         tabLayout.setSelectedTabIndicatorColor(Color.parseColor("#fd6839"));
-        //tabLayout.setDrawingCacheBackgroundColor(Color.parseColor("#fd6839"));
+        tabLayout.setSelectedTabIndicatorHeight(8);
 
         final ViewPager viewPager = (ViewPager) findViewById(R.id.tab_view);
         final PagerAdapter adapter = new TabPagerAdapter(getSupportFragmentManager(), tabLayout.getTabCount());
