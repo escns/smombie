@@ -6,7 +6,7 @@ package com.escns.smombie.DAO;
 
 public class Record {
 
-    private String mId;
+    private int mId;
     private int mYear;
     private int mMonth;
     private int mDay;
@@ -14,7 +14,7 @@ public class Record {
     private int mDist;
     private int mStepCnt;
 
-    public Record(String mId, int mYear, int mMonth, int mDay, int mHour, int mDist, int mStepCnt) {
+    public Record(int mId, int mYear, int mMonth, int mDay, int mHour, int mDist, int mStepCnt) {
         this.mId = mId;
         this.mYear = mYear;
         this.mMonth = mMonth;
@@ -24,11 +24,11 @@ public class Record {
         this.mStepCnt = mStepCnt;
     }
 
-    public String getmId() {
+    public int getmId() {
         return mId;
     }
 
-    public void setmId(String mId) {
+    public void setmId(int mId) {
         this.mId = mId;
     }
 

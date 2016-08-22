@@ -6,16 +6,16 @@
     android:layout_margin="8dp">
 
     <RelativeLayout
-        android:layout_width="140dp"
-        android:layout_height="140dp"
+        android:layout_width="150dp"
+        android:layout_height="110dp"
         android:background="@color/border_color">
 
     </RelativeLayout>
 
     <ImageView
         android:id="@+id/item_detail_image"
-        android:layout_width="140dp"
-        android:layout_height="140dp"
+        android:layout_width="150dp"
+        android:layout_height="110dp"
         android:padding="1sp"
         android:scaleType="fitXY"
         android:src="@drawable/img_event1"/>

@@ -6,7 +6,7 @@ package com.escns.smombie.DAO;
 
 public class User {
 
-    private String mId;
+    private int mId;
     private String mName;
     private String mEmail;
     private String mGender;
@@ -19,7 +19,7 @@ public class User {
     private int mAvgDist;
 
 
-    public User(String mId, String mName, String mEmail, String mGender, int mAge, int mPoint, int mGoal, int mReword, int mSuccessCnt, int mFailCnt, int mAvgDist) {
+    public User(int mId, String mName, String mEmail, String mGender, int mAge, int mPoint, int mGoal, int mReword, int mSuccessCnt, int mFailCnt, int mAvgDist) {
         this.mId = mId;
         this.mName = mName;
         this.mEmail = mEmail;
@@ -33,11 +33,11 @@ public class User {
         this.mAvgDist = mAvgDist;
     }
 
-    public String getmId() {
+    public int getmId() {
         return mId;
     }
 
-    public void setmId(String mId) {
+    public void setmId(int mId) {
         this.mId = mId;
     }
 

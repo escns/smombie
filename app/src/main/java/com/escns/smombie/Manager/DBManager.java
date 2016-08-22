@@ -45,7 +45,7 @@ public class DBManager extends SQLiteOpenHelper {
 
         sb.append(" CREATE TABLE "+ RECORD_TABLE +" ( ");
         sb.append(" _id INTEGER PRIMARY KEY AUTOINCREMENT, ");
-        sb.append(" USER_ID TEXT, ");
+        sb.append(" USER_ID INTEGER, ");
         sb.append(" YEAR INTEGER, ");
         sb.append(" MONTH INTEGER, ");
         sb.append(" DAY INTEGER, ");
@@ -58,7 +58,7 @@ public class DBManager extends SQLiteOpenHelper {
         sb = new StringBuffer();
 
         sb.append(" CREATE TABLE "+ USER_TABLE +" ( ");
-        sb.append(" USER_ID TEXT PRIMARY KEY, ");
+        sb.append(" USER_ID INTEGER PRIMARY KEY, ");
         sb.append(" NAME TEXT, ");
         sb.append(" EMAIL TEXT, ");
         sb.append(" GENDER TEXT, ");
@@ -143,7 +143,7 @@ public class DBManager extends SQLiteOpenHelper {
                     });
 
             while(cursor.moveToNext()) {
-                record = new Record(cursor.getString(0), cursor.getInt(1), cursor.getInt(2), cursor.getInt(3), cursor.getInt(4), cursor.getInt(5), cursor.getInt(6));
+                record = new Record(cursor.getInt(0), cursor.getInt(1), cursor.getInt(2), cursor.getInt(3), cursor.getInt(4), cursor.getInt(5), cursor.getInt(6));
                 list.add(record);
             }
 
@@ -257,7 +257,7 @@ public class DBManager extends SQLiteOpenHelper {
                     });
 
             while(cursor.moveToNext()) {
-                user = new User(cursor.getString(0), cursor.getString(1), cursor.getString(2), cursor.getString(3), cursor.getInt(4), cursor.getInt(5), cursor.getInt(6), cursor.getInt(7), cursor.getInt(8), cursor.getInt(9), cursor.getInt(10));
+                user = new User(cursor.getInt(0), cursor.getString(1), cursor.getString(2), cursor.getString(3), cursor.getInt(4), cursor.getInt(5), cursor.getInt(6), cursor.getInt(7), cursor.getInt(8), cursor.getInt(9), cursor.getInt(10));
             }
 
         } catch (Exception e) {
