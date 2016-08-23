@@ -57,19 +57,17 @@ public class MainActivity extends AppCompatActivity {
 
     public static Activity mExitAct;
 
-    DrawerLayout drawerLayout; // 메인화면에서의 화면
-    NavigationView navigationView; // Side 메뉴바
+    DrawerLayout drawerLayout;              // 메인화면에서의 화면
+    NavigationView navigationView;          // Side 메뉴바
 
     private SharedPreferences pref;         // 화면 꺼짐 및 이동 시 switch가 초기화되기 때문에 파일에 따로 저장하기 위한 객체
-    private DBManager mDbManager;            // DB 선언
+    private DBManager mDbManager;           // DB 선언
 
     private Conf conf;
 
-    private int mMenuState = 1; // 1:홈   2:히스토리   3:설정   4:내정보   5:로그아웃
+    private int mMenuState = 1;             // 1:홈   2:히스토리   3:설정   4:내정보   5:로그아웃
 
     Fragment mFr2;
-    FragmentManager mFragManager;
-    FragmentTransaction mFragTrans;
 
     private Bitmap mProfileImage;
     private boolean isProfileImageLoaded;
@@ -189,9 +187,6 @@ public class MainActivity extends AppCompatActivity {
         navigationView.inflateMenu((R.menu.navigation_item));
         HeaderLayout = navigationView.getHeaderView(0);
 
-        mFragManager = getSupportFragmentManager();
-        mFragTrans = mFragManager.beginTransaction();
-        //mFr2 = new HistoryActivity();
         mFr2 = new TabFragment1();
 
         // 추가한 코드...아래
