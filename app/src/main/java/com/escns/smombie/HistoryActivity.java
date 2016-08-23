@@ -36,13 +36,6 @@ import java.net.URL;
 
 public class HistoryActivity extends Fragment {
 
-    DrawerLayout drawerLayout;       // 메인화면에서의 화면
-    NavigationView navigationView;   // Side 메뉴바
-
-    private Conf conf;      // 페이스북 개인정보
-
-    private Bitmap mProfileImage;                 // 페이스북으로부터 사진을 받아올 객체
-
     View rootView;
 
     @Override
@@ -59,10 +52,7 @@ public class HistoryActivity extends Fragment {
      * 탭 메뉴 구현
      */
     public void initTab() {
-
-        //Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        //setSupportActionBar(toolbar);
-
+        
         TabLayout tabLayout = (TabLayout) rootView.findViewById(R.id.tab_layout);
 
         tabLayout.addTab(tabLayout.newTab().setText("날짜별"));//setIcon(android.R.drawable.ic_dialog_email));

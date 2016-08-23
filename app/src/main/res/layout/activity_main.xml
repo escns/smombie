@@ -19,16 +19,17 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <!-- 만약 프래그먼트로 작업시에는 이 부분이 Frame이 되야됨 -->
-
             <FrameLayout
                 android:id="@+id/frame_layout"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
-            </FrameLayout>
+            <!-- 만약 프래그먼트로 작업시에는 이 부분이 Frame이 되야됨 -->
+
+
 
             <!-- 만약 프래그먼트로 작업시에는 이 부분이 Frame이 되야됨 -->
+            </FrameLayout>
 
         </android.support.design.widget.CoordinatorLayout>
 

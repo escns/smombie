@@ -55,7 +55,6 @@
 
         <activity android:name=".MainActivity"></activity>
         <activity android:name=".LoginActivity"></activity>
-        <activity android:name=".HistoryActivity"></activity>
 
         <meta-data
             android:name="com.facebook.sdk.ApplicationId"
