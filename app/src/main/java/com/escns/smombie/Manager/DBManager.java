@@ -45,7 +45,7 @@ public class DBManager extends SQLiteOpenHelper {
 
         sb.append(" CREATE TABLE "+ RECORD_TABLE +" ( ");
         sb.append(" _id INTEGER PRIMARY KEY AUTOINCREMENT, ");
-        sb.append(" USER_ID INTEGER, ");
+        sb.append(" USER_ID_INT INTEGER, ");
         sb.append(" YEAR INTEGER, ");
         sb.append(" MONTH INTEGER, ");
         sb.append(" DAY INTEGER, ");
@@ -58,7 +58,8 @@ public class DBManager extends SQLiteOpenHelper {
         sb = new StringBuffer();
 
         sb.append(" CREATE TABLE "+ USER_TABLE +" ( ");
-        sb.append(" USER_ID INTEGER PRIMARY KEY, ");
+        sb.append(" USER_ID_INT INTEGER PRIMARY KEY AUTOINCREMENT, ");
+        sb.append(" USER_ID_TEXT TEXT, ");
         sb.append(" NAME TEXT, ");
         sb.append(" EMAIL TEXT, ");
         sb.append(" GENDER TEXT, ");
@@ -96,12 +97,12 @@ public class DBManager extends SQLiteOpenHelper {
 
             StringBuffer sb = new StringBuffer();
             sb.append(" INSERT INTO "+ RECORD_TABLE +" ( ");
-            sb.append(" USER_ID, YEAR, MONTH, DAY, HOUR, DIST, STEPCNT ) ");
+            sb.append(" USER_ID_INT, YEAR, MONTH, DAY, HOUR, DIST, STEPCNT ) ");
             sb.append(" VALUES ( ?, ?, ?, ?, ?, ?, ? ) ");
 
             db.execSQL(sb.toString(),
                     new Object[]{
-                            data.getmId(),
+                            data.getmIdInt(),
                             data.getmYear(),
                             data.getmMonth(),
                             data.getmDay(),
@@ -124,7 +125,7 @@ public class DBManager extends SQLiteOpenHelper {
      * @param id
      * @return
      */
-    public List<Record> getRecord(String id) {
+    public List<Record> getRecord(int id) {
 
         SQLiteDatabase db = null;
         List<Record> list = new ArrayList<>();
@@ -135,15 +136,21 @@ public class DBManager extends SQLiteOpenHelper {
 
             StringBuffer sb = new StringBuffer();
             sb.append(" SELECT * FROM "+ RECORD_TABLE);
-            sb.append(" WHERE USER_ID is ? ");
+            sb.append(" WHERE USER_ID_INT is ? ");
 
             Cursor cursor = db.rawQuery(sb.toString(),
                     new String[]{
-                            id
+                            ""+id
                     });
 
             while(cursor.moveToNext()) {
-                record = new Record(cursor.getInt(0), cursor.getInt(1), cursor.getInt(2), cursor.getInt(3), cursor.getInt(4), cursor.getInt(5), cursor.getInt(6));
+                record = new Record(cursor.getInt(0),
+                        cursor.getInt(1),
+                        cursor.getInt(2),
+                        cursor.getInt(3),
+                        cursor.getInt(4),
+                        cursor.getInt(5),
+                        cursor.getInt(6));
                 list.add(record);
             }
 
@@ -169,12 +176,13 @@ public class DBManager extends SQLiteOpenHelper {
             StringBuffer sb = new StringBuffer();
 
             sb.append(" INSERT INTO "+ USER_TABLE +" ( ");
-            sb.append(" USER_ID, NAME, EMAIL, GENDER, AGE, POINT, GOAL, REWORD, SUCCESSCNT, FAILCNT, AVGDIST ) ");
-            sb.append(" VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) ");
+            sb.append(" USER_ID_INT, USER_ID_TEXT, NAME, EMAIL, GENDER, AGE, POINT, GOAL, REWORD, SUCCESSCNT, FAILCNT, AVGDIST ) ");
+            sb.append(" VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) ");
 
             db.execSQL(sb.toString(),
                     new Object[]{
-                            data.getmId(),
+                            data.getmIdInt(),
+                            data.getmIdStr(),
                             data.getmName(),
                             data.getmEmail(),
                             data.getmGender(),
@@ -218,7 +226,7 @@ public class DBManager extends SQLiteOpenHelper {
             sb.append(" SUCCESSCNT = ? ,");
             sb.append(" FAILCNT = ? ");
             sb.append(" AVGDIST = ? ");
-            sb.append(" WHERE USER_ID = ? ");
+            sb.append(" WHERE USER_ID_INT = ? ");
 
             db.execSQL(sb.toString(),
                     new Object[]{
@@ -227,7 +235,7 @@ public class DBManager extends SQLiteOpenHelper {
                             user.getmGoal()+data.getmGoal(),
                             user.getmSuccessCnt()+data.getmSuccessCnt(),
                             user.getmFailCnt()+data.getmFailCnt(),
-                            data.getmId()
+                            data.getmIdInt()
                     });
 
         } catch (Exception e) {
@@ -239,7 +247,7 @@ public class DBManager extends SQLiteOpenHelper {
         }
     }
 
-    public User getUser(String id) {
+    public User getUser(int id) {
 
         SQLiteDatabase db = null;
         User user = null;
@@ -249,15 +257,26 @@ public class DBManager extends SQLiteOpenHelper {
 
             StringBuffer sb = new StringBuffer();
             sb.append(" SELECT * FROM "+ USER_TABLE);
-            sb.append(" WHERE USER_ID is ? ");
+            sb.append(" WHERE USER_ID_INT is ? ");
 
             Cursor cursor = db.rawQuery(sb.toString(),
                     new String[]{
-                            id
+                            ""+id
                     });
 
             while(cursor.moveToNext()) {
-                user = new User(cursor.getInt(0), cursor.getString(1), cursor.getString(2), cursor.getString(3), cursor.getInt(4), cursor.getInt(5), cursor.getInt(6), cursor.getInt(7), cursor.getInt(8), cursor.getInt(9), cursor.getInt(10));
+                user = new User(cursor.getInt(0),
+                        cursor.getString(1),
+                        cursor.getString(2),
+                        cursor.getString(3),
+                        cursor.getString(4),
+                        cursor.getInt(5),
+                        cursor.getInt(6),
+                        cursor.getInt(7),
+                        cursor.getInt(8),
+                        cursor.getInt(9),
+                        cursor.getInt(10),
+                        cursor.getInt(11));
             }
 
         } catch (Exception e) {
@@ -269,38 +288,5 @@ public class DBManager extends SQLiteOpenHelper {
         }
 
         return user;
-    }
-
-
-
-
-    //////////////////////////////////////////////////////////////////////////////////////////////
-    /**
-     * 빈데이터의 행 하나를 추가하는 함수
-     * @param query
-     */
-    public void insertRow(String query) {
-        SQLiteDatabase db = getWritableDatabase(); // 데이터베이스 불러오기 - 쓰기전용
-        db.execSQL("INSERT INTO "+ RECORD_TABLE +" VALUES"+ query); // 쿼리문 입력
-        db.close();
-    }
-
-    /**
-     * 테이블의 행 갯수 출력
-     * @return 행 갯수 반환
-     */
-    public int getRowCount() {
-        SQLiteDatabase db = getReadableDatabase(); // 데이터베이스 불러오기 - 읽기전용
-        int cnt = 0; // 걸음 수
-
-        Cursor cursor; // 테이블 한줄한줄 읽어오기 위한 Cursor 클래스
-        cursor = db.rawQuery("SELECT * from "+ RECORD_TABLE, null); // RECORD_LIST 테이블 전부 콜
-        while(cursor.moveToNext()) { // 테이블이 끝 날때까지 동작하는 반복문
-            cnt++;
-        }
-        cursor.close();
-        db.close();
-
-        return cnt;
     }
 }

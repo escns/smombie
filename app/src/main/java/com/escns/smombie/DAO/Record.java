@@ -6,7 +6,7 @@ package com.escns.smombie.DAO;
 
 public class Record {
 
-    private int mId;
+    private int mIdInt;
     private int mYear;
     private int mMonth;
     private int mDay;
@@ -14,8 +14,8 @@ public class Record {
     private int mDist;
     private int mStepCnt;
 
-    public Record(int mId, int mYear, int mMonth, int mDay, int mHour, int mDist, int mStepCnt) {
-        this.mId = mId;
+    public Record(int mIdInt, int mYear, int mMonth, int mDay, int mHour, int mDist, int mStepCnt) {
+        this.mIdInt = mIdInt;
         this.mYear = mYear;
         this.mMonth = mMonth;
         this.mDay = mDay;
@@ -24,12 +24,12 @@ public class Record {
         this.mStepCnt = mStepCnt;
     }
 
-    public int getmId() {
-        return mId;
+    public int getmIdInt() {
+        return mIdInt;
     }
 
-    public void setmId(int mId) {
-        this.mId = mId;
+    public void setmIdInt(int mIdInt) {
+        this.mIdInt = mIdInt;
     }
 
     public int getmYear() {
@@ -83,7 +83,7 @@ public class Record {
     @Override
     public String toString() {
         return "Record {" +
-                "mId='" + mId + '\'' +
+                "mIdInt='" + mIdInt + '\'' +
                 ", mYear=" + mYear +
                 ", mMonth=" + mMonth +
                 ", mDay=" + mDay +

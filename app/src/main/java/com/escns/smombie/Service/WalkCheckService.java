@@ -120,7 +120,7 @@ public class WalkCheckService extends Service {
                         Record record = new Record("hajaekwon", calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DATE), calendar.get(Calendar.HOUR), (int)distance, 0);
                         mDbManager.insertRecord(record);
 
-                        mDbManager.updateUser(new User("hajaekwon", "hajaekwon", "hazxz@naver.com", "남자",  26, (int)distance, 1000, 0, 1, 0, 0));
+                        mDbManager.updateUser(new User(1, "hajaekwon", "hajaekwon", "hazxz@naver.com", "남자",  26, (int)distance, 1000, 0, 1, 0, 0));
 
                         List<Record> list = mDbManager.getRecord("hajaekwon");
                         for(Record s : list) {

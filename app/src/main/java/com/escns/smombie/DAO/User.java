@@ -6,7 +6,8 @@ package com.escns.smombie.DAO;
 
 public class User {
 
-    private int mId;
+    private int mIdInt;
+    private String mIdStr;
     private String mName;
     private String mEmail;
     private String mGender;
@@ -19,8 +20,9 @@ public class User {
     private int mAvgDist;
 
 
-    public User(int mId, String mName, String mEmail, String mGender, int mAge, int mPoint, int mGoal, int mReword, int mSuccessCnt, int mFailCnt, int mAvgDist) {
-        this.mId = mId;
+    public User(int mIdInt, String mIdStr, String mName, String mEmail, String mGender, int mAge, int mPoint, int mGoal, int mReword, int mSuccessCnt, int mFailCnt, int mAvgDist) {
+        this.mIdInt = mIdInt;
+        this.mIdStr = mIdStr;
         this.mName = mName;
         this.mEmail = mEmail;
         this.mGender = mGender;
@@ -33,12 +35,20 @@ public class User {
         this.mAvgDist = mAvgDist;
     }
 
-    public int getmId() {
-        return mId;
+    public int getmIdInt() {
+        return mIdInt;
     }
 
-    public void setmId(int mId) {
-        this.mId = mId;
+    public void setmIdInt(int mIdInt) {
+        this.mIdInt = mIdInt;
+    }
+
+    public String getmIdStr() {
+        return mIdStr;
+    }
+
+    public void setmIdStr(String mIdStr) {
+        this.mIdStr = mIdStr;
     }
 
     public String getmName() {
@@ -124,7 +134,8 @@ public class User {
     @Override
     public String toString() {
         return "User{" +
-                "mId='" + mId + '\'' +
+                "mIdInt='" + mIdInt + '\'' +
+                ", mIdStr='" + mIdStr + '\'' +
                 ", mName='" + mName + '\'' +
                 ", mEmail='" + mEmail + '\'' +
                 ", mGender='" + mGender + '\'' +

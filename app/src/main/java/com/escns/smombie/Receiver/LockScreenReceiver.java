@@ -341,7 +341,7 @@ public class LockScreenReceiver extends BroadcastReceiver {
 
         // NOTE: The order of the entries when being added to the entries array determines their position around the center of
         // the chart.
-        User user = new DBManager(mContext).getUser(conf.mFbId);
+        User user = new DBManager(mContext).getUser(conf.mPrimaryKey);
         //entries.add(new PieEntry((float) (50), "진행률"));
         entries.add(new PieEntry((float) (user.getmPoint()), "진행률"));
         entries.add(new PieEntry((float) (user.getmGoal()), "목표치"));
