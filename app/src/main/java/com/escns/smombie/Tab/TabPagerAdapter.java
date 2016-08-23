@@ -10,11 +10,19 @@ import android.support.v4.app.FragmentPagerAdapter;
 
 public class TabPagerAdapter extends FragmentPagerAdapter {
 
-    int tabCount;
+    private int tabCount;
+
+    TabFragment1 frag1;
+    TabFragment2 frag2;
+    TabFragment3 frag3;
 
     public TabPagerAdapter(FragmentManager fm, int numberOfTabs) {
         super(fm);
         this.tabCount = numberOfTabs;
+        frag1 = new TabFragment1();
+        frag2 = new TabFragment2();
+        frag3 = new TabFragment3();
+
     }
 
     @Override
@@ -22,13 +30,10 @@ public class TabPagerAdapter extends FragmentPagerAdapter {
 
         switch (position) {
             case 0:
-                TabFragment1 frag1 = new TabFragment1();
                 return frag1;
             case 1:
-                TabFragment2 frag2 = new TabFragment2();
                 return frag2;
             case 2:
-                TabFragment3 frag3 = new TabFragment3();
                 return frag3;
             default:
                 return null;

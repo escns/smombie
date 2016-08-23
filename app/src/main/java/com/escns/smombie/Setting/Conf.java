@@ -1,5 +1,7 @@
 package com.escns.smombie.Setting;
 
+import android.graphics.Bitmap;
+
 /**
  * Created by Administrator on 2016-08-19.
  */
@@ -14,6 +16,7 @@ public class Conf {
     public String mFbEmail;        // 페이스북 이메일
     public String mFbGender;       // 페이스북 성별
     public int mFbAge;             // 페이스북 나이
+    public Bitmap mFbProfileImage;
 
     public static Conf getInstance() {
         if(conf==null) {

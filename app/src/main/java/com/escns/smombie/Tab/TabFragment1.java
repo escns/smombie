@@ -64,8 +64,8 @@ public class TabFragment1 extends Fragment {
             @Override
             public void onClick(View v) {
                 layout1.setVisibility(View.VISIBLE);
-                layout2.setVisibility(View.INVISIBLE);
-                layout3.setVisibility(View.INVISIBLE);
+                layout2.setVisibility(View.GONE);
+                layout3.setVisibility(View.GONE);
                 buttonOne.setImageResource(R.drawable.bg_round_blue_day);
                 buttonTwo.setImageResource(R.drawable.bg_round_gray_week);
                 buttonThree.setImageResource(R.drawable.bg_round_gray_month);
@@ -77,9 +77,9 @@ public class TabFragment1 extends Fragment {
         buttonTwo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                layout1.setVisibility(View.INVISIBLE);
+                layout1.setVisibility(View.GONE);
                 layout2.setVisibility(View.VISIBLE);
-                layout3.setVisibility(View.INVISIBLE);
+                layout3.setVisibility(View.GONE);
                 buttonOne.setImageResource(R.drawable.bg_round_gray_day);
                 buttonTwo.setImageResource(R.drawable.bg_round_blue_week);
                 buttonThree.setImageResource(R.drawable.bg_round_gray_month);
@@ -89,8 +89,8 @@ public class TabFragment1 extends Fragment {
         buttonThree.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                layout1.setVisibility(View.INVISIBLE);
-                layout2.setVisibility(View.INVISIBLE);
+                layout1.setVisibility(View.GONE);
+                layout2.setVisibility(View.GONE);
                 layout3.setVisibility(View.VISIBLE);
                 buttonOne.setImageResource(R.drawable.bg_round_gray_day);
                 buttonTwo.setImageResource(R.drawable.bg_round_gray_week);

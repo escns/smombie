@@ -1,12 +1,16 @@
-package com.escns.smombie;
+package com.escns.smombie.ScreenFragment;
 
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.IBinder;
+import android.os.Message;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -23,9 +27,13 @@ import com.escns.smombie.DAO.User;
 import com.escns.smombie.Interface.ApiService;
 import com.escns.smombie.Item.ItemMain;
 import com.escns.smombie.Manager.DBManager;
+import com.escns.smombie.R;
 import com.escns.smombie.Service.LockScreenService;
 import com.escns.smombie.Setting.Conf;
+import com.escns.smombie.View.CustomImageView;
 
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -50,6 +58,8 @@ public class MainFragment extends Fragment {
     private boolean mBound = false; // WalkCheckService Service가 제대로 동작하면 true 아니면 false
     private Retrofit mRetrofit;
     private ApiService mApiService;
+
+    private Bitmap mFbProfileImage;
 
     View rootView;
 
@@ -91,6 +101,10 @@ public class MainFragment extends Fragment {
         mDbManager = new DBManager(mContext);
 
         conf = Conf.getInstance();
+
+        // 메인화면
+        //((CustomImageView) rootView.findViewById(R.id.profile_view)).setImageBitmap(conf.mFbProfileImage);
+        ((TextView) rootView.findViewById(R.id.user_email)).setText(conf.mFbEmail);
 
         SwitchCompat swc = (SwitchCompat) rootView.findViewById(R.id.switch_lock);
         swc.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
