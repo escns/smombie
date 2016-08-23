@@ -117,12 +117,12 @@ public class WalkCheckService extends Service {
                         double distance = mGpsManager.calculateDistance(mStartLon, mStartLat, mLastLon, mLastLat);
 
                         Calendar calendar = Calendar.getInstance();
-                        Record record = new Record("hajaekwon", calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DATE), calendar.get(Calendar.HOUR), (int)distance, 0);
+                        Record record = new Record(1, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DATE), calendar.get(Calendar.HOUR), (int)distance, 0);
                         mDbManager.insertRecord(record);
 
                         mDbManager.updateUser(new User(1, "hajaekwon", "hajaekwon", "hazxz@naver.com", "남자",  26, (int)distance, 1000, 0, 1, 0, 0));
 
-                        List<Record> list = mDbManager.getRecord("hajaekwon");
+                        List<Record> list = mDbManager.getRecord(1);
                         for(Record s : list) {
                             Toast.makeText(getApplicationContext(), s.toString(), Toast.LENGTH_SHORT).show();
                             Log.i("tag", s.toString());
