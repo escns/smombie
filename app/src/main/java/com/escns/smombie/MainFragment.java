@@ -5,10 +5,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.os.Message;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -28,8 +26,6 @@ import com.escns.smombie.Manager.DBManager;
 import com.escns.smombie.Service.LockScreenService;
 import com.escns.smombie.Setting.Conf;
 
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -42,7 +38,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class MainFragment extends Fragment {
 
-    static Context mContext;
+    private Context mContext;
 
     public final static int DEFAULT_GOAL = 1000;
 
@@ -88,6 +84,8 @@ public class MainFragment extends Fragment {
     }
 
     public void init() {
+
+        mContext = getContext();
 
         pref = mContext.getSharedPreferences("pref", mContext.MODE_PRIVATE);
         mDbManager = new DBManager(mContext);

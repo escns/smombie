@@ -1,49 +1,31 @@
 package com.escns.smombie;
 
 import android.app.Activity;
-import android.content.ComponentName;
-import android.content.Context;
 import android.content.Intent;
-import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.IBinder;
 import android.os.Message;
 import android.support.design.widget.NavigationView;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.SwitchCompat;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.CompoundButton;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import com.escns.smombie.Adapter.ItemMainAdpater;
 import com.escns.smombie.DAO.User;
 import com.escns.smombie.Interface.ApiService;
-import com.escns.smombie.Item.ItemMain;
 import com.escns.smombie.Manager.DBManager;
-import com.escns.smombie.Service.LockScreenService;
 import com.escns.smombie.Setting.Conf;
-import com.escns.smombie.Tab.TabFragment1;
 import com.escns.smombie.View.CustomImageView;
 
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
 
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -67,7 +49,8 @@ public class MainActivity extends AppCompatActivity {
 
     private int mMenuState = 1;             // 1:홈   2:히스토리   3:설정   4:내정보   5:로그아웃
 
-    Fragment mFr2;
+    MainFragment mMainFragment;
+    HistoryFragment mHistoryFragment;
 
     private Bitmap mProfileImage;
     private boolean isProfileImageLoaded;
@@ -87,11 +70,7 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void handleMessage(Message msg) {
             if(msg.what==UPDATE_PROFILE_IMAGE) {
-                ((CustomImageView) findViewById(R.id.profile_view)).setImageBitmap(mProfileImage);
                 ((CustomImageView)HeaderLayout.findViewById(R.id.header_profile)).setImageBitmap(mProfileImage);
-                ((TextView)findViewById(R.id.user_email)).setText(conf.mFbEmail);
-                ((TextView)HeaderLayout.findViewById(R.id.header_name)).setText(conf.mFbName);
-                ((TextView)HeaderLayout.findViewById(R.id.header_email)).setText(conf.mFbEmail);
                 isProfileImageLoaded=true;
             }
         }
@@ -101,6 +80,10 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        mMainFragment = new MainFragment();
+        mHistoryFragment = new HistoryFragment();
+        getSupportFragmentManager().beginTransaction().replace(R.id.frame_layout, mMainFragment).commit();
 
         initDrawer(); // 툴바 구현
         init();
@@ -120,10 +103,6 @@ public class MainActivity extends AppCompatActivity {
             Goal = user.getmGoal();
             Reword = user.getmReword();
         }
-
-        ((TextView) findViewById(R.id.section1_text)).setText(""+Point);
-        ((TextView) findViewById(R.id.section2_text)).setText(""+Goal);
-        ((TextView) findViewById(R.id.section3_text)).setText(""+Reword);
         super.onResume();
     }
 
@@ -187,8 +166,6 @@ public class MainActivity extends AppCompatActivity {
         navigationView.inflateMenu((R.menu.navigation_item));
         HeaderLayout = navigationView.getHeaderView(0);
 
-        mFr2 = new TabFragment1();
-
         // 추가한 코드...아래
         // 사이드메뉴에 있는 item들을 클릭 시 동작
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
@@ -203,16 +180,15 @@ public class MainActivity extends AppCompatActivity {
                 switch(id) {
                     case R.id.drawer_Home: // 홈
 
+                        getSupportFragmentManager().beginTransaction().replace(R.id.frame_layout, mMainFragment).commit();
+
                         mMenuState = 1;
                         drawerLayout.closeDrawer(navigationView);
                         return true;
 
                     case R.id.drawer_menu1 : // 히스토리
-                        //intent = new Intent(getApplicationContext(), HistoryActivity.class);
-                        //startActivity(intent);
 
-                        mFragTrans.replace(R.id.frame_layout, mFr2);
-                        mFragTrans.commit();
+                        getSupportFragmentManager().beginTransaction().replace(R.id.frame_layout, mHistoryFragment).commit();
 
                         mMenuState = 2;
                         drawerLayout.closeDrawer(navigationView);
@@ -280,26 +256,7 @@ public class MainActivity extends AppCompatActivity {
         });
         thread.start();
 
-        SwitchCompat swc = (SwitchCompat) findViewById(R.id.switch_lock);
-        swc.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 
-                if(isChecked) {
-
-                    pref.edit().putBoolean("switch", true).commit();
-
-                    Intent intent = new Intent("com.escns.smombie.service").setPackage("com.escns.smombie");
-                    bindService(intent, mConnection, Context.BIND_AUTO_CREATE); // 만보기 동작
-                    startService(new Intent(MainActivity.this, LockScreenService.class));
-                } else {
-                    pref.edit().putBoolean("switch", false).commit();
-
-                    unbindService(mConnection);
-                    stopService(new Intent(MainActivity.this, LockScreenService.class));
-                }
-            }
-        });
 
         mRetrofit = new Retrofit.Builder().baseUrl(mApiService.API_URL).addConverterFactory(GsonConverterFactory.create()).build();
         mApiService = mRetrofit.create(ApiService.class);
@@ -336,48 +293,6 @@ public class MainActivity extends AppCompatActivity {
         });
         */
 
-        final List<ItemMain> ItemMains = new ArrayList<>();
-        ItemMains.add(new ItemMain(true, "이벤트", R.drawable.title_icon_event));
-        ItemMains.add(new ItemMain(false, R.drawable.img_event1));
-        ItemMains.add(new ItemMain(false, R.drawable.img_event2));
-        ItemMains.add(new ItemMain(false, R.drawable.img_event1));
 
-        ItemMains.add(new ItemMain(true, "제휴 서비스", R.drawable.title_icon_service));
-        ItemMains.add(new ItemMain(false, R.drawable.img_event2));
-        ItemMains.add(new ItemMain(false, R.drawable.img_event2));
-        ItemMains.add(new ItemMain(false, R.drawable.img_event1));
-
-        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.id_stickynavlayout_innerscrollview);
-        final GridLayoutManager gridLayoutManager = new GridLayoutManager(this,2);
-        gridLayoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
-            @Override
-            public int getSpanSize(int position) {
-                if(ItemMains.get(position).isHeader()) return gridLayoutManager.getSpanCount();
-                return 1;
-            }
-        });
-        recyclerView.setLayoutManager(gridLayoutManager);
-        recyclerView.setAdapter(new ItemMainAdpater(ItemMains));
     }
-
-    // ThreadService와 MainActivity를 연결 시켜줄 ServiceConnection
-    /** Defines callbacks for service binding, passed to bindService() */
-    private ServiceConnection mConnection = new ServiceConnection() {
-
-        // 리턴되는 Binder를 다시 Service로 꺼내서 ThreadSerivce내부의 함수 사용이 가능하다.
-        @Override
-        public void onServiceConnected(ComponentName className, IBinder service) {
-            //WalkCheckService.LocalBinder binder = (WalkCheckService.LocalBinder) service;
-            //mService = binder.getService();
-            mBound = true;
-            Log.d("tag", "onServiceConnected");
-        }
-
-        @Override
-        public void onServiceDisconnected(ComponentName arg0) {
-            mBound = false;
-            Log.d("tag", "onServiceDisconnected");
-        }
-    };
-
 }

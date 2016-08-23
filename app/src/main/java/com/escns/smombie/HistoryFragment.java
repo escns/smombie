@@ -1,40 +1,22 @@
 package com.escns.smombie;
 
-import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
-import android.support.annotation.Nullable;
-import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
-import com.escns.smombie.Setting.Conf;
 import com.escns.smombie.Tab.TabPagerAdapter;
-import com.escns.smombie.View.CustomImageView;
-
-import java.net.HttpURLConnection;
-import java.net.URL;
 
 /**
  * Created by hyo99 on 2016-08-16.
  */
 
-public class HistoryActivity extends Fragment {
+public class HistoryFragment extends Fragment {
 
     View rootView;
 
