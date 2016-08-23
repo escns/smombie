@@ -13,6 +13,9 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
@@ -34,6 +37,7 @@ import com.escns.smombie.Item.ItemMain;
 import com.escns.smombie.Manager.DBManager;
 import com.escns.smombie.Service.LockScreenService;
 import com.escns.smombie.Setting.Conf;
+import com.escns.smombie.Tab.TabFragment1;
 import com.escns.smombie.View.CustomImageView;
 
 import java.net.HttpURLConnection;
@@ -60,6 +64,12 @@ public class MainActivity extends AppCompatActivity {
     private DBManager mDbManager;            // DB 선언
 
     private Conf conf;
+
+    private int mMenuState = 1; // 1:홈   2:히스토리   3:설정   4:내정보   5:로그아웃
+
+    Fragment mFr2;
+    FragmentManager mFragManager;
+    FragmentTransaction mFragTrans;
 
     private Bitmap mProfileImage;
     private boolean isProfileImageLoaded;
@@ -121,16 +131,25 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        double curTime = System.currentTimeMillis();
-        double intervalTime = curTime - mbackPressedTime;
 
-        if(intervalTime <= 2000) {
-            super.onBackPressed();
+        if(mMenuState == 1) {
+            double curTime = System.currentTimeMillis();
+            double intervalTime = curTime - mbackPressedTime;
+
+            if (intervalTime <= 2000) {
+                super.onBackPressed();
+            } else {
+                mbackPressedTime = System.currentTimeMillis();
+                Toast.makeText(getApplicationContext(), "종료하실려면 한번 더 눌러주십시오", Toast.LENGTH_SHORT).show();
+            }
         }
-        else {
-            mbackPressedTime = System.currentTimeMillis();
-            Toast.makeText(getApplicationContext(), "종료하실려면 한번 더 눌러주십시오", Toast.LENGTH_SHORT).show();
+        else if(mMenuState == 2) {
+            Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+            startActivity(intent);
+            finish();
         }
+
+
     }
 
     /**
@@ -170,6 +189,11 @@ public class MainActivity extends AppCompatActivity {
         navigationView.inflateMenu((R.menu.navigation_item));
         HeaderLayout = navigationView.getHeaderView(0);
 
+        mFragManager = getSupportFragmentManager();
+        mFragTrans = mFragManager.beginTransaction();
+        //mFr2 = new HistoryActivity();
+        mFr2 = new TabFragment1();
+
         // 추가한 코드...아래
         // 사이드메뉴에 있는 item들을 클릭 시 동작
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
@@ -183,24 +207,34 @@ public class MainActivity extends AppCompatActivity {
                 Intent intent;
                 switch(id) {
                     case R.id.drawer_Home: // 홈
+
+                        mMenuState = 1;
                         drawerLayout.closeDrawer(navigationView);
                         return true;
 
                     case R.id.drawer_menu1 : // 히스토리
-                        intent = new Intent(getApplicationContext(), HistoryActivity.class);
-                        startActivity(intent);
+                        //intent = new Intent(getApplicationContext(), HistoryActivity.class);
+                        //startActivity(intent);
+
+                        mFragTrans.replace(R.id.frame_layout, mFr2);
+                        mFragTrans.commit();
+
+                        mMenuState = 2;
                         drawerLayout.closeDrawer(navigationView);
                         return true;
 
                     case R.id.drawer_menu2 : // 설정
+                        mMenuState = 3;
                         drawerLayout.closeDrawer(navigationView);
                         return true;
 
                     case R.id.drawer_menu3 : // 내정보
+                        mMenuState = 4;
                         drawerLayout.closeDrawer(navigationView);
                         return true;
 
                     case R.id.drawer_menu4 : // 로그아웃
+                        mMenuState = 5;
                         com.facebook.login.LoginManager.getInstance().logOut();
                         intent = new Intent(getApplicationContext(), StartActivity.class);
                         startActivity(intent);
@@ -225,14 +259,6 @@ public class MainActivity extends AppCompatActivity {
         mDbManager = new DBManager(this);
 
         conf = Conf.getInstance();
-
-        // LoginActivity로부터 페이스북 프로필정보 받아오기
-        conf.mPrimaryKey = 1; // DB에서 받아와야함
-        conf.mFbId = getIntent().getStringExtra("id");
-        conf.mFbName = getIntent().getStringExtra("name");
-        conf.mFbEmail = getIntent().getStringExtra("email");
-        conf.mFbGender = getIntent().getStringExtra("gender");
-        conf.mFbAge = getIntent().getIntExtra("age", 0);
 
         Thread thread =  new Thread(new Runnable() {
             @Override
@@ -358,6 +384,5 @@ public class MainActivity extends AppCompatActivity {
             Log.d("tag", "onServiceDisconnected");
         }
     };
-
 
 }

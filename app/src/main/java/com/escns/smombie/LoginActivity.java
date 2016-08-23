@@ -14,6 +14,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.escns.smombie.Manager.DBManager;
+import com.escns.smombie.Setting.Conf;
 import com.escns.smombie.View.CustomImageView;
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
@@ -39,6 +40,8 @@ public class LoginActivity extends Activity {
 
     private DBManager mDbManger;
 
+    private Conf conf;
+
     private String mFbId;           // 페이스북 ID
     private String mFbName;         // 페이스북 이름
     private String mFbEmail;        // 페이스북 이메일
@@ -63,6 +66,7 @@ public class LoginActivity extends Activity {
 
         // DB 생성
         mDbManger = new DBManager(this);
+        conf = Conf.getInstance();
 
         mLoginBackground = (ImageView) findViewById(R.id.login_background);
         Picasso.with(this).load(R.drawable.bg_login).fit().into(mLoginBackground);
@@ -117,12 +121,16 @@ public class LoginActivity extends Activity {
                                     Log.d("tag", "User Gender : " + mFbGender);
                                     Log.d("tag", "User Age : " + mFbAge);
 
+
+                                    // LoginActivity로부터 페이스북 프로필정보 받아오기
+                                    conf.mPrimaryKey = 1; // DB에서 받아와야함
+                                    conf.mFbId = mFbId;
+                                    conf.mFbName = mFbName;
+                                    conf.mFbEmail = mFbEmail;
+                                    conf.mFbGender = mFbGender;
+                                    conf.mFbAge = mFbAge;
+
                                     Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-                                    intent.putExtra("id", mFbId);
-                                    intent.putExtra("name", mFbName);
-                                    intent.putExtra("email", mFbEmail);
-                                    intent.putExtra("gender", mFbGender);
-                                    intent.putExtra("age", mFbAge);
                                     startActivity(intent);
                                     finish();
 
