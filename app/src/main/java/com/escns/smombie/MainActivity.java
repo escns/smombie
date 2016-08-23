@@ -1,9 +1,7 @@
 package com.escns.smombie;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Handler;
@@ -16,11 +14,16 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.escns.smombie.DAO.User;
 import com.escns.smombie.Interface.ApiService;
 import com.escns.smombie.Manager.DBManager;
+import com.escns.smombie.ScreenFragment.HistoryFragment;
+import com.escns.smombie.ScreenFragment.InfoFragment;
+import com.escns.smombie.ScreenFragment.MainFragment;
+import com.escns.smombie.ScreenFragment.SetFragment;
 import com.escns.smombie.Setting.Conf;
 import com.escns.smombie.View.CustomImageView;
 
@@ -37,8 +40,6 @@ public class MainActivity extends AppCompatActivity {
 
     public final static int DEFAULT_GOAL = 1000;
 
-    public static Activity mExitAct;
-
     DrawerLayout drawerLayout;              // 메인화면에서의 화면
     NavigationView navigationView;          // Side 메뉴바
 
@@ -51,8 +52,9 @@ public class MainActivity extends AppCompatActivity {
 
     MainFragment mMainFragment;
     HistoryFragment mHistoryFragment;
+    SetFragment mSetFragment;
+    InfoFragment mInfoFragment;
 
-    private Bitmap mProfileImage;
     private boolean isProfileImageLoaded;
 
     private View HeaderLayout;
@@ -70,7 +72,10 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void handleMessage(Message msg) {
             if(msg.what==UPDATE_PROFILE_IMAGE) {
-                ((CustomImageView)HeaderLayout.findViewById(R.id.header_profile)).setImageBitmap(mProfileImage);
+                // 사이드 메뉴 header
+                ((CustomImageView)HeaderLayout.findViewById(R.id.header_profile)).setImageBitmap(conf.mFbProfileImage);
+                ((TextView)HeaderLayout.findViewById(R.id.header_name)).setText(conf.mFbName);
+                ((TextView)HeaderLayout.findViewById(R.id.header_email)).setText(conf.mFbEmail);
                 isProfileImageLoaded=true;
             }
         }
@@ -83,7 +88,8 @@ public class MainActivity extends AppCompatActivity {
 
         mMainFragment = new MainFragment();
         mHistoryFragment = new HistoryFragment();
-        getSupportFragmentManager().beginTransaction().replace(R.id.frame_layout, mMainFragment).commit();
+        mSetFragment = new SetFragment();
+        mInfoFragment = new InfoFragment();
 
         initDrawer(); // 툴바 구현
         init();
@@ -110,10 +116,12 @@ public class MainActivity extends AppCompatActivity {
     public void onBackPressed() {
 
         if(mMenuState == 1) {
+            drawerLayout.closeDrawer(navigationView);
+
             double curTime = System.currentTimeMillis();
             double intervalTime = curTime - mbackPressedTime;
 
-            if (intervalTime <= 2000) {
+            if (intervalTime <= 1000) {
                 super.onBackPressed();
             } else {
                 mbackPressedTime = System.currentTimeMillis();
@@ -121,11 +129,20 @@ public class MainActivity extends AppCompatActivity {
             }
         }
         else if(mMenuState == 2) {
-            Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-            startActivity(intent);
-            finish();
+            mMenuState = 1;
+            getSupportFragmentManager().beginTransaction().replace(R.id.frame_layout, mMainFragment).commit();
+            drawerLayout.closeDrawer(navigationView);
         }
-
+        else if(mMenuState == 3) {
+            mMenuState = 1;
+            getSupportFragmentManager().beginTransaction().replace(R.id.frame_layout, mMainFragment).commit();
+            drawerLayout.closeDrawer(navigationView);
+        }
+        else if(mMenuState == 4) {
+            mMenuState = 1;
+            getSupportFragmentManager().beginTransaction().replace(R.id.frame_layout, mMainFragment).commit();
+            drawerLayout.closeDrawer(navigationView);
+        }
 
     }
 
@@ -175,32 +192,44 @@ public class MainActivity extends AppCompatActivity {
                 Log.d("tag", "Click item in side Menu");
 
                 int id = item.getItemId();
+                item.setCheckable(false);
 
                 Intent intent;
                 switch(id) {
                     case R.id.drawer_Home: // 홈
 
-                        getSupportFragmentManager().beginTransaction().replace(R.id.frame_layout, mMainFragment).commit();
-
-                        mMenuState = 1;
+                        if(mMenuState != 1) {
+                            mMenuState = 1;
+                            getSupportFragmentManager().beginTransaction().replace(R.id.frame_layout, mMainFragment).commit();
+                        }
                         drawerLayout.closeDrawer(navigationView);
+
                         return true;
 
                     case R.id.drawer_menu1 : // 히스토리
 
-                        getSupportFragmentManager().beginTransaction().replace(R.id.frame_layout, mHistoryFragment).commit();
-
-                        mMenuState = 2;
+                        if(mMenuState != 2) {
+                            mMenuState = 2;
+                            getSupportFragmentManager().beginTransaction().replace(R.id.frame_layout, mHistoryFragment).commit();
+                        }
                         drawerLayout.closeDrawer(navigationView);
                         return true;
 
                     case R.id.drawer_menu2 : // 설정
-                        mMenuState = 3;
+
+                        if(mMenuState != 3) {
+                            mMenuState = 3;
+                            getSupportFragmentManager().beginTransaction().replace(R.id.frame_layout, mSetFragment).commit();
+                        }
                         drawerLayout.closeDrawer(navigationView);
                         return true;
 
                     case R.id.drawer_menu3 : // 내정보
-                        mMenuState = 4;
+
+                        if(mMenuState != 4) {
+                            mMenuState = 4;
+                            getSupportFragmentManager().beginTransaction().replace(R.id.frame_layout, mInfoFragment).commit();
+                        }
                         drawerLayout.closeDrawer(navigationView);
                         return true;
 
@@ -224,8 +253,6 @@ public class MainActivity extends AppCompatActivity {
      */
     public void init() {
 
-        mExitAct = MainActivity.this; // 다른 Activity에서 MainActivity를 종료하기 위함
-
         pref = getSharedPreferences("pref", MODE_PRIVATE);
         mDbManager = new DBManager(this);
 
@@ -240,7 +267,7 @@ public class MainActivity extends AppCompatActivity {
                         HttpURLConnection conn = (HttpURLConnection) url.openConnection();              //  아래 코드는 웹에서 이미지를 가져온 뒤
                         conn.setDoInput(true);
                         conn.connect();
-                        mProfileImage = BitmapFactory.decodeStream(conn.getInputStream());               //  이미지 뷰에 지정할 Bitmap을 생성하는 과정
+                        conf.mFbProfileImage = BitmapFactory.decodeStream(conn.getInputStream());               //  이미지 뷰에 지정할 Bitmap을 생성하는 과정
 
                         Thread.sleep(100);
 
@@ -255,6 +282,9 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         thread.start();
+
+        // 홈 화면 실행
+        getSupportFragmentManager().beginTransaction().replace(R.id.frame_layout, mMainFragment).commit();
 
 
 

@@ -56,7 +56,7 @@ public class TabFragment2 extends Fragment {
             @Override
             public void onClick(View v) {
                 layout1.setVisibility(View.VISIBLE);
-                layout2.setVisibility(View.INVISIBLE);
+                layout2.setVisibility(View.GONE);
                 buttonOne.setImageResource(R.drawable.bg_round_blue_gender);
                 buttonTwo.setImageResource(R.drawable.bg_round_gray_age);
             }
@@ -65,7 +65,7 @@ public class TabFragment2 extends Fragment {
         buttonTwo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                layout1.setVisibility(View.INVISIBLE);
+                layout1.setVisibility(View.GONE);
                 layout2.setVisibility(View.VISIBLE);
                 buttonOne.setImageResource(R.drawable.bg_round_gray_gender);
                 buttonTwo.setImageResource(R.drawable.bg_round_blue_age);
