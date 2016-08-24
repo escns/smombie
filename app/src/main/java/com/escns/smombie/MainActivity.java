@@ -70,7 +70,7 @@ public class MainActivity extends AppCompatActivity {
 
         pref = getSharedPreferences(getResources().getString(R.string.app_name), MODE_PRIVATE);
 
-        mMainFragment = MainFragment.getInstance();
+        mMainFragment = new MainFragment();
         mHistoryFragment = new HistoryFragment();
         mSettingFragment = new SettingFragment();
         mInfoFragment = new InfoFragment();

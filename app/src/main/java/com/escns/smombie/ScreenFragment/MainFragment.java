@@ -25,13 +25,11 @@ import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import com.escns.smombie.Adapter.ItemMainAdpater;
-import com.escns.smombie.DAO.User;
 import com.escns.smombie.Interface.ApiService;
 import com.escns.smombie.Item.ItemMain;
 import com.escns.smombie.Manager.DBManager;
 import com.escns.smombie.R;
 import com.escns.smombie.Service.LockScreenService;
-import com.escns.smombie.Setting.Conf;
 import com.escns.smombie.View.CustomImageView;
 
 import java.net.HttpURLConnection;
@@ -41,6 +39,8 @@ import java.util.List;
 
 import it.carlom.stikkyheader.core.StikkyHeaderBuilder;
 import retrofit2.Retrofit;
+
+import static android.content.Context.MODE_PRIVATE;
 
 /**
  * Created by hyo99 on 2016-08-23.
@@ -53,21 +53,14 @@ public class MainFragment extends Fragment {
 
     private Context mContext;
 
-    private Conf conf;
-    private static MainFragment mMainFragment;
-
     private SharedPreferences pref;         // 화면 꺼짐 및 이동 시 switch가 초기화되기 때문에 파일에 따로 저장하기 위한 객체
     private DBManager mDbManager;            // DB 선언
 
-    private boolean mBound = false; // WalkCheckService Service가 제대로 동작하면 true 아니면 false
     private Retrofit mRetrofit;
     private ApiService mApiService;
 
     private boolean isProfileDataLoaded;
     private Bitmap mFbProfileImage;
-    private int section1Text;
-    private int section2Text;
-    private int section3Text;
 
     View rootView;
 
@@ -80,25 +73,17 @@ public class MainFragment extends Fragment {
             if(msg.what==UPDATE_PROFILE_DATA) {
                 // 사이드 메뉴 header
                 ((CustomImageView)rootView.findViewById(R.id.profile_view)).setImageBitmap(mFbProfileImage);
-                ((TextView)rootView.findViewById(R.id.user_email)).setText(conf.mFbEmail);
+                ((TextView)rootView.findViewById(R.id.user_email)).setText(pref.getString("EMAIL", "사용자 이메일"));
                 isProfileDataLoaded=true;
             }
         }
     };
 
-    public static MainFragment getInstance() {
-        if(mMainFragment==null) {
-            mMainFragment = new MainFragment();
-        }
-        return mMainFragment;
-    }
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.fragment_main2, container, false);
-        Log.i("tag", "onCreateView : " + rootView.getHeight());
 
-
+        pref = getActivity().getSharedPreferences(getResources().getString(R.string.app_name), MODE_PRIVATE);
 
         return rootView;
     }
@@ -126,27 +111,9 @@ public class MainFragment extends Fragment {
     @Override
     public void onResume() {
 
-        User user = mDbManager.getUser(conf.mPrimaryKey);
-        int Point, Goal, Reword;
-        if(user==null) {
-            Log.i("tag", "MainFragment onResume user is null");
-            mDbManager.insertUser(new User(conf.mPrimaryKey, conf.mFbId, conf.mFbName, conf.mFbEmail, conf.mFbGender, conf.mFbAge, 0, DEFAULT_GOAL, 0, 0, 0, 0));
-            Point = 0;
-            Goal = DEFAULT_GOAL;
-            Reword = 0;
-        } else {
-            Log.i("tag", "MainFragment onResume user is not null");
-            Log.i("tag", "MainFragment onResume user is " + user.toString());
-            Point = user.getmPoint();
-            Goal = user.getmGoal();
-            Reword = user.getmReword();
-        }
-
-        ((TextView) rootView.findViewById(R.id.section1_text)).setText(""+Point);
-        ((TextView) rootView.findViewById(R.id.section2_text)).setText(""+Goal);
-        ((TextView) rootView.findViewById(R.id.section3_text)).setText(""+Reword);
-        if(mFbProfileImage!=null) ((CustomImageView)rootView.findViewById(R.id.profile_view)).setImageBitmap(mFbProfileImage);
-        ((TextView)rootView.findViewById(R.id.user_email)).setText(conf.mFbEmail);
+        ((TextView) rootView.findViewById(R.id.section1_text)).setText(""+pref.getInt("POINT", 0));
+        ((TextView) rootView.findViewById(R.id.section2_text)).setText(""+pref.getInt("GOAL", 0));
+        ((TextView) rootView.findViewById(R.id.section3_text)).setText(""+pref.getInt("REWORD", 0));
 
         super.onResume();
     }
@@ -156,13 +123,10 @@ public class MainFragment extends Fragment {
 
         mContext = getContext();
 
-        pref = mContext.getSharedPreferences("pref", mContext.MODE_PRIVATE);
         mDbManager = new DBManager(mContext);
 
-        conf = Conf.getInstance();
-
         SwitchCompat swc = (SwitchCompat) rootView.findViewById(R.id.switch_lock);
-        //swc.setChecked(pref.getBoolean("switch",false));
+        swc.setChecked(pref.getBoolean("switch",false));
 
         swc.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -187,7 +151,7 @@ public class MainFragment extends Fragment {
             public void run() {
                 while(!isProfileDataLoaded) {
                     try{
-                        URL url = new URL("https://graph.facebook.com/" + conf.mFbId + "/picture?type=large"); // URL 주소를 이용해서 URL 객체 생성
+                        URL url = new URL("https://graph.facebook.com/" + pref.getString("USER_ID_TEXT", "1111") + "/picture?type=large"); // URL 주소를 이용해서 URL 객체 생성
                         HttpURLConnection conn = (HttpURLConnection) url.openConnection();              //  아래 코드는 웹에서 이미지를 가져온 뒤
                         conn.setDoInput(true);
                         conn.connect();
@@ -251,13 +215,13 @@ public class MainFragment extends Fragment {
         public void onServiceConnected(ComponentName className, IBinder service) {
             //WalkCheckService.LocalBinder binder = (WalkCheckService.LocalBinder) service;
             //mService = binder.getService();
-            mBound = true;
+            //mBound = true;
             Log.d("tag", "onServiceConnected");
         }
 
         @Override
         public void onServiceDisconnected(ComponentName arg0) {
-            mBound = false;
+            //mBound = false;
             Log.d("tag", "onServiceDisconnected");
         }
     };
