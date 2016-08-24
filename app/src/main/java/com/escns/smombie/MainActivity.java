@@ -17,7 +17,6 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.escns.smombie.DAO.User;
 import com.escns.smombie.Interface.ApiService;
 import com.escns.smombie.Manager.DBManager;
 import com.escns.smombie.ScreenFragment.HistoryFragment;
@@ -90,24 +89,6 @@ public class MainActivity extends AppCompatActivity {
 
         initDrawer(); // 툴바 구현
         init();
-    }
-
-    @Override
-    protected void onResume() {
-        User user = mDbManager.getUser(conf.mPrimaryKey);
-        int Point, Goal, Reword;
-        if(user==null) {
-            mDbManager.insertUser(new User(conf.mPrimaryKey, conf.mFbId, conf.mFbName, conf.mFbEmail, conf.mFbGender, conf.mFbAge, 0, DEFAULT_GOAL, 0, 0, 0, 0));
-            Point = 0;
-            Goal = DEFAULT_GOAL;
-            Reword = 0;
-        } else {
-            Point = user.getmPoint();
-            Goal = user.getmGoal();
-            Reword = user.getmReword();
-        }
-
-        super.onResume();
     }
 
     @Override

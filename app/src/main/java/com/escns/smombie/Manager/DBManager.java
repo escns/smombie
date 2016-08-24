@@ -209,32 +209,40 @@ public class DBManager extends SQLiteOpenHelper {
      * @param data
      */
     public void updateUser(User data) {
-        Log.i("tag", "UPDATE USER");
+        Log.i("tag", "UPDATE USER is " + data.toString());
 
         SQLiteDatabase db = null;
-        User user =  null;
 
         try {
             db = getReadableDatabase();
 
             StringBuffer sb = new StringBuffer();
-
+            //sb.append(" USER_ID_INT, USER_ID_TEXT, NAME, EMAIL, GENDER, AGE, POINT, GOAL, REWORD, SUCCESSCNT, FAILCNT, AVGDIST ) ");
             sb.append(" UPDATE "+ USER_TABLE +" SET");
+            sb.append(" NAME = ? ,");
+            sb.append(" EMAIL = ? ,");
+            sb.append(" GENDER = ? ,");
+            sb.append(" AGE = ? ,");
             sb.append(" POINT = ? ,");
             sb.append(" GOAL = ? ,");
             sb.append(" REWORD = ? ,");
             sb.append(" SUCCESSCNT = ? ,");
-            sb.append(" FAILCNT = ? ");
+            sb.append(" FAILCNT = ? ,");
             sb.append(" AVGDIST = ? ");
             sb.append(" WHERE USER_ID_INT = ? ");
 
             db.execSQL(sb.toString(),
                     new Object[]{
-                            user.getmPoint()+data.getmPoint(),
-                            user.getmReword()+data.getmReword(),
-                            user.getmGoal()+data.getmGoal(),
-                            user.getmSuccessCnt()+data.getmSuccessCnt(),
-                            user.getmFailCnt()+data.getmFailCnt(),
+                            data.getmName(),
+                            data.getmEmail(),
+                            data.getmGender(),
+                            data.getmAge(),
+                            data.getmPoint(),
+                            data.getmReword(),
+                            data.getmGoal(),
+                            data.getmSuccessCnt(),
+                            data.getmFailCnt(),
+                            data.getmAvgDist(),
                             data.getmIdInt()
                     });
 
@@ -256,7 +264,7 @@ public class DBManager extends SQLiteOpenHelper {
             db = getReadableDatabase();
 
             StringBuffer sb = new StringBuffer();
-            sb.append(" SELECT * FROM "+ USER_TABLE);
+            sb.append(" SELECT USER_ID_TEXT, NAME, EMAIL, GENDER, AGE, POINT, GOAL, REWORD, SUCCESSCNT, FAILCNT, AVGDIST FROM "+ USER_TABLE);
             sb.append(" WHERE USER_ID_INT is ? ");
 
             Cursor cursor = db.rawQuery(sb.toString(),
@@ -265,18 +273,18 @@ public class DBManager extends SQLiteOpenHelper {
                     });
 
             while(cursor.moveToNext()) {
-                user = new User(cursor.getInt(0),
+                user = new User(id,
+                        cursor.getString(0),
                         cursor.getString(1),
                         cursor.getString(2),
                         cursor.getString(3),
-                        cursor.getString(4),
+                        cursor.getInt(4),
                         cursor.getInt(5),
-                        cursor.getInt(6),
                         cursor.getInt(7),
+                        cursor.getInt(6),
                         cursor.getInt(8),
                         cursor.getInt(9),
-                        cursor.getInt(10),
-                        cursor.getInt(11));
+                        cursor.getInt(10));
             }
 
         } catch (Exception e) {
@@ -286,7 +294,7 @@ public class DBManager extends SQLiteOpenHelper {
                 db.close();
             }
         }
-
+        Log.i("tag", "GET USER IS " + user.toString());
         return user;
     }
 }

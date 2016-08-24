@@ -97,11 +97,14 @@ public class MainFragment extends Fragment {
         User user = mDbManager.getUser(conf.mPrimaryKey);
         int Point, Goal, Reword;
         if(user==null) {
+            Log.i("tag", "MainFragment onResume user is null");
             mDbManager.insertUser(new User(conf.mPrimaryKey, conf.mFbId, conf.mFbName, conf.mFbEmail, conf.mFbGender, conf.mFbAge, 0, DEFAULT_GOAL, 0, 0, 0, 0));
             Point = 0;
             Goal = DEFAULT_GOAL;
             Reword = 0;
         } else {
+            Log.i("tag", "MainFragment onResume user is not null");
+            Log.i("tag", "MainFragment onResume user is " + user.toString());
             Point = user.getmPoint();
             Goal = user.getmGoal();
             Reword = user.getmReword();

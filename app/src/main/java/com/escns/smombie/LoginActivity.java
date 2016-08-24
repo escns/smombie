@@ -237,14 +237,15 @@ public class LoginActivity extends Activity {
     }
 
     public void moveToMain(User user) {
-        Log.d("tag", "moveToMain : " + user.toString());
         User temp = mDbManger.getUser(user.getmIdInt());
         if(temp==null) {
+            Log.i("tag", "temp is null");
             mDbManger.insertUser(user);
         } else {
+            Log.i("tag", "temp is not null");
             mDbManger.updateUser(user);
         }
-
+        Log.d("tag", "moveToMain : " + user.toString());
         // LoginActivity로부터 페이스북 프로필정보 받아오기
         conf.mPrimaryKey = user.getmIdInt(); // DB에서 받아와야함
         conf.mFbId = user.getmIdStr();
