@@ -20,9 +20,7 @@ import java.util.List;
 public class DBManager extends SQLiteOpenHelper {
 
     private String DB_NAME; // 테이블 이름
-    private String USER_TABLE;
     private String RECORD_TABLE;
-    private String STATISTIC_TABLE;
 
     /**
      * 생성자
@@ -32,9 +30,7 @@ public class DBManager extends SQLiteOpenHelper {
     public DBManager(Context context) {
         super(context, context.getResources().getString(R.string.app_name), null, 1);
         DB_NAME = context.getResources().getString(R.string.app_name);        // app name의 DB table 생성
-        USER_TABLE = "USERS";
         RECORD_TABLE = "RECORDS";
-        STATISTIC_TABLE = "STATISTICS";
     }
 
     /**
@@ -47,24 +43,6 @@ public class DBManager extends SQLiteOpenHelper {
 
         StringBuffer sb = new StringBuffer();
 
-        sb.append(" CREATE TABLE " + USER_TABLE + " ( ");
-        sb.append(" USER_ID_INT INTEGER PRIMARY KEY AUTOINCREMENT, ");
-        sb.append(" USER_ID_TEXT TEXT, ");
-        sb.append(" NAME TEXT, ");
-        sb.append(" EMAIL TEXT, ");
-        sb.append(" GENDER TEXT, ");
-        sb.append(" AGE INTEGER, ");
-        sb.append(" POINT INTEGER, ");
-        sb.append(" GOAL INTEGER, ");
-        sb.append(" REWORD INTEGER, ");
-        sb.append(" SUCCESSCNT INTEGER, ");
-        sb.append(" FAILCNT INTEGER, ");
-        sb.append(" AVGDIST INTEGER ) ");
-
-        db.execSQL(sb.toString());
-
-        sb = new StringBuffer();
-
         sb.append(" CREATE TABLE " + RECORD_TABLE + " ( ");
         sb.append(" _id INTEGER PRIMARY KEY AUTOINCREMENT, "); // 의미없음
         sb.append(" USER_ID_INT INTEGER, ");
@@ -73,20 +51,6 @@ public class DBManager extends SQLiteOpenHelper {
         sb.append(" DAY INTEGER, ");
         sb.append(" HOUR INTEGER, ");
         sb.append(" DIST INTEGER ) ");
-
-        db.execSQL(sb.toString());
-
-        sb = new StringBuffer();
-
-        sb.append(" CREATE TABLE " + STATISTIC_TABLE + " ( ");
-        sb.append(" _d INTEGER PRIMARY KEY AUTOINCREMENT, "); // 의미없음
-        sb.append(" AVGMALE DOUBLE, ");
-        sb.append(" AVGFEMALE DOUBLE, ");
-        sb.append(" AVG10S DOUBLE, ");
-        sb.append(" AVG20S DOUBLE, ");
-        sb.append(" AVG30S DOUBLE, ");
-        sb.append(" AVG40S DOUBLE, ");
-        sb.append(" AVG50S DOUBLE ) ");
 
         db.execSQL(sb.toString());
     }
@@ -141,9 +105,52 @@ public class DBManager extends SQLiteOpenHelper {
     /**
      * id 값에 해당하는 Data를 Record테이블에서 찾아서 List 형식으로 반환
      *
-     * @param id
      * @return
      */
+    public List<Record> getRecord() {
+
+        SQLiteDatabase db = null;
+        List<Record> list = new ArrayList<>();
+        Record record = null;
+
+        try {
+            db = getReadableDatabase();
+
+            StringBuffer sb = new StringBuffer();
+            sb.append(" SELECT * FROM " + RECORD_TABLE);
+
+            Cursor cursor = db.rawQuery(sb.toString(),null);
+
+            while (cursor.moveToNext()) {
+                record = new Record(cursor.getInt(0),
+                        cursor.getInt(1),
+                        cursor.getInt(2),
+                        cursor.getInt(3),
+                        cursor.getInt(4),
+                        cursor.getInt(5));
+                list.add(record);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (db != null) {
+                db.close();
+            }
+        }
+        return list;
+    }
+
+    /**
+     * record 테이블 삭제
+     */
+    public void dropRecord() {
+        SQLiteDatabase db = getWritableDatabase(); // 데이터베이스 불러오기 - 쓰기전용
+        db.execSQL("DROP TABLE " + RECORD_TABLE); // 쿼리문 입력
+        db.close();
+    }
+
+    /*
     public List<Record> getRecord(int id) {
 
         SQLiteDatabase db = null;
@@ -179,7 +186,7 @@ public class DBManager extends SQLiteOpenHelper {
                 db.close();
             }
         }
-
         return list;
     }
+    */
 }

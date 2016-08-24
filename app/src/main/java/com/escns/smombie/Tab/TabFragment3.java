@@ -1,5 +1,7 @@
 package com.escns.smombie.Tab;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -23,26 +25,46 @@ import java.util.List;
 
 public class TabFragment3 extends Fragment {
 
+    Context mContext;
+    private SharedPreferences pref;
+
     RelativeLayout layout1;
 
     PieChart chart1;
 
+    View rootView;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_tab3, container, false);
+        rootView = inflater.inflate(R.layout.fragment_tab3, container, false);
+
+        init();
+
+        return rootView;
+    }
+
+    public void init() {
+
+        mContext = getActivity().getApplicationContext();
+        pref = mContext.getSharedPreferences(getResources().getString(R.string.app_name), mContext.MODE_PRIVATE);
 
         layout1 = (RelativeLayout) rootView.findViewById(R.id.tab3_charLayout1);
 
         chart1 = (PieChart) rootView.findViewById(R.id.tab3_chart1);
 
-        List<PieEntry> entries = new ArrayList<>();
+        chart();
+    }
+
+    public void chart() {List<PieEntry> entries = new ArrayList<>();
 
         entries.add(new PieEntry(30f, "실패"));
         entries.add(new PieEntry(70f, "성공"));
 
+        //entries.add(new PieEntry(pref.getInt("FAILCNT",0), "실패"));
+        //entries.add(new PieEntry(pref.getInt("SUCCESSCNT",0), "성공"));
+
         PieDataSet set = new PieDataSet(entries, "Election Results");
-        set.setColors(new int[] {Color.rgb(220,100,100), Color.rgb(200,200,200)});
+        set.setColors(new int[] {getResources().getColor(R.color.tab_PieChart_Success), getResources().getColor(R.color.tab_PieChart_Fail)});
 
         PieData data = new PieData(set);
         data.setValueTextSize(11);
@@ -54,6 +76,5 @@ public class TabFragment3 extends Fragment {
         chart1.setTouchEnabled(false);
         chart1.invalidate(); // refresh
 
-        return rootView;
     }
 }
