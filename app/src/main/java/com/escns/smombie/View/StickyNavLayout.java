@@ -200,12 +200,14 @@ public class StickyNavLayout extends LinearLayout implements NestedScrollingPare
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
         getChildAt(0).measure(widthMeasureSpec, MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED));
         ViewGroup.LayoutParams params = mViewPager.getLayoutParams();
-        params.height = getMeasuredHeight() - mNav.getMeasuredHeight();
-        setMeasuredDimension(getMeasuredWidth(), mTop.getMeasuredHeight() + mNav.getMeasuredHeight() + mViewPager.getMeasuredHeight());
-        Log.i("tag", "getMeasuredWidth : "+getMeasuredWidth());
+        Log.i("tag", "getMeasuredHeight() : "+getMeasuredHeight());
         Log.i("tag", "mTop.getMeasuredHeight() : "+mTop.getMeasuredHeight());
         Log.i("tag", "mNav.getMeasuredHeight() : "+mNav.getMeasuredHeight());
         Log.i("tag", "mViewPager.getMeasuredHeight() : "+mViewPager.getMeasuredHeight());
+        params.height = getMeasuredHeight() - mNav.getMeasuredHeight();
+        Log.i("tag", "params.height : "+params.height);
+        setMeasuredDimension(getMeasuredWidth(), mTop.getMeasuredHeight() + mNav.getMeasuredHeight() + mViewPager.getMeasuredHeight());
+
     }
 
     @Override

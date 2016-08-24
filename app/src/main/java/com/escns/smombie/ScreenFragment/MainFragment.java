@@ -86,8 +86,6 @@ public class MainFragment extends Fragment {
 
         init();
 
-
-
         return rootView;
     }
 
