@@ -1,5 +1,7 @@
 package com.escns.smombie.Tab;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -27,6 +29,9 @@ import java.util.List;
 
 public class TabFragment2 extends Fragment {
 
+    Context mContext;
+    private SharedPreferences pref;
+
     ImageView buttonOne;
     ImageView buttonTwo;
 
@@ -39,6 +44,8 @@ public class TabFragment2 extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_tab2, container, false);
+
+        pref = mContext.getSharedPreferences("@string/app_name", mContext.MODE_PRIVATE);
 
         layout1 = (RelativeLayout) rootView.findViewById(R.id.tab2_charLayout1);
         layout2 = (RelativeLayout) rootView.findViewById(R.id.tab2_charLayout2);
@@ -85,6 +92,9 @@ public class TabFragment2 extends Fragment {
         entries.add(new BarEntry(0, 3.00f));
         entries.add(new BarEntry(1, 0.00f));
         entries.add(new BarEntry(2, 6.00f));
+        //entries.add(new BarEntry(0, pref.getInt()));
+        //entries.add(new BarEntry(1, 0.00f));
+        //entries.add(new BarEntry(2, 6.00f));
 
         BarDataSet set = new BarDataSet(entries, "이동거리");
 

@@ -1,6 +1,7 @@
 package com.escns.smombie.ScreenFragment;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -22,6 +23,8 @@ public class InfoFragment extends Fragment {
 
     private DBManager mDbManger;
 
+    private SharedPreferences pref;
+
     View rootView;
 
     @Override
@@ -35,21 +38,19 @@ public class InfoFragment extends Fragment {
 
     public void init() {
 
-        //mDbManger = new DBManager(mContext);
-
         User user;
 
-        //user = mDbManger.getUser();
+        pref = mContext.getSharedPreferences("@string/app_name", mContext.MODE_PRIVATE);
 
         ((TextView) rootView.findViewById(R.id.info_name)).setText("홍길동");
         ((TextView) rootView.findViewById(R.id.info_gender)).setText("남성");
         ((TextView) rootView.findViewById(R.id.info_age)).setText("25"+"세");
         ((TextView) rootView.findViewById(R.id.info_email)).setText("hyo99075@naver.com");
 
-        //((TextView) rootView.findViewById(R.id.info_name)).setText(user.getmName());
-        //((TextView) rootView.findViewById(R.id.info_gender)).setText(user.getmGender());
-        //((TextView) rootView.findViewById(R.id.info_age)).setText(user.getmAge()+"세");
-        //((TextView) rootView.findViewById(R.id.info_email)).setText(user.getmEmail());
+        //((TextView) rootView.findViewById(R.id.info_name)).setText(pref.getString("NAME",""));
+        //((TextView) rootView.findViewById(R.id.info_gender)).setText(pref.getString("GENDER",""));
+        //((TextView) rootView.findViewById(R.id.info_age)).setText(pref.getString("AGE","")+"세");
+        //((TextView) rootView.findViewById(R.id.info_email)).setText(pref.getString("EMAIL",""));
 
     }
 }
