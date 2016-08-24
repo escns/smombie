@@ -4,10 +4,8 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.util.Log;
 
 import com.escns.smombie.DAO.Record;
-import com.escns.smombie.DAO.User;
 import com.escns.smombie.R;
 
 import java.util.ArrayList;
@@ -41,6 +39,12 @@ public class DBManager extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
 
+        CreateRecordTable();
+    }
+
+    public void CreateRecordTable() {
+        SQLiteDatabase db = getWritableDatabase();
+
         StringBuffer sb = new StringBuffer();
 
         sb.append(" CREATE TABLE " + RECORD_TABLE + " ( ");
@@ -53,6 +57,7 @@ public class DBManager extends SQLiteOpenHelper {
         sb.append(" DIST INTEGER ) ");
 
         db.execSQL(sb.toString());
+        db.close();
     }
 
     /**
@@ -144,9 +149,9 @@ public class DBManager extends SQLiteOpenHelper {
     /**
      * record 테이블 삭제
      */
-    public void dropRecord() {
+    public void dropRecordTable() {
         SQLiteDatabase db = getWritableDatabase(); // 데이터베이스 불러오기 - 쓰기전용
-        db.execSQL("DROP TABLE " + RECORD_TABLE); // 쿼리문 입력
+        db.execSQL("DROP TABLE IF EXISTS " + RECORD_TABLE); // 쿼리문 입력
         db.close();
     }
 

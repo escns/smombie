@@ -239,27 +239,34 @@ public class LoginActivity extends Activity {
     }
 
     public void moveToMain(User user) {
-        pref.edit().putInt("USER_ID_INT", user.getmIdInt());
-        pref.edit().putString("USER_ID_TEXT", user.getmIdStr());
-        pref.edit().putString("NAME", user.getmName());
-        pref.edit().putString("EMAIL", user.getmEmail());
-        pref.edit().putString("GENDER", user.getmGender());
-        pref.edit().putInt("AGE", user.getmAge());
-        pref.edit().putInt("POINT", user.getmPoint());
-        pref.edit().putInt("GOAL", user.getmGoal());
-        pref.edit().putInt("REWORD", user.getmReword());
-        pref.edit().putInt("SUCCESSCNT", user.getmSuccessCnt());
-        pref.edit().putInt("FAILCNT", user.getmFailCnt());
-        pref.edit().putInt("AVGDIST", user.getmAvgDist()).commit();
+        SharedPreferences.Editor editor = pref.edit();
+        editor.putInt("USER_ID_INT", user.getmIdInt());
+        editor.putString("USER_ID_TEXT", user.getmIdStr());
+        editor.putString("NAME", user.getmName());
+        editor.putString("EMAIL", user.getmEmail());
+        editor.putString("GENDER", user.getmGender());
+        editor.putInt("AGE", user.getmAge());
+        editor.putInt("POINT", user.getmPoint());
+        editor.putInt("GOAL", user.getmGoal());
+        editor.putInt("REWORD", user.getmReword());
+        editor.putInt("SUCCESSCNT", user.getmSuccessCnt());
+        editor.putInt("FAILCNT", user.getmFailCnt());
+        editor.putInt("AVGDIST", user.getmAvgDist());
+        editor.commit();
 
+        Log.i("tag", user.toString());
         Call<List<Record>> selectRecord = mApiService.selectRecord(user.getmIdInt());
         selectRecord.enqueue(new retrofit2.Callback<List<Record>>() {
             @Override
             public void onResponse(Call<List<Record>> call, Response<List<Record>> response) {
+                mDbManger.dropRecordTable();
+                mDbManger.CreateRecordTable();
                 List<Record> list = response.body();
-                for(Record r : list) {
-                    Log.i("tag", r.toString());
-                    mDbManger.insertRecord(r);
+                if(list!=null) {
+                    for(Record r : list) {
+                        Log.i("tag", r.toString());
+                        mDbManger.insertRecord(r);
+                    }
                 }
             }
 

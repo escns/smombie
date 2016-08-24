@@ -58,6 +58,8 @@ public class MainActivity extends AppCompatActivity {
                 ((CustomImageView)HeaderLayout.findViewById(R.id.header_profile)).setImageBitmap(mFbProfileImage);
                 ((TextView)HeaderLayout.findViewById(R.id.header_name)).setText(pref.getString("NAME", "사용자 이름"));
                 ((TextView)HeaderLayout.findViewById(R.id.header_email)).setText(pref.getString("EMAIL", "사용자 이메일"));
+                Log.i("tag", "EMAIL " + pref.getString("EMAIL", "사용자 이메일"));
+                Log.i("tag", "GENDER " + pref.getString("GENDER", "dddd"));
                 isProfileImageLoaded=true;
             }
         }
@@ -192,8 +194,6 @@ public class MainActivity extends AppCompatActivity {
      *  Initialize layout
      */
     public void init() {
-
-        pref = getSharedPreferences("pref", MODE_PRIVATE);
 
         Thread thread =  new Thread(new Runnable() {
             @Override
