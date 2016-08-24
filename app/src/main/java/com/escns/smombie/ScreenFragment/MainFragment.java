@@ -38,13 +38,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 /**
  * Created by hyo99 on 2016-08-23.
  */
 
 public class MainFragment extends Fragment {
+
+    public final static int UPDATE_PROFILE_DATA = 1;
 
     private Context mContext;
 
@@ -59,12 +60,40 @@ public class MainFragment extends Fragment {
     private Retrofit mRetrofit;
     private ApiService mApiService;
 
+    private boolean isProfileDataLoaded;
     private Bitmap mFbProfileImage;
+    private int section1Text;
+    private int section2Text;
+    private int section3Text;
 
     View rootView;
 
+    private Handler handler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            if(msg.what==UPDATE_PROFILE_DATA) {
+                // 사이드 메뉴 header
+                ((CustomImageView)rootView.findViewById(R.id.profile_view)).setImageBitmap(mFbProfileImage);
+                ((TextView)rootView.findViewById(R.id.user_email)).setText(conf.mFbEmail);
+                isProfileDataLoaded=true;
+            }
+        }
+    };
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        rootView = inflater.inflate(R.layout.fragment_main, container, false);
+
+        init();
+
+
+
+        return rootView;
+    }
+
     @Override
     public void onResume() {
+
         User user = mDbManager.getUser(conf.mPrimaryKey);
         int Point, Goal, Reword;
         if(user==null) {
@@ -81,17 +110,12 @@ public class MainFragment extends Fragment {
         ((TextView) rootView.findViewById(R.id.section1_text)).setText(""+Point);
         ((TextView) rootView.findViewById(R.id.section2_text)).setText(""+Goal);
         ((TextView) rootView.findViewById(R.id.section3_text)).setText(""+Reword);
+        if(mFbProfileImage!=null) ((CustomImageView)rootView.findViewById(R.id.profile_view)).setImageBitmap(mFbProfileImage);
+        ((TextView)rootView.findViewById(R.id.user_email)).setText(conf.mFbEmail);
+
         super.onResume();
     }
 
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        rootView = inflater.inflate(R.layout.fragment_main, container, false);
-
-        init();
-
-        return rootView;
-    }
 
     public void init() {
 
@@ -102,17 +126,11 @@ public class MainFragment extends Fragment {
 
         conf = Conf.getInstance();
 
-        // 메인화면
-        //((CustomImageView) rootView.findViewById(R.id.profile_view)).setImageBitmap(conf.mFbProfileImage);
-        ((TextView) rootView.findViewById(R.id.user_email)).setText(conf.mFbEmail);
-
         SwitchCompat swc = (SwitchCompat) rootView.findViewById(R.id.switch_lock);
         swc.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-
                 if(isChecked) {
-
                     pref.edit().putBoolean("switch", true).commit();
 
                     Intent intent = new Intent("com.escns.smombie.service").setPackage("com.escns.smombie");
@@ -127,10 +145,34 @@ public class MainFragment extends Fragment {
             }
         });
 
+        Thread thread =  new Thread(new Runnable() {
+            @Override
+            public void run() {
+                while(!isProfileDataLoaded) {
+                    try{
+                        URL url = new URL("https://graph.facebook.com/" + conf.mFbId + "/picture?type=large"); // URL 주소를 이용해서 URL 객체 생성
+                        HttpURLConnection conn = (HttpURLConnection) url.openConnection();              //  아래 코드는 웹에서 이미지를 가져온 뒤
+                        conn.setDoInput(true);
+                        conn.connect();
+                        mFbProfileImage = BitmapFactory.decodeStream(conn.getInputStream());               //  이미지 뷰에 지정할 Bitmap을 생성하는 과정
+
+                        Thread.sleep(100);
+
+                        Message message = handler.obtainMessage();
+                        message.what = UPDATE_PROFILE_DATA;
+                        handler.sendMessage(message);
+                    } catch (Exception e){
+                        e.printStackTrace();
+                    }
+                }
+            }
+        });
+        thread.start();
+/*
         mRetrofit = new Retrofit.Builder().baseUrl(mApiService.API_URL).addConverterFactory(GsonConverterFactory.create()).build();
         mApiService = mRetrofit.create(ApiService.class);
 
-        /*
+
         Call<Point> currentPoint = mApiService.getCurrentPoint(1);
         currentPoint.enqueue(new Callback<Point>() {
             @Override

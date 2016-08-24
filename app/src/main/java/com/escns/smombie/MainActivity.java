@@ -23,7 +23,7 @@ import com.escns.smombie.Manager.DBManager;
 import com.escns.smombie.ScreenFragment.HistoryFragment;
 import com.escns.smombie.ScreenFragment.InfoFragment;
 import com.escns.smombie.ScreenFragment.MainFragment;
-import com.escns.smombie.ScreenFragment.SetFragment;
+import com.escns.smombie.ScreenFragment.SettingFragment;
 import com.escns.smombie.Setting.Conf;
 import com.escns.smombie.View.CustomImageView;
 
@@ -37,7 +37,6 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class MainActivity extends AppCompatActivity {
 
     public final static int UPDATE_PROFILE_IMAGE = 1;
-
     public final static int DEFAULT_GOAL = 1000;
 
     DrawerLayout drawerLayout;              // 메인화면에서의 화면
@@ -52,7 +51,7 @@ public class MainActivity extends AppCompatActivity {
 
     MainFragment mMainFragment;
     HistoryFragment mHistoryFragment;
-    SetFragment mSetFragment;
+    SettingFragment mSettingFragment;
     InfoFragment mInfoFragment;
 
     private boolean isProfileImageLoaded;
@@ -68,7 +67,6 @@ public class MainActivity extends AppCompatActivity {
     private ApiService mApiService;
 
     private Handler handler = new Handler() {
-
         @Override
         public void handleMessage(Message msg) {
             if(msg.what==UPDATE_PROFILE_IMAGE) {
@@ -88,7 +86,7 @@ public class MainActivity extends AppCompatActivity {
 
         mMainFragment = new MainFragment();
         mHistoryFragment = new HistoryFragment();
-        mSetFragment = new SetFragment();
+        mSettingFragment = new SettingFragment();
         mInfoFragment = new InfoFragment();
 
         initDrawer(); // 툴바 구현
@@ -219,7 +217,7 @@ public class MainActivity extends AppCompatActivity {
 
                         if(mMenuState != 3) {
                             mMenuState = 3;
-                            getSupportFragmentManager().beginTransaction().replace(R.id.frame_layout, mSetFragment).commit();
+                            getSupportFragmentManager().beginTransaction().replace(R.id.frame_layout, mSettingFragment).commit();
                         }
                         drawerLayout.closeDrawer(navigationView);
                         return true;

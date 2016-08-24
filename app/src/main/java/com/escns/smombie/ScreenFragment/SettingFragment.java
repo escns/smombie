@@ -12,13 +12,13 @@ import com.escns.smombie.R;
  * Created by hyo99 on 2016-08-23.
  */
 
-public class SetFragment extends Fragment {
+public class SettingFragment extends Fragment {
 
     View rootView;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        rootView = inflater.inflate(R.layout.fragment_set, container, false);
+        rootView = inflater.inflate(R.layout.fragment_setting, container, false);
 
         //init();
 

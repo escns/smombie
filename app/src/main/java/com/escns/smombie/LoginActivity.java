@@ -3,19 +3,16 @@ package com.escns.smombie;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
 import android.support.multidex.MultiDex;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.TextView;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.escns.smombie.Manager.DBManager;
 import com.escns.smombie.Setting.Conf;
-import com.escns.smombie.View.CustomImageView;
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
@@ -25,6 +22,7 @@ import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
+import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
 import org.json.JSONException;
@@ -69,8 +67,21 @@ public class LoginActivity extends Activity {
         conf = Conf.getInstance();
 
         mLoginBackground = (ImageView) findViewById(R.id.login_background);
-        Picasso.with(this).load(R.drawable.bg_login).fit().into(mLoginBackground);
+        final ProgressBar progressBar = (ProgressBar) findViewById(R.id.bg_loading);
+        final ImageView loginFacebook = (ImageView) findViewById(R.id.login_button_visible);
+        progressBar.setVisibility(View.VISIBLE);
+        Picasso.with(this).load(R.drawable.bg_login_compressed).fit().into(mLoginBackground, new Callback() {
+            @Override
+            public void onSuccess() {
+                progressBar.setVisibility(View.GONE);
+                loginFacebook.setVisibility(View.VISIBLE);
+            }
 
+            @Override
+            public void onError() {
+
+            }
+        });
 
         // 로그인 응답을 처리할 콜백 관리자를 만듦
         callbackManager = CallbackManager.Factory.create();
@@ -121,7 +132,6 @@ public class LoginActivity extends Activity {
                                     Log.d("tag", "User Gender : " + mFbGender);
                                     Log.d("tag", "User Age : " + mFbAge);
 
-
                                     // LoginActivity로부터 페이스북 프로필정보 받아오기
                                     conf.mPrimaryKey = 1; // DB에서 받아와야함
                                     conf.mFbId = mFbId;
@@ -161,14 +171,14 @@ public class LoginActivity extends Activity {
         ((Button) findViewById(R.id.button_NoAccount)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                conf.mPrimaryKey = 1; // DB에서 받아와야함
+                conf.mFbId = "11111";
+                conf.mFbName = "Admin";
+                conf.mFbEmail = "Admin@naver.com";
+                conf.mFbGender = "남자";
+                conf.mFbAge = 26;
+
                 Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-                mFbId = "12345";
-                mFbName = "이름";
-                mFbEmail = "이메일주소";
-                intent.putExtra("id", mFbId);
-                intent.putExtra("name", mFbName);
-                intent.putExtra("email", mFbEmail);
                 startActivity(intent);
                 finish();
             }

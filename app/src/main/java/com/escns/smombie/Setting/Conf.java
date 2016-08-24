@@ -10,7 +10,7 @@ public class Conf {
 
     private static Conf conf;
 
-    public int mPrimaryKey;    // 유저 고유키
+    public int mPrimaryKey;        // 유저 고유키
     public String mFbId;           // 페이스북 ID
     public String mFbName;         // 페이스북 이름
     public String mFbEmail;        // 페이스북 이메일
