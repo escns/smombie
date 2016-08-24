@@ -29,7 +29,7 @@ public class PedometerCheckService extends Service {
     private float lastZ; // 만보기: 마지막 z축 위치
     private float x, y, z; // 만보기: 현재 x,y,z축 위치
 
-    private static final int SHAKE_THRESHOLD = 500; // 만보기: 흔듦을 감지하는 민감도
+    private static final int SHAKE_THRESHOLD = 200; // 만보기: 흔듦을 감지하는 민감도
     private static final int DATA_X = SensorManager.DATA_X; // 만보기: 센서에서 x축 데이터
     private static final int DATA_Y = SensorManager.DATA_Y; // 만보기: 센서에서 y축 데이터
     private static final int DATA_Z = SensorManager.DATA_Z; // 만보기: 센서에서 z축 데이터
