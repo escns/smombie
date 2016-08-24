@@ -21,8 +21,6 @@ public class InfoFragment extends Fragment {
 
     Context mContext;
 
-    private DBManager mDbManger;
-
     private SharedPreferences pref;
 
     View rootView;
@@ -38,9 +36,8 @@ public class InfoFragment extends Fragment {
 
     public void init() {
 
-        User user;
-
-        pref = mContext.getSharedPreferences("@string/app_name", mContext.MODE_PRIVATE);
+        mContext = getActivity().getApplicationContext();
+        pref = mContext.getSharedPreferences(getResources().getString(R.string.app_name), mContext.MODE_PRIVATE);
 
         ((TextView) rootView.findViewById(R.id.info_name)).setText("홍길동");
         ((TextView) rootView.findViewById(R.id.info_gender)).setText("남성");

@@ -27,13 +27,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
-                <android.support.v7.widget.SwitchCompat
-                    android:id="@+id/switch_lock"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
-                    android:layout_margin="30dp"/>
-
                 <com.escns.smombie.View.CustomImageView
                     android:id="@+id/profile_view"
                     android:layout_width="100dp"

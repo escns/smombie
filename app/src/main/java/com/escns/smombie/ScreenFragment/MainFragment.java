@@ -126,33 +126,11 @@ public class MainFragment extends Fragment {
         super.onResume();
     }
 
-
     public void init() {
 
         mContext = getContext();
 
         mDbManager = new DBManager(mContext);
-
-        SwitchCompat swc = (SwitchCompat) rootView.findViewById(R.id.switch_lock);
-        swc.setChecked(pref.getBoolean("switch",false));
-
-        swc.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if(isChecked) {
-                    pref.edit().putBoolean("switch", true).commit();
-
-                    Intent intent = new Intent("com.escns.smombie.service").setPackage("com.escns.smombie");
-                    mContext.bindService(intent, mConnection, Context.BIND_AUTO_CREATE); // 만보기 동작
-                    mContext.startService(new Intent(mContext, LockScreenService.class));
-                } else {
-                    pref.edit().putBoolean("switch", false).commit();
-
-                    mContext.unbindService(mConnection);
-                    mContext.stopService(new Intent(mContext, LockScreenService.class));
-                }
-            }
-        });
 
         Thread thread =  new Thread(new Runnable() {
             @Override
