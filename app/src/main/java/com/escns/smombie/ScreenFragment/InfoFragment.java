@@ -20,7 +20,7 @@ public class InfoFragment extends Fragment {
 
     Context mContext;
 
-    DBManager mDbManger;
+    private DBManager mDbManger;
 
     View rootView;
 
@@ -35,11 +35,11 @@ public class InfoFragment extends Fragment {
 
     public void init() {
 
-        mDbManger = new DBManager(mContext);
+        //mDbManger = new DBManager(mContext);
 
         User user;
 
-        user = mDbManger.getUser();
+        //user = mDbManger.getUser();
 
         ((TextView) rootView.findViewById(R.id.info_name)).setText("홍길동");
         ((TextView) rootView.findViewById(R.id.info_gender)).setText("남성");

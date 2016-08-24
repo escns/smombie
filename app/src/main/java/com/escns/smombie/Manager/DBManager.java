@@ -22,6 +22,7 @@ public class DBManager extends SQLiteOpenHelper {
     private String DB_NAME; // 테이블 이름
     private String USER_TABLE;
     private String RECORD_TABLE;
+    private String STATISTIC_TABLE;
 
     /**
      * 생성자
@@ -30,8 +31,9 @@ public class DBManager extends SQLiteOpenHelper {
     public DBManager(Context context) {
         super(context, context.getResources().getString(R.string.app_name), null, 1);
         DB_NAME = context.getResources().getString(R.string.app_name);        // app name의 DB table 생성
-        USER_TABLE = DB_NAME+"_USER";
-        RECORD_TABLE = DB_NAME+"_RECORD";
+        USER_TABLE = "USERS";
+        RECORD_TABLE = "RECORDS";
+        STATISTIC_TABLE = "STATISTICS";
     }
 
     /**
@@ -42,20 +44,6 @@ public class DBManager extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
 
         StringBuffer sb = new StringBuffer();
-
-        sb.append(" CREATE TABLE "+ RECORD_TABLE +" ( ");
-        sb.append(" _id INTEGER PRIMARY KEY AUTOINCREMENT, ");
-        sb.append(" USER_ID_INT INTEGER, ");
-        sb.append(" YEAR INTEGER, ");
-        sb.append(" MONTH INTEGER, ");
-        sb.append(" DAY INTEGER, ");
-        sb.append(" HOUR INTEGER, ");
-        sb.append(" DIST INTEGER, ");
-        sb.append(" STEPCNT INTEGER ) ");
-
-        db.execSQL(sb.toString());
-
-        sb = new StringBuffer();
 
         sb.append(" CREATE TABLE "+ USER_TABLE +" ( ");
         sb.append(" USER_ID_INT INTEGER PRIMARY KEY AUTOINCREMENT, ");
@@ -70,6 +58,33 @@ public class DBManager extends SQLiteOpenHelper {
         sb.append(" SUCCESSCNT INTEGER, ");
         sb.append(" FAILCNT INTEGER, ");
         sb.append(" AVGDIST INTEGER ) ");
+
+        db.execSQL(sb.toString());
+
+        sb = new StringBuffer();
+
+        sb.append(" CREATE TABLE "+ RECORD_TABLE +" ( ");
+        sb.append(" _id INTEGER PRIMARY KEY AUTOINCREMENT, "); // 의미없음
+        sb.append(" USER_ID_INT INTEGER, ");
+        sb.append(" YEAR INTEGER, ");
+        sb.append(" MONTH INTEGER, ");
+        sb.append(" DAY INTEGER, ");
+        sb.append(" HOUR INTEGER, ");
+        sb.append(" DIST INTEGER ) ");
+
+        db.execSQL(sb.toString());
+
+        sb = new StringBuffer();
+
+        sb.append(" CREATE TABLE "+ STATISTIC_TABLE +" ( ");
+        sb.append(" _d INTEGER PRIMARY KEY AUTOINCREMENT, "); // 의미없음
+        sb.append(" AVGMALE DOUBLE, ");
+        sb.append(" AVGFEMALE DOUBLE, ");
+        sb.append(" AVG10S DOUBLE, ");
+        sb.append(" AVG20S DOUBLE, ");
+        sb.append(" AVG30S DOUBLE, ");
+        sb.append(" AVG40S DOUBLE, ");
+        sb.append(" AVG50S DOUBLE ) ");
 
         db.execSQL(sb.toString());
     }
@@ -97,7 +112,7 @@ public class DBManager extends SQLiteOpenHelper {
 
             StringBuffer sb = new StringBuffer();
             sb.append(" INSERT INTO "+ RECORD_TABLE +" ( ");
-            sb.append(" USER_ID_INT, YEAR, MONTH, DAY, HOUR, DIST, STEPCNT ) ");
+            sb.append(" USER_ID_INT, YEAR, MONTH, DAY, HOUR, DIST) ");
             sb.append(" VALUES ( ?, ?, ?, ?, ?, ?, ? ) ");
 
             db.execSQL(sb.toString(),
@@ -107,8 +122,7 @@ public class DBManager extends SQLiteOpenHelper {
                             data.getmMonth(),
                             data.getmDay(),
                             data.getmHour(),
-                            data.getmDist(),
-                            data.getmStepCnt()
+                            data.getmDist()
                     });
 
         } catch (Exception e) {
@@ -149,8 +163,7 @@ public class DBManager extends SQLiteOpenHelper {
                         cursor.getInt(2),
                         cursor.getInt(3),
                         cursor.getInt(4),
-                        cursor.getInt(5),
-                        cursor.getInt(6));
+                        cursor.getInt(5));
                 list.add(record);
             }
 

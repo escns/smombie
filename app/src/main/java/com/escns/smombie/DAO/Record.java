@@ -12,16 +12,14 @@ public class Record {
     private int mDay;
     private int mHour;
     private int mDist;
-    private int mStepCnt;
 
-    public Record(int mIdInt, int mYear, int mMonth, int mDay, int mHour, int mDist, int mStepCnt) {
+    public Record(int mIdInt, int mYear, int mMonth, int mDay, int mHour, int mDist) {
         this.mIdInt = mIdInt;
         this.mYear = mYear;
         this.mMonth = mMonth;
         this.mDay = mDay;
         this.mHour = mHour;
         this.mDist = mDist;
-        this.mStepCnt = mStepCnt;
     }
 
     public int getmIdInt() {
@@ -72,14 +70,6 @@ public class Record {
         this.mDist = mDist;
     }
 
-    public int getmStepCnt() {
-        return mStepCnt;
-    }
-
-    public void setmStepCnt(int mStepCnt) {
-        this.mStepCnt = mStepCnt;
-    }
-
     @Override
     public String toString() {
         return "Record {" +
@@ -89,7 +79,6 @@ public class Record {
                 ", mDay=" + mDay +
                 ", mHour=" + mHour +
                 ", mDist=" + mDist +
-                ", mStepCnt=" + mStepCnt +
                 '}';
     }
 }
