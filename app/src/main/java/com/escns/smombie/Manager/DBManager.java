@@ -297,4 +297,43 @@ public class DBManager extends SQLiteOpenHelper {
         Log.i("tag", "GET USER IS " + user.toString());
         return user;
     }
+
+    public User getUser() {
+
+        SQLiteDatabase db = null;
+        User user = null;
+
+        try {
+            db = getReadableDatabase();
+
+            Cursor cursor; // 테이블 한줄한줄 읽어오기 위한 Cursor 클래스
+            cursor = db.rawQuery("SELECT USER_ID_INT, USER_ID_TEXT, NAME, EMAIL, GENDER, AGE, POINT, GOAL, REWORD, SUCCESSCNT, FAILCNT, AVGDIST FROM "+ USER_TABLE, null); // RECORD_LIST 테이블 전부 콜
+            while(cursor.moveToNext()) { // 테이블이 끝 날때까지 동작하는 반복문
+                user = new User(
+                        cursor.getInt(0),
+                        cursor.getString(1),
+                        cursor.getString(2),
+                        cursor.getString(3),
+                        cursor.getString(4),
+                        cursor.getInt(5),
+                        cursor.getInt(6),
+                        cursor.getInt(7),
+                        cursor.getInt(8),
+                        cursor.getInt(10),
+                        cursor.getInt(11),
+                        cursor.getInt(12));
+            }
+            cursor.close();
+            db.close();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if(db!=null) {
+                db.close();
+            }
+        }
+        Log.i("tag", "GET USER IS " + user.toString());
+        return user;
+    }
 }

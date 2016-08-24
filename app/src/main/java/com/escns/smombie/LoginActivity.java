@@ -80,6 +80,7 @@ public class LoginActivity extends Activity {
         mApiService = mRetrofit.create(ApiService.class);
 
         mLoginBackground = (ImageView) findViewById(R.id.login_background);
+
         final ProgressBar progressBar = (ProgressBar) findViewById(R.id.bg_loading);
         final ImageView loginFacebook = (ImageView) findViewById(R.id.login_button_visible);
         progressBar.setVisibility(View.VISIBLE);

@@ -130,6 +130,8 @@ public class MainFragment extends Fragment {
         conf = Conf.getInstance();
 
         SwitchCompat swc = (SwitchCompat) rootView.findViewById(R.id.switch_lock);
+        //swc.setChecked(pref.getBoolean("switch",false));
+
         swc.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
