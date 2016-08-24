@@ -14,8 +14,9 @@
 
     <color name="tab_menu">#c8c8c8</color>
     <color name="tab_menuSelect">#212121</color>
-    <color name="tab_line">#a6a2a0</color>
     <color name="tab_lineSelect">#fd6839</color>
+    <color name="tab_PieChart_Success">#dc6464</color>
+    <color name="tab_PieChart_Fail">#c8c8c8</color>
 
     <color name="section1">#f5722a</color>
     <color name="section2">#20bc8e</color>

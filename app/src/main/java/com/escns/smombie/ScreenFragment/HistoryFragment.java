@@ -19,7 +19,7 @@ import com.escns.smombie.Tab.TabPagerAdapter;
 
 public class HistoryFragment extends Fragment {
 
-    TabLayout tabLayout;
+    TabLayout tabLayout; // 탭메뉴가 있을 레이아웃
 
     View rootView;
 
@@ -58,7 +58,7 @@ public class HistoryFragment extends Fragment {
         tabLayout.addTab(tabLayout.newTab().setText("관계별"));//setIcon(android.R.drawable.ic_dialog_dialer));
         tabLayout.addTab(tabLayout.newTab().setText("성과별"));//setIcon(android.R.drawable.ic_dialog_map));
         tabLayout.setTabTextColors(getResources().getColor(R.color.tab_menu), getResources().getColor(R.color.tab_menuSelect));
-        tabLayout.setSelectedTabIndicatorColor(Color.parseColor("#fd6839"));
+        tabLayout.setSelectedTabIndicatorColor(getResources().getColor(R.color.tab_lineSelect));//Color.parseColor("#fd6839"));
         tabLayout.setSelectedTabIndicatorHeight(8);
 
 

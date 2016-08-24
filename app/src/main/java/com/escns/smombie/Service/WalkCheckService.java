@@ -122,7 +122,7 @@ public class WalkCheckService extends Service {
 
                         //mDbManager.updateUser(new User(1, "hajaekwon", "hajaekwon", "hazxz@naver.com", "남자",  26, (int)distance, 1000, 0, 1, 0, 0));
 
-                        List<Record> list = mDbManager.getRecord(1);
+                        List<Record> list = mDbManager.getRecord();
                         for(Record s : list) {
                             Toast.makeText(getApplicationContext(), s.toString(), Toast.LENGTH_SHORT).show();
                             Log.i("tag", s.toString());
