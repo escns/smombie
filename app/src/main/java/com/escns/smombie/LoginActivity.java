@@ -12,6 +12,7 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import com.escns.smombie.DAO.Record;
 import com.escns.smombie.DAO.User;
 import com.escns.smombie.Interface.ApiService;
 import com.escns.smombie.Manager.DBManager;
@@ -31,6 +32,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.Arrays;
+import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Response;
@@ -249,6 +251,23 @@ public class LoginActivity extends Activity {
         pref.edit().putInt("SUCCESSCNT", user.getmSuccessCnt());
         pref.edit().putInt("FAILCNT", user.getmFailCnt());
         pref.edit().putInt("AVGDIST", user.getmAvgDist()).commit();
+
+        Call<List<Record>> selectRecord = mApiService.selectRecord(user.getmIdInt());
+        selectRecord.enqueue(new retrofit2.Callback<List<Record>>() {
+            @Override
+            public void onResponse(Call<List<Record>> call, Response<List<Record>> response) {
+                List<Record> list = response.body();
+                for(Record r : list) {
+                    Log.i("tag", r.toString());
+                    mDbManger.insertRecord(r);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<Record>> call, Throwable t) {
+
+            }
+        });
 
         Intent intent = new Intent(getApplicationContext(), MainActivity.class);
         startActivity(intent);

@@ -1,16 +1,24 @@
 package com.escns.smombie.DAO;
 
+import com.google.gson.annotations.SerializedName;
+
 /**
  * Created by Administrator on 2016-08-17.
  */
 
 public class Record {
 
+    @SerializedName("USER_ID_INT")
     private int mIdInt;
+    @SerializedName("YEAR")
     private int mYear;
+    @SerializedName("MONTH")
     private int mMonth;
+    @SerializedName("DAY")
     private int mDay;
+    @SerializedName("HOUR")
     private int mHour;
+    @SerializedName("DIST")
     private int mDist;
 
     public Record(int mIdInt, int mYear, int mMonth, int mDay, int mHour, int mDist) {
