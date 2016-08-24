@@ -33,7 +33,6 @@ public class User {
     @SerializedName("AVGDIST")
     private int mAvgDist;
 
-
     public User(int mIdInt, String mIdStr, String mName, String mEmail, String mGender, int mAge, int mPoint, int mGoal, int mReword, int mSuccessCnt, int mFailCnt, int mAvgDist) {
         this.mIdInt = mIdInt;
         this.mIdStr = mIdStr;

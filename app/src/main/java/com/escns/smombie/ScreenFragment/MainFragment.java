@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -20,6 +21,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CompoundButton;
+import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import com.escns.smombie.Adapter.ItemMainAdpater;
@@ -37,6 +39,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
+import it.carlom.stikkyheader.core.StikkyHeaderBuilder;
 import retrofit2.Retrofit;
 
 /**
@@ -68,6 +71,9 @@ public class MainFragment extends Fragment {
 
     View rootView;
 
+    RecyclerView mRecyclerView;
+    FrameLayout mHeader;
+
     private Handler handler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
@@ -89,12 +95,32 @@ public class MainFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        rootView = inflater.inflate(R.layout.fragment_main, container, false);
+        rootView = inflater.inflate(R.layout.fragment_main2, container, false);
         Log.i("tag", "onCreateView : " + rootView.getHeight());
 
-        init();
+
 
         return rootView;
+    }
+
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        mRecyclerView = (RecyclerView) view.findViewById(R.id.recyclerview);
+        mHeader = (FrameLayout) view.findViewById(R.id.header);
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+        StikkyHeaderBuilder.stickTo(mRecyclerView)
+                .setHeader(mHeader)
+                .minHeightHeaderDim(R.dimen.toolbar_height)
+                .build();
+
+        init();
     }
 
     @Override
@@ -191,6 +217,7 @@ public class MainFragment extends Fragment {
         ItemMains.add(new ItemMain(false, R.drawable.img_event2));
         ItemMains.add(new ItemMain(false, R.drawable.img_event1));
 
+        /*
         RecyclerView recyclerView = (RecyclerView) rootView.findViewById(R.id.id_stickynavlayout_innerscrollview);
         final GridLayoutManager gridLayoutManager = new GridLayoutManager(mContext,2);
         gridLayoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
@@ -202,6 +229,17 @@ public class MainFragment extends Fragment {
         });
         recyclerView.setLayoutManager(gridLayoutManager);
         recyclerView.setAdapter(new ItemMainAdpater(ItemMains));
+        */
+        final GridLayoutManager gridLayoutManager = new GridLayoutManager(mContext,2);
+        gridLayoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
+            @Override
+            public int getSpanSize(int position) {
+                if(ItemMains.get(position).isHeader()) return gridLayoutManager.getSpanCount();
+                return 1;
+            }
+        });
+        mRecyclerView.setLayoutManager(gridLayoutManager);
+        mRecyclerView.setAdapter(new ItemMainAdpater(ItemMains));
     }
 
     // ThreadService와 MainActivity를 연결 시켜줄 ServiceConnection

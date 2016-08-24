@@ -21,6 +21,7 @@ android {
 
 repositories { // Facebook 추가
     mavenCentral()
+    maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
 }
 
 dependencies {
@@ -42,7 +43,7 @@ dependencies {
     compile 'com.squareup.retrofit2:converter-gson:2.1.0'
     compile 'com.google.code.gson:gson:2.2.4'
     compile 'com.android.support:multidex:1.0.0'
-    compile 'com.gxz.stickynavlayout:library:1.3.1'
+    compile 'com.github.carlonzo.stikkyheader:core:0.0.3-SNAPSHOT'
 
     testCompile 'junit:junit:4.12'
 }
