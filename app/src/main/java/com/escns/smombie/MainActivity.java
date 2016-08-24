@@ -2,11 +2,13 @@ package com.escns.smombie;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.Fragment;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
@@ -17,19 +19,14 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.escns.smombie.Interface.ApiService;
-import com.escns.smombie.Manager.DBManager;
 import com.escns.smombie.ScreenFragment.HistoryFragment;
 import com.escns.smombie.ScreenFragment.InfoFragment;
 import com.escns.smombie.ScreenFragment.MainFragment;
 import com.escns.smombie.ScreenFragment.SettingFragment;
-import com.escns.smombie.Setting.Conf;
 import com.escns.smombie.View.CustomImageView;
 
 import java.net.HttpURLConnection;
 import java.net.URL;
-
-import retrofit2.Retrofit;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -37,41 +34,30 @@ public class MainActivity extends AppCompatActivity {
     public final static int UPDATE_PROFILE_IMAGE = 1;
     public final static int DEFAULT_GOAL = 1000;
 
-    DrawerLayout drawerLayout;              // 메인화면에서의 화면
-    NavigationView navigationView;          // Side 메뉴바
-
-    private SharedPreferences pref;         // 화면 꺼짐 및 이동 시 switch가 초기화되기 때문에 파일에 따로 저장하기 위한 객체
-    private DBManager mDbManager;           // DB 선언
-
-    private Conf conf;
-
-    private int mMenuState = 1;             // 1:홈   2:히스토리   3:설정   4:내정보   5:로그아웃
-
-    MainFragment mMainFragment;
-    HistoryFragment mHistoryFragment;
-    SettingFragment mSettingFragment;
-    InfoFragment mInfoFragment;
-
-    private boolean isProfileImageLoaded;
-
+    private DrawerLayout drawerLayout;              // 메인화면에서의 화면
+    private NavigationView navigationView;          // Side 메뉴바
     private View HeaderLayout;
 
-    private double mbackPressedTime = 0; // 연속으로 두번 누르면 종료 시 사용하는 변수
+    private SharedPreferences pref;                 // 화면 꺼짐 및 이동 시 switch가 초기화되기 때문에 파일에 따로 저장하기 위한 객체
 
-    //private WalkCheckService mService;
-    private boolean mBound = false; // WalkCheckService Service가 제대로 동작하면 true 아니면 false
+    Fragment mMainFragment;
+    Fragment mHistoryFragment;
+    Fragment mSettingFragment;
+    Fragment mInfoFragment;
 
-    private Retrofit mRetrofit;
-    private ApiService mApiService;
+    private int mMenuState = 1;                     // 1:홈   2:히스토리   3:설정   4:내정보   5:로그아웃
+    private boolean isProfileImageLoaded;
+    private double mbackPressedTime = 0;            // 연속으로 두번 누르면 종료 시 사용하는 변수
+    private Bitmap mFbProfileImage;
 
     private Handler handler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
             if(msg.what==UPDATE_PROFILE_IMAGE) {
                 // 사이드 메뉴 header
-                ((CustomImageView)HeaderLayout.findViewById(R.id.header_profile)).setImageBitmap(conf.mFbProfileImage);
-                ((TextView)HeaderLayout.findViewById(R.id.header_name)).setText(conf.mFbName);
-                ((TextView)HeaderLayout.findViewById(R.id.header_email)).setText(conf.mFbEmail);
+                ((CustomImageView)HeaderLayout.findViewById(R.id.header_profile)).setImageBitmap(mFbProfileImage);
+                ((TextView)HeaderLayout.findViewById(R.id.header_name)).setText(pref.getString("NAME", "사용자 이름"));
+                ((TextView)HeaderLayout.findViewById(R.id.header_email)).setText(pref.getString("EMAIL", "사용자 이메일"));
                 isProfileImageLoaded=true;
             }
         }
@@ -81,6 +67,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        pref = getSharedPreferences(getResources().getString(R.string.app_name), MODE_PRIVATE);
 
         mMainFragment = MainFragment.getInstance();
         mHistoryFragment = new HistoryFragment();
@@ -107,17 +95,7 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(getApplicationContext(), "종료하실려면 한번 더 눌러주십시오", Toast.LENGTH_SHORT).show();
             }
         }
-        else if(mMenuState == 2) {
-            mMenuState = 1;
-            getSupportFragmentManager().beginTransaction().replace(R.id.frame_layout, mMainFragment).commit();
-            drawerLayout.closeDrawer(navigationView);
-        }
-        else if(mMenuState == 3) {
-            mMenuState = 1;
-            getSupportFragmentManager().beginTransaction().replace(R.id.frame_layout, mMainFragment).commit();
-            drawerLayout.closeDrawer(navigationView);
-        }
-        else if(mMenuState == 4) {
+        else {
             mMenuState = 1;
             getSupportFragmentManager().beginTransaction().replace(R.id.frame_layout, mMainFragment).commit();
             drawerLayout.closeDrawer(navigationView);
@@ -168,55 +146,30 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public boolean onNavigationItemSelected(MenuItem item) {
 
-                Log.d("tag", "Click item in side Menu");
-
                 int id = item.getItemId();
                 item.setCheckable(false);
 
-                Intent intent;
                 switch(id) {
                     case R.id.drawer_Home: // 홈
-
-                        if(mMenuState != 1) {
-                            mMenuState = 1;
-                            getSupportFragmentManager().beginTransaction().replace(R.id.frame_layout, mMainFragment).commit();
-                        }
-                        drawerLayout.closeDrawer(navigationView);
-
+                        moveFragment(1, mMainFragment);
                         return true;
 
                     case R.id.drawer_menu1 : // 히스토리
-
-                        if(mMenuState != 2) {
-                            mMenuState = 2;
-                            getSupportFragmentManager().beginTransaction().replace(R.id.frame_layout, mHistoryFragment).commit();
-                        }
-                        drawerLayout.closeDrawer(navigationView);
+                        moveFragment(2, mHistoryFragment);
                         return true;
 
                     case R.id.drawer_menu2 : // 설정
-
-                        if(mMenuState != 3) {
-                            mMenuState = 3;
-                            getSupportFragmentManager().beginTransaction().replace(R.id.frame_layout, mSettingFragment).commit();
-                        }
-                        drawerLayout.closeDrawer(navigationView);
+                        moveFragment(3, mSettingFragment);
                         return true;
 
                     case R.id.drawer_menu3 : // 내정보
-
-                        if(mMenuState != 4) {
-                            mMenuState = 4;
-                            getSupportFragmentManager().beginTransaction().replace(R.id.frame_layout, mInfoFragment).commit();
-                        }
-                        drawerLayout.closeDrawer(navigationView);
+                        moveFragment(4, mInfoFragment);
                         return true;
 
                     case R.id.drawer_menu4 : // 로그아웃
                         mMenuState = 5;
                         com.facebook.login.LoginManager.getInstance().logOut();
-                        intent = new Intent(getApplicationContext(), StartActivity.class);
-                        startActivity(intent);
+                        startActivity(new Intent(getApplicationContext(), StartActivity.class));
                         finish();
                         return true;
                 }
@@ -227,26 +180,31 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    private void moveFragment(int i, Fragment fragment) {
+        if(mMenuState != i) {
+            mMenuState = i;
+            getSupportFragmentManager().beginTransaction().replace(R.id.frame_layout, fragment).commit();
+        }
+        drawerLayout.closeDrawer(navigationView);
+    }
+
     /**
      *  Initialize layout
      */
     public void init() {
 
         pref = getSharedPreferences("pref", MODE_PRIVATE);
-        mDbManager = new DBManager(this);
-
-        conf = Conf.getInstance();
 
         Thread thread =  new Thread(new Runnable() {
             @Override
             public void run() {
                 while(!isProfileImageLoaded) {
                     try{
-                        URL url = new URL("https://graph.facebook.com/" + conf.mFbId + "/picture?type=large"); // URL 주소를 이용해서 URL 객체 생성
+                        URL url = new URL("https://graph.facebook.com/" + pref.getString("USER_ID_TEXT", "1111") + "/picture?type=large"); // URL 주소를 이용해서 URL 객체 생성
                         HttpURLConnection conn = (HttpURLConnection) url.openConnection();              //  아래 코드는 웹에서 이미지를 가져온 뒤
                         conn.setDoInput(true);
                         conn.connect();
-                        conf.mFbProfileImage = BitmapFactory.decodeStream(conn.getInputStream());               //  이미지 뷰에 지정할 Bitmap을 생성하는 과정
+                        mFbProfileImage = BitmapFactory.decodeStream(conn.getInputStream());               //  이미지 뷰에 지정할 Bitmap을 생성하는 과정
 
                         Thread.sleep(100);
 
@@ -264,7 +222,6 @@ public class MainActivity extends AppCompatActivity {
 
         // 홈 화면 실행
         getSupportFragmentManager().beginTransaction().replace(R.id.frame_layout, mMainFragment).commit();
-
 
     }
 }

@@ -2,6 +2,7 @@ package com.escns.smombie;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.multidex.MultiDex;
 import android.util.Log;
@@ -14,7 +15,6 @@ import android.widget.Toast;
 import com.escns.smombie.DAO.User;
 import com.escns.smombie.Interface.ApiService;
 import com.escns.smombie.Manager.DBManager;
-import com.escns.smombie.Setting.Conf;
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
@@ -46,8 +46,7 @@ public class LoginActivity extends Activity {
     private DBManager mDbManger;
     private Retrofit mRetrofit;
     private ApiService mApiService;
-
-    private Conf conf;
+    private SharedPreferences pref;
 
     private String mFbId;           // 페이스북 ID
     private String mFbName;         // 페이스북 이름
@@ -75,9 +74,9 @@ public class LoginActivity extends Activity {
 
         // DB 생성
         mDbManger = new DBManager(this);
-        conf = Conf.getInstance();
         mRetrofit = new Retrofit.Builder().baseUrl(mApiService.API_URL).addConverterFactory(GsonConverterFactory.create()).build();
         mApiService = mRetrofit.create(ApiService.class);
+        pref = getSharedPreferences(getResources().getString(R.string.app_name), MODE_PRIVATE);
 
         mLoginBackground = (ImageView) findViewById(R.id.login_background);
 
@@ -97,7 +96,7 @@ public class LoginActivity extends Activity {
             }
         });
 
-        // 로그인 응답을 처리할 콜백 관리자를 만듦
+        // 로그인 응답을 처리할 콜백 관리자를 만듬
         callbackManager = CallbackManager.Factory.create();
 
         mLoginButtonInvisible = (LoginButton) findViewById(R.id.login_button_invisible);
@@ -238,22 +237,18 @@ public class LoginActivity extends Activity {
     }
 
     public void moveToMain(User user) {
-        User temp = mDbManger.getUser(user.getmIdInt());
-        if(temp==null) {
-            Log.i("tag", "temp is null");
-            mDbManger.insertUser(user);
-        } else {
-            Log.i("tag", "temp is not null");
-            mDbManger.updateUser(user);
-        }
-        Log.d("tag", "moveToMain : " + user.toString());
-        // LoginActivity로부터 페이스북 프로필정보 받아오기
-        conf.mPrimaryKey = user.getmIdInt(); // DB에서 받아와야함
-        conf.mFbId = user.getmIdStr();
-        conf.mFbName = user.getmName();
-        conf.mFbEmail = user.getmEmail();
-        conf.mFbGender = user.getmGender();
-        conf.mFbAge = user.getmAge();
+        pref.edit().putInt("USER_ID_INT", user.getmIdInt());
+        pref.edit().putString("USER_ID_TEXT", user.getmIdStr());
+        pref.edit().putString("NAME", user.getmName());
+        pref.edit().putString("EMAIL", user.getmEmail());
+        pref.edit().putString("GENDER", user.getmGender());
+        pref.edit().putInt("AGE", user.getmAge());
+        pref.edit().putInt("POINT", user.getmPoint());
+        pref.edit().putInt("GOAL", user.getmGoal());
+        pref.edit().putInt("REWORD", user.getmReword());
+        pref.edit().putInt("SUCCESSCNT", user.getmSuccessCnt());
+        pref.edit().putInt("FAILCNT", user.getmFailCnt());
+        pref.edit().putInt("AVGDIST", user.getmAvgDist()).commit();
 
         Intent intent = new Intent(getApplicationContext(), MainActivity.class);
         startActivity(intent);
