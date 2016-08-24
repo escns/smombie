@@ -40,6 +40,8 @@ public class SettingFragment extends Fragment {
     }
 
     public void init() {
+        /**
+        pref = mContext.getSharedPreferences("pref", mContext.MODE_PRIVATE);
 
         SwitchCompat swc = (SwitchCompat) rootView.findViewById(R.id.switch_lock_setting);
         swc.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -59,7 +61,7 @@ public class SettingFragment extends Fragment {
                 }
             }
         });
-
+*/
     }
 
     // ThreadService와 MainActivity를 연결 시켜줄 ServiceConnection
