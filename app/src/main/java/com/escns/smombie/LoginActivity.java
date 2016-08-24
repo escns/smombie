@@ -53,7 +53,7 @@ public class LoginActivity extends Activity {
     private String mFbName;         // 페이스북 이름
     private String mFbEmail;        // 페이스북 이메일
     private String mFbGender;       // 페이스북 성별
-    private int mFbAge;          // 페이스북 나이
+    private int mFbAge;             // 페이스북 나이
 
     ImageView mLoginBackground;
     LoginButton mLoginButtonInvisible;      // 페이스북 로그인 버튼

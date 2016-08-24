@@ -38,7 +38,7 @@
                     android:id="@+id/profile_view"
                     android:layout_width="100dp"
                     android:layout_height="100dp"
-                    android:layout_margin="6sp"
+                    android:layout_margin="6dp"
                     android:src="@drawable/img_profile"
                     android:scaleType="fitXY"
                     app:customImageViewType="circle"
