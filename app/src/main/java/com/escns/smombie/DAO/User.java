@@ -1,22 +1,36 @@
 package com.escns.smombie.DAO;
 
+import com.google.gson.annotations.SerializedName;
+
 /**
  * Created by hyo99 on 2016-08-18.
  */
 
 public class User {
 
+    @SerializedName("USER_ID_INT")
     private int mIdInt;
+    @SerializedName("USER_ID_TEXT")
     private String mIdStr;
+    @SerializedName("NAME")
     private String mName;
+    @SerializedName("EMAIL")
     private String mEmail;
+    @SerializedName("GENDER")
     private String mGender;
+    @SerializedName("AGE")
     private int mAge;
+    @SerializedName("POINT")
     private int mPoint;
+    @SerializedName("GOAL")
     private int mGoal;
+    @SerializedName("REWORD")
     private int mReword;
+    @SerializedName("SUCCESSCNT")
     private int mSuccessCnt;
+    @SerializedName("FAILCNT")
     private int mFailCnt;
+    @SerializedName("AVGDIST")
     private int mAvgDist;
 
 

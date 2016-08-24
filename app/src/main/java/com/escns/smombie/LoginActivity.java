@@ -11,6 +11,8 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import com.escns.smombie.DAO.User;
+import com.escns.smombie.Interface.ApiService;
 import com.escns.smombie.Manager.DBManager;
 import com.escns.smombie.Setting.Conf;
 import com.facebook.AccessToken;
@@ -30,6 +32,11 @@ import org.json.JSONObject;
 
 import java.util.Arrays;
 
+import retrofit2.Call;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
+
 /**
  * Created by hyo99 on 2016-08-10.
  */
@@ -37,6 +44,8 @@ import java.util.Arrays;
 public class LoginActivity extends Activity {
 
     private DBManager mDbManger;
+    private Retrofit mRetrofit;
+    private ApiService mApiService;
 
     private Conf conf;
 
@@ -52,6 +61,8 @@ public class LoginActivity extends Activity {
 
     CallbackManager callbackManager;        // 콜백
 
+    User user;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -65,6 +76,8 @@ public class LoginActivity extends Activity {
         // DB 생성
         mDbManger = new DBManager(this);
         conf = Conf.getInstance();
+        mRetrofit = new Retrofit.Builder().baseUrl(mApiService.API_URL).addConverterFactory(GsonConverterFactory.create()).build();
+        mApiService = mRetrofit.create(ApiService.class);
 
         mLoginBackground = (ImageView) findViewById(R.id.login_background);
         final ProgressBar progressBar = (ProgressBar) findViewById(R.id.bg_loading);
@@ -132,17 +145,7 @@ public class LoginActivity extends Activity {
                                     Log.d("tag", "User Gender : " + mFbGender);
                                     Log.d("tag", "User Age : " + mFbAge);
 
-                                    // LoginActivity로부터 페이스북 프로필정보 받아오기
-                                    conf.mPrimaryKey = 1; // DB에서 받아와야함
-                                    conf.mFbId = mFbId;
-                                    conf.mFbName = mFbName;
-                                    conf.mFbEmail = mFbEmail;
-                                    conf.mFbGender = mFbGender;
-                                    conf.mFbAge = mFbAge;
-
-                                    Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-                                    startActivity(intent);
-                                    finish();
+                                    checkUserIdText(mFbId);
 
                                 } catch (JSONException e) {
                                     e.printStackTrace();
@@ -171,16 +174,9 @@ public class LoginActivity extends Activity {
         ((Button) findViewById(R.id.button_NoAccount)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                conf.mPrimaryKey = 1; // DB에서 받아와야함
-                conf.mFbId = "11111";
-                conf.mFbName = "Admin";
-                conf.mFbEmail = "Admin@naver.com";
-                conf.mFbGender = "남자";
-                conf.mFbAge = 26;
+                mFbId="1111";
 
-                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-                startActivity(intent);
-                finish();
+                checkUserIdText(mFbId);
             }
         });
     }
@@ -202,5 +198,63 @@ public class LoginActivity extends Activity {
     public boolean isLogin() {
         AccessToken accessToken = AccessToken.getCurrentAccessToken();
         return accessToken != null;
+    }
+
+    public void checkUserIdText(final String id_text) {
+        Call<User> currentPoint = mApiService.selectUserIdText(id_text);
+        currentPoint.enqueue(new retrofit2.Callback<User>() {
+            @Override
+            public void onResponse(Call<User> call, Response<User> response) {
+                Log.i("tag", "checkUserIdText onResponse");
+                moveToMain(response.body());
+            }
+
+            @Override
+            public void onFailure(Call<User> call, Throwable t) {
+                Log.i("tag", "checkUserIdText onFailure");
+                insertUserIdText(id_text);
+            }
+        });
+    }
+
+    public void insertUserIdText(final String id_text) {
+        Call<String> currentPoint = mApiService.insertUser(id_text, mFbName, mFbEmail, mFbGender, mFbAge, 0, MainActivity.DEFAULT_GOAL, 0, 0, 0, 0);
+        currentPoint.enqueue(new retrofit2.Callback<String>() {
+            @Override
+            public void onResponse(Call<String> call, Response<String> response) {
+                Log.i("tag", "insertUserIdText onResponse");
+                if(response.body().compareTo("success")==0) {
+                    checkUserIdText(mFbId);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
+                Log.i("tag", "insertUserIdText onFailure");
+                Log.i("tag", t.getMessage());
+            }
+        });
+    }
+
+    public void moveToMain(User user) {
+        Log.d("tag", "moveToMain : " + user.toString());
+        User temp = mDbManger.getUser(user.getmIdInt());
+        if(temp==null) {
+            mDbManger.insertUser(user);
+        } else {
+            mDbManger.updateUser(user);
+        }
+
+        // LoginActivity로부터 페이스북 프로필정보 받아오기
+        conf.mPrimaryKey = user.getmIdInt(); // DB에서 받아와야함
+        conf.mFbId = user.getmIdStr();
+        conf.mFbName = user.getmName();
+        conf.mFbEmail = user.getmEmail();
+        conf.mFbGender = user.getmGender();
+        conf.mFbAge = user.getmAge();
+
+        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+        startActivity(intent);
+        finish();
     }
 }

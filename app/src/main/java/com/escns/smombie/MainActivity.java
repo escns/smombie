@@ -31,7 +31,6 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -107,6 +106,7 @@ public class MainActivity extends AppCompatActivity {
             Goal = user.getmGoal();
             Reword = user.getmReword();
         }
+
         super.onResume();
     }
 
@@ -283,43 +283,6 @@ public class MainActivity extends AppCompatActivity {
 
         // 홈 화면 실행
         getSupportFragmentManager().beginTransaction().replace(R.id.frame_layout, mMainFragment).commit();
-
-
-
-        mRetrofit = new Retrofit.Builder().baseUrl(mApiService.API_URL).addConverterFactory(GsonConverterFactory.create()).build();
-        mApiService = mRetrofit.create(ApiService.class);
-
-        /*
-        Call<Point> currentPoint = mApiService.getCurrentPoint(1);
-        currentPoint.enqueue(new Callback<Point>() {
-            @Override
-            public void onResponse(Call<Point> call, Response<Point> response) {
-                if(response.body()!=null) {
-                    section1Text.setText(""+response.body().getPoint()+"m");
-                }
-            }
-
-            @Override
-            public void onFailure(Call<Point> call, Throwable t) {
-
-            }
-        });
-
-        Call<Point> goalPoint = mApiService.getGoalPoint(1);
-        goalPoint.enqueue(new Callback<Point>() {
-            @Override
-            public void onResponse(Call<Point> call, Response<Point> response) {
-                if(response.body()!=null) {
-                    section2Text.setText("" + response.body().getPoint() + "m");
-                }
-            }
-
-            @Override
-            public void onFailure(Call<Point> call, Throwable t) {
-
-            }
-        });
-        */
 
 
     }
