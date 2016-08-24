@@ -25,7 +25,14 @@
         </activity>
 
         <service
-            android:name=".Service.WalkCheckService"
+            android:name=".Service.WalkCheckService">
+            <intent-filter>
+                <action android:name="WalkCheckService" />
+            </intent-filter>
+        </service>
+
+        <service
+            android:name=".Service.PedometerCheckService"
             android:enabled="true">
             <intent-filter>
                 <action android:name="com.escns.smombie.service" />
@@ -33,6 +40,8 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </service>
+
+
         <service android:name=".Service.LockScreenService">
             <intent-filter>
                 <action android:name="LockScreenService" />

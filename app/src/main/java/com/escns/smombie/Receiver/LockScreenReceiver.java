@@ -82,7 +82,7 @@ public class LockScreenReceiver extends BroadcastReceiver {
             }
         } else if(action.equals("com.escns.smombie.LOCK_SCREEN_OFF")) {
             isWalking=false;
-            if(mWindowManager!=null) {
+            if(mWindowManager!=null && isWalking == true) {
                 mWindowManager.removeView(mLockScreenView);
                 mWindowManager = null;
                 isLock=false;
