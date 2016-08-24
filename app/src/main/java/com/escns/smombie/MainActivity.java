@@ -82,7 +82,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        mMainFragment = new MainFragment();
+        mMainFragment = MainFragment.getInstance();
         mHistoryFragment = new HistoryFragment();
         mSettingFragment = new SettingFragment();
         mInfoFragment = new InfoFragment();

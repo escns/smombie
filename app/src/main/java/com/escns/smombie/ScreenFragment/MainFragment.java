@@ -46,12 +46,12 @@ import retrofit2.Retrofit;
 public class MainFragment extends Fragment {
 
     public final static int UPDATE_PROFILE_DATA = 1;
+    public final static int DEFAULT_GOAL = 1000;
 
     private Context mContext;
 
-    public final static int DEFAULT_GOAL = 1000;
-
     private Conf conf;
+    private static MainFragment mMainFragment;
 
     private SharedPreferences pref;         // 화면 꺼짐 및 이동 시 switch가 초기화되기 때문에 파일에 따로 저장하기 위한 객체
     private DBManager mDbManager;            // DB 선언
@@ -80,9 +80,17 @@ public class MainFragment extends Fragment {
         }
     };
 
+    public static MainFragment getInstance() {
+        if(mMainFragment==null) {
+            mMainFragment = new MainFragment();
+        }
+        return mMainFragment;
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.fragment_main, container, false);
+        Log.i("tag", "onCreateView : " + rootView.getHeight());
 
         init();
 
@@ -169,41 +177,6 @@ public class MainFragment extends Fragment {
             }
         });
         thread.start();
-/*
-        mRetrofit = new Retrofit.Builder().baseUrl(mApiService.API_URL).addConverterFactory(GsonConverterFactory.create()).build();
-        mApiService = mRetrofit.create(ApiService.class);
-
-
-        Call<Point> currentPoint = mApiService.getCurrentPoint(1);
-        currentPoint.enqueue(new Callback<Point>() {
-            @Override
-            public void onResponse(Call<Point> call, Response<Point> response) {
-                if(response.body()!=null) {
-                    section1Text.setText(""+response.body().getPoint()+"m");
-                }
-            }
-
-            @Override
-            public void onFailure(Call<Point> call, Throwable t) {
-
-            }
-        });
-
-        Call<Point> goalPoint = mApiService.getGoalPoint(1);
-        goalPoint.enqueue(new Callback<Point>() {
-            @Override
-            public void onResponse(Call<Point> call, Response<Point> response) {
-                if(response.body()!=null) {
-                    section2Text.setText("" + response.body().getPoint() + "m");
-                }
-            }
-
-            @Override
-            public void onFailure(Call<Point> call, Throwable t) {
-
-            }
-        });
-        */
 
         final List<ItemMain> ItemMains = new ArrayList<>();
         ItemMains.add(new ItemMain(true, "이벤트", R.drawable.title_icon_event));
