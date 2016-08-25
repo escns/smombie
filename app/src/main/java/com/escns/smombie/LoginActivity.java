@@ -82,7 +82,6 @@ public class LoginActivity extends Activity {
         Gson gson = new GsonBuilder()
                 .setLenient()
                 .create();
-
         mRetrofit = new Retrofit.Builder().baseUrl(mApiService.API_URL).addConverterFactory(GsonConverterFactory.create(gson)).build();
         mApiService = mRetrofit.create(ApiService.class);
         pref = getSharedPreferences(getResources().getString(R.string.app_name), MODE_PRIVATE);
@@ -191,16 +190,14 @@ public class LoginActivity extends Activity {
             @Override
             public void onError(FacebookException error) {
                 Toast.makeText(getApplicationContext(), "에러가 발생하였습니다", Toast.LENGTH_SHORT).show();
-                Log.d("fb_login_sdk", "callback onError : " + error.getMessage());
+                Log.d("fb_login_sdk", "callback onError");
             }
         });
 
         ((Button) findViewById(R.id.button_NoAccount)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mFbId="1236513456";
-                mFbName = "가나라마바사";
-                mFbEmail = "가나라다@마바사.com";
+                mFbId="1111";
 
                 checkUserIdText(mFbId);
             }
@@ -244,7 +241,6 @@ public class LoginActivity extends Activity {
     }
 
     public void insertUserIdText(final String id_text) {
-
         Call<String> currentPoint = mApiService.insertUser(id_text, mFbName, mFbEmail, mFbGender, mFbAge, 0, MainActivity.DEFAULT_GOAL, 0, 0, 0, 0);
         currentPoint.enqueue(new retrofit2.Callback<String>() {
             @Override

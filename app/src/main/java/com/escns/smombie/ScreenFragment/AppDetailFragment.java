@@ -36,7 +36,7 @@ public class AppDetailFragment extends Fragment {
     public static int STICKY_HEIGHT1; // height1是代表从顶部到tab的距离
     public static int STICKY_HEIGHT2; // height2是代表从顶部到viewpager的距离
 
-    boolean first = true;
+    boolean first = false;
 
     public static AppDetailFragment getInstance() {
         if(mAppDetailFragment==null) {
@@ -114,10 +114,7 @@ public class AppDetailFragment extends Fragment {
 
     @SuppressLint("NewApi")
     private void processStickyTranslateY(int translateY) {
-        if(first==false) {
-            first=true;
-            return;
-        }
+        //if(translateY==-161) return;
         if (translateY == Integer.MIN_VALUE
                 || translateY == lastProcessStickyTranslateY) {
             return;
