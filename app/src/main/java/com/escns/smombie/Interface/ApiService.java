@@ -2,6 +2,7 @@ package com.escns.smombie.Interface;
 
 import com.escns.smombie.DAO.Record;
 import com.escns.smombie.DAO.User;
+import com.escns.smombie.DAO.UserJoinRecord;
 
 import java.util.List;
 
@@ -29,7 +30,10 @@ public interface ApiService {
     @GET("/select_user_id_text.php")
     Call<User> selectUserIdText (@Query("USER_ID_TEXT") String user_id_text);
 
-    @GET("/select_record")
+    @GET("/select_record.php")
     Call<List<Record>> selectRecord(@Query("USER_ID_INT") int user_id_int);
+
+    @GET("/select_record_all.php")
+    Call<List<UserJoinRecord>> selectRecordAll();
 
 }

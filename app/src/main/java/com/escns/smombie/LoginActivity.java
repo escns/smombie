@@ -14,6 +14,7 @@ import android.widget.Toast;
 
 import com.escns.smombie.DAO.Record;
 import com.escns.smombie.DAO.User;
+import com.escns.smombie.DAO.UserJoinRecord;
 import com.escns.smombie.Interface.ApiService;
 import com.escns.smombie.Manager.DBManager;
 import com.facebook.AccessToken;
@@ -239,20 +240,8 @@ public class LoginActivity extends Activity {
     }
 
     public void moveToMain(User user) {
-        SharedPreferences.Editor editor = pref.edit();
-        editor.putInt("USER_ID_INT", user.getmIdInt());
-        editor.putString("USER_ID_TEXT", user.getmIdStr());
-        editor.putString("NAME", user.getmName());
-        editor.putString("EMAIL", user.getmEmail());
-        editor.putString("GENDER", user.getmGender());
-        editor.putInt("AGE", user.getmAge());
-        editor.putInt("POINT", user.getmPoint());
-        editor.putInt("GOAL", user.getmGoal());
-        editor.putInt("REWORD", user.getmReword());
-        editor.putInt("SUCCESSCNT", user.getmSuccessCnt());
-        editor.putInt("FAILCNT", user.getmFailCnt());
-        editor.putInt("AVGDIST", user.getmAvgDist());
-        editor.commit();
+
+        MakeUserInfo(user);
 
         Log.i("tag", user.toString());
         Call<List<Record>> selectRecord = mApiService.selectRecord(user.getmIdInt());
@@ -276,8 +265,102 @@ public class LoginActivity extends Activity {
             }
         });
 
+        Call<List<UserJoinRecord>> selectRecordAll = mApiService.selectRecordAll();
+        selectRecordAll.enqueue(new retrofit2.Callback<List<UserJoinRecord>>() {
+            @Override
+            public void onResponse(Call<List<UserJoinRecord>> call, Response<List<UserJoinRecord>> response) {
+
+                MakeStatisticInfo(response);
+            }
+
+            @Override
+            public void onFailure(Call<List<UserJoinRecord>> call, Throwable t) {
+
+            }
+        });
+
         Intent intent = new Intent(getApplicationContext(), MainActivity.class);
         startActivity(intent);
         finish();
+    }
+
+    private void MakeStatisticInfo(Response<List<UserJoinRecord>> response) {
+        int sumMale = 0;
+        int sumFemale = 0;
+        int sum10s = 0;
+        int sum20s = 0;
+        int sum30s = 0;
+        int sum40s = 0;
+        int sum50s = 0;
+        int cntMale = 0;
+        int cntFemale = 0;
+        int cnt10s = 0;
+        int cnt20s = 0;
+        int cnt30s = 0;
+        int cnt40s = 0;
+        int cnt50s = 0;
+
+        for(UserJoinRecord ujr : response.body()) {
+            int age = ujr.getAGE();
+            if(age >= 50) {
+                cnt50s++;
+                sum50s += ujr.getAVGDIST();
+            } else if(age >= 40) {
+                cnt40s++;
+                sum40s += ujr.getAVGDIST();
+            } else if(age >= 30) {
+                cnt30s++;
+                sum30s += ujr.getAVGDIST();
+            } else if(age >= 20) {
+                cnt20s++;
+                sum20s += ujr.getAVGDIST();
+            } else if(age >= 10) {
+                cnt10s++;
+                sum10s += ujr.getAVGDIST();
+            }
+            boolean isMale = ujr.getGENDER().compareTo("남자") == 0;
+            if(isMale) {
+                cntMale++;
+                sumMale += ujr.getAVGDIST();
+            } else {
+                cntFemale++;
+                sumFemale = ujr.getAVGDIST();
+            }
+        }
+
+        float avgMale = sumMale/cntMale;
+        float avgFemale = sumFemale/cntFemale;
+        float avg10s = sum10s/cnt10s;
+        float avg20s = sum20s/cnt20s;
+        float avg30s = sum30s/cnt30s;
+        float avg40s = sum40s/cnt40s;
+        float avg50s = sum50s/cnt50s;
+
+        SharedPreferences.Editor editor = pref.edit();
+        editor.putFloat("avgMale", avgMale);
+        editor.putFloat("avgFemale", avgFemale);
+        editor.putFloat("avg10s", avg10s);
+        editor.putFloat("avg20s", avg20s);
+        editor.putFloat("avg30s", avg30s);
+        editor.putFloat("avg40s", avg40s);
+        editor.putFloat("avg50s", avg50s);
+        editor.commit();
+    }
+
+    private void MakeUserInfo(User user) {
+        SharedPreferences.Editor editor = pref.edit();
+        editor.putInt("USER_ID_INT", user.getmIdInt());
+        editor.putString("USER_ID_TEXT", user.getmIdStr());
+        editor.putString("NAME", user.getmName());
+        editor.putString("EMAIL", user.getmEmail());
+        editor.putString("GENDER", user.getmGender());
+        editor.putInt("AGE", user.getmAge());
+        editor.putInt("POINT", user.getmPoint());
+        editor.putInt("GOAL", user.getmGoal());
+        editor.putInt("REWORD", user.getmReword());
+        editor.putInt("SUCCESSCNT", user.getmSuccessCnt());
+        editor.putInt("FAILCNT", user.getmFailCnt());
+        editor.putInt("AVGDIST", user.getmAvgDist());
+        editor.commit();
     }
 }

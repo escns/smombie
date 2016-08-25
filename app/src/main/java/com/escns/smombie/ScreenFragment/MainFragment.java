@@ -2,7 +2,6 @@ package com.escns.smombie.ScreenFragment;
 
 import android.content.ComponentName;
 import android.content.Context;
-import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
@@ -15,13 +14,11 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.SwitchCompat;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CompoundButton;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
@@ -30,7 +27,6 @@ import com.escns.smombie.Interface.ApiService;
 import com.escns.smombie.Item.ItemMain;
 import com.escns.smombie.Manager.DBManager;
 import com.escns.smombie.R;
-import com.escns.smombie.Service.LockScreenService;
 import com.escns.smombie.View.CustomImageView;
 
 import java.net.HttpURLConnection;
@@ -113,6 +109,8 @@ public class MainFragment extends Fragment {
                 .minHeightHeaderPixel(actionBarHeight+35)
                 .build();
 
+
+
         init();
     }
 
@@ -160,30 +158,25 @@ public class MainFragment extends Fragment {
         ItemMains.add(new ItemMain(true, "이벤트", R.drawable.title_icon_event));
         ItemMains.add(new ItemMain(false, R.drawable.img_event1));
         ItemMains.add(new ItemMain(false, R.drawable.img_event2));
+        ItemMains.add(new ItemMain(false, R.drawable.img_event2));
+        ItemMains.add(new ItemMain(false, R.drawable.img_event1));
+        ItemMains.add(new ItemMain(false, R.drawable.img_event2));
+        ItemMains.add(new ItemMain(false, R.drawable.img_event2));
         ItemMains.add(new ItemMain(false, R.drawable.img_event1));
 
         ItemMains.add(new ItemMain(true, "제휴 서비스", R.drawable.title_icon_service));
         ItemMains.add(new ItemMain(false, R.drawable.img_event2));
         ItemMains.add(new ItemMain(false, R.drawable.img_event2));
         ItemMains.add(new ItemMain(false, R.drawable.img_event1));
+        ItemMains.add(new ItemMain(false, R.drawable.img_event2));
+        ItemMains.add(new ItemMain(false, R.drawable.img_event2));
+        ItemMains.add(new ItemMain(false, R.drawable.img_event1));
 
-        /*
-        RecyclerView recyclerView = (RecyclerView) rootView.findViewById(R.id.id_stickynavlayout_innerscrollview);
         final GridLayoutManager gridLayoutManager = new GridLayoutManager(mContext,2);
         gridLayoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
             @Override
             public int getSpanSize(int position) {
-                if(ItemMains.get(position).isHeader()) return gridLayoutManager.getSpanCount();
-                return 1;
-            }
-        });
-        recyclerView.setLayoutManager(gridLayoutManager);
-        recyclerView.setAdapter(new ItemMainAdpater(ItemMains));
-        */
-        final GridLayoutManager gridLayoutManager = new GridLayoutManager(mContext,2);
-        gridLayoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
-            @Override
-            public int getSpanSize(int position) {
+                if(position==2) return 1;
                 if(ItemMains.get(position).isHeader()) return gridLayoutManager.getSpanCount();
                 return 1;
             }
