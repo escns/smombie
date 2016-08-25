@@ -77,6 +77,15 @@ public class LoginActivity extends Activity {
 
         setContentView(R.layout.activity_login);
 
+        // 이미 로그인 상태면 loginButton 자동실행
+        if(isLogin()) {
+            //com.facebook.login.LoginManager.getInstance().logOut();
+            //mLoginButtonInvisible.performClick();
+            Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+            startActivity(intent);
+            finish();
+        }
+
         // DB 생성
         mDbManger = new DBManager(this);
         Gson gson = new GsonBuilder()
@@ -119,12 +128,6 @@ public class LoginActivity extends Activity {
 
         // 페이스북에서 제공할 데이터 권한
         mLoginButtonInvisible.setReadPermissions(Arrays.asList("public_profile","email"));
-
-        // 이미 로그인 상태면 loginButton 자동실행
-        if(isLogin()) {
-            com.facebook.login.LoginManager.getInstance().logOut();
-            mLoginButtonInvisible.performClick();
-        }
 
         mLoginButtonInvisible.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
             @Override
