@@ -19,6 +19,7 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.escns.smombie.ScreenFragment.AppDetailFragment;
 import com.escns.smombie.ScreenFragment.HistoryFragment;
 import com.escns.smombie.ScreenFragment.InfoFragment;
 import com.escns.smombie.ScreenFragment.MainFragment;
@@ -153,7 +154,7 @@ public class MainActivity extends AppCompatActivity {
 
                 switch(id) {
                     case R.id.drawer_Home: // 홈
-                        moveFragment(1, mMainFragment);
+                        moveFragment(1, AppDetailFragment.getInstance());
                         return true;
 
                     case R.id.drawer_menu1 : // 히스토리
@@ -221,7 +222,7 @@ public class MainActivity extends AppCompatActivity {
         thread.start();
 
         // 홈 화면 실행
-        getSupportFragmentManager().beginTransaction().replace(R.id.frame_layout, mMainFragment).commit();
+        getSupportFragmentManager().beginTransaction().replace(R.id.frame_layout, AppDetailFragment.getInstance()).commit();
 
     }
 }

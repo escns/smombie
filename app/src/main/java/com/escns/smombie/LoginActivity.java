@@ -26,6 +26,8 @@ import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
@@ -77,7 +79,11 @@ public class LoginActivity extends Activity {
 
         // DB 생성
         mDbManger = new DBManager(this);
-        mRetrofit = new Retrofit.Builder().baseUrl(mApiService.API_URL).addConverterFactory(GsonConverterFactory.create()).build();
+        Gson gson = new GsonBuilder()
+                .setLenient()
+                .create();
+
+        mRetrofit = new Retrofit.Builder().baseUrl(mApiService.API_URL).addConverterFactory(GsonConverterFactory.create(gson)).build();
         mApiService = mRetrofit.create(ApiService.class);
         pref = getSharedPreferences(getResources().getString(R.string.app_name), MODE_PRIVATE);
 
@@ -185,14 +191,16 @@ public class LoginActivity extends Activity {
             @Override
             public void onError(FacebookException error) {
                 Toast.makeText(getApplicationContext(), "에러가 발생하였습니다", Toast.LENGTH_SHORT).show();
-                Log.d("fb_login_sdk", "callback onError");
+                Log.d("fb_login_sdk", "callback onError : " + error.getMessage());
             }
         });
 
         ((Button) findViewById(R.id.button_NoAccount)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mFbId="1111";
+                mFbId="1236513456";
+                mFbName = "가나라마바사";
+                mFbEmail = "가나라다@마바사.com";
 
                 checkUserIdText(mFbId);
             }
@@ -236,6 +244,7 @@ public class LoginActivity extends Activity {
     }
 
     public void insertUserIdText(final String id_text) {
+
         Call<String> currentPoint = mApiService.insertUser(id_text, mFbName, mFbEmail, mFbGender, mFbAge, 0, MainActivity.DEFAULT_GOAL, 0, 0, 0, 0);
         currentPoint.enqueue(new retrofit2.Callback<String>() {
             @Override

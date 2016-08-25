@@ -22,7 +22,7 @@ public interface ApiService {
 
     @FormUrlEncoded
     @POST("/insert_user.php")
-    Call<String> insertUser (@Field("USER_ID_TEXT") String user_id_text, @Field("NAME") String name, @Field("EMAIL") String email, @Field("GENDER") String gender, @Field("AGE") int age,@Field("POINT") int point,@Field("GOAL") int goal,@Field("REWORD") int reword,@Field("SUCCESSCNT") int successcnt,@Field("FAILCNT") int failcnt,@Field("AVGDIST") int avgdist);
+    Call<String> insertUser (@Field("USER_ID_TEXT") String user_id_text, @Field("NAME") String name, @Field("EMAIL") String email, @Field("GENDER") String gender, @Field("AGE") int age, @Field("POINT") int point, @Field("GOAL") int goal, @Field("REWORD") int reword, @Field("SUCCESSCNT") int successcnt, @Field("FAILCNT") int failcnt, @Field("AVGDIST") int avgdist);
 
     @GET("/select_user.php")
     Call<User> selectUser (@Query("USER_ID_INT") int user_id_int);
