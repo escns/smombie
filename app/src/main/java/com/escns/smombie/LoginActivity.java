@@ -328,13 +328,28 @@ public class LoginActivity extends Activity {
             }
         }
 
-        float avgMale = sumMale/cntMale;
-        float avgFemale = sumFemale/cntFemale;
-        float avg10s = sum10s/cnt10s;
-        float avg20s = sum20s/cnt20s;
-        float avg30s = sum30s/cnt30s;
-        float avg40s = sum40s/cnt40s;
-        float avg50s = sum50s/cnt50s;
+        float avgMale;
+        float avgFemale;
+        float avg10s;
+        float avg20s;
+        float avg30s;
+        float avg40s;
+        float avg50s;
+
+        if(cntMale!=0) avgMale = sumMale/cntMale;
+        else avgMale = 0;
+        if(cntFemale!=0) avgFemale = sumFemale/cntFemale;
+        else avgFemale = 0;
+        if(cnt10s!=0) avg10s = sum10s/cnt10s;
+        else avg10s = 0;
+        if(cnt20s!=0) avg20s = sum20s/cnt20s;
+        else avg20s = 0;
+        if(cnt30s!=0) avg30s = sum30s/cnt30s;
+        else avg30s = 0;
+        if(cnt40s!=0) avg40s = sum40s/cnt40s;
+        else avg40s = 0;
+        if(cnt50s!=0) avg50s = sum50s/cnt50s;
+        else avg50s = 0;
 
         SharedPreferences.Editor editor = pref.edit();
         editor.putFloat("avgMale", avgMale);
@@ -345,6 +360,12 @@ public class LoginActivity extends Activity {
         editor.putFloat("avg40s", avg40s);
         editor.putFloat("avg50s", avg50s);
         editor.commit();
+
+        Log.i("tag", "avgMale : " + avgMale);
+        Log.i("tag", "avgFemale : " + avgFemale);
+        Log.i("tag", "avg10s : " + avg10s);
+        Log.i("tag", "avg20s : " + avg20s);
+        Log.i("tag", "avg30s : " + avg30s);
     }
 
     private void MakeUserInfo(User user) {
