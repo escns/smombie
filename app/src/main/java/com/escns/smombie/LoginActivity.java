@@ -352,13 +352,13 @@ public class LoginActivity extends Activity {
         else avg50s = 0;
 
         SharedPreferences.Editor editor = pref.edit();
-        editor.putFloat("avgMale", avgMale);
-        editor.putFloat("avgFemale", avgFemale);
-        editor.putFloat("avg10s", avg10s);
-        editor.putFloat("avg20s", avg20s);
-        editor.putFloat("avg30s", avg30s);
-        editor.putFloat("avg40s", avg40s);
-        editor.putFloat("avg50s", avg50s);
+        editor.putFloat("AVGMALE", avgMale);
+        editor.putFloat("AVGFEMALE", avgFemale);
+        editor.putFloat("AVG10S", avg10s);
+        editor.putFloat("AVG20S", avg20s);
+        editor.putFloat("AVG30S", avg30s);
+        editor.putFloat("AVG40S", avg40s);
+        editor.putFloat("AVG50S", avg50s);
         editor.commit();
 
         Log.i("tag", "avgMale : " + avgMale);

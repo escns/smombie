@@ -20,7 +20,10 @@ import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.BarData;
 import com.github.mikephil.charting.data.BarDataSet;
 import com.github.mikephil.charting.data.BarEntry;
+import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.formatter.AxisValueFormatter;
+import com.github.mikephil.charting.formatter.ValueFormatter;
+import com.github.mikephil.charting.utils.ViewPortHandler;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -150,7 +153,8 @@ public class TabFragment1 extends Fragment {
 
         BarData data = new BarData(set);
         data.setBarWidth(0.5f); // set custom bar width
-        data.setValueTextSize(10f);
+        data.setValueTextSize(13f);
+        data.setValueFormatter(new MyValueFormatter());
 
         initAxisOne();
 
@@ -209,19 +213,20 @@ public class TabFragment1 extends Fragment {
         entries.add(new BarEntry(5, 30.000f));
         entries.add(new BarEntry(6, 50.000f));
 
-        //entries.add(new BarEntry(0, getWeek(mDate-6)));
-        //entries.add(new BarEntry(1, getWeek(mDate-5)));
-        //entries.add(new BarEntry(2, getWeek(mDate-4)));
-        //entries.add(new BarEntry(3, getWeek(mDate-3)));
-        //entries.add(new BarEntry(4, getWeek(mDate-2)));
-        //entries.add(new BarEntry(5, getWeek(mDate-1)));
-        //entries.add(new BarEntry(6, getWeek(mDate)));
+        //entries.add(new BarEntry(0, getDataChart2(mDate-6)));
+        //entries.add(new BarEntry(1, getDataChart2(mDate-5)));
+        //entries.add(new BarEntry(2, getDataChart2(mDate-4)));
+        //entries.add(new BarEntry(3, getDataChart2(mDate-3)));
+        //entries.add(new BarEntry(4, getDataChart2(mDate-2)));
+        //entries.add(new BarEntry(5, getDataChart2(mDate-1)));
+        //entries.add(new BarEntry(6, getDataChart2(mDate)));
 
         BarDataSet set = new BarDataSet(entries, "이동거리");
 
         BarData data = new BarData(set);
         data.setBarWidth(0.5f); // set custom bar width
         data.setValueTextSize(10f);
+        data.setValueFormatter(new MyValueFormatter());
 
         initAxisTwo();
 
@@ -238,7 +243,14 @@ public class TabFragment1 extends Fragment {
      */
     public void initAxisTwo() {
 
-        final String[] xProperties = new String[] { "8/11", "8/12", "8/13", "8/14", "8/15", "8/16", "8/17" };
+        final String[] xProperties = new String[] {
+                getCalendarDate(mDate-6)[1] +"/"+ getCalendarDate(mDate-6)[2],
+                getCalendarDate(mDate-5)[1] +"/"+ getCalendarDate(mDate-5)[2],
+                getCalendarDate(mDate-4)[1] +"/"+ getCalendarDate(mDate-4)[2],
+                getCalendarDate(mDate-3)[1] +"/"+ getCalendarDate(mDate-3)[2],
+                getCalendarDate(mDate-2)[1] +"/"+ getCalendarDate(mDate-2)[2],
+                getCalendarDate(mDate-1)[1] +"/"+ getCalendarDate(mDate-1)[2],
+                getCalendarDate(mDate)[1] +"/"+ getCalendarDate(mDate)[2] };
         AxisValueFormatter formatter = new AxisValueFormatter() {
             @Override
             public String getFormattedValue(float value, AxisBase axis) {
@@ -272,9 +284,9 @@ public class TabFragment1 extends Fragment {
      */
     public void chartThree() {
         List<BarEntry> entries = new ArrayList<>();
-        entries.add(new BarEntry(0, 20.000f));
-        entries.add(new BarEntry(1, 10.000f));
-        entries.add(new BarEntry(2, 30.000f));
+        entries.add(new BarEntry(0, 300));
+        entries.add(new BarEntry(1, 100));
+        entries.add(new BarEntry(2, 130));
 
        //entries.add(new BarEntry(0, getMonth(mMonth-2)));
        //entries.add(new BarEntry(1, getMonth(mMonth-1)));
@@ -284,7 +296,8 @@ public class TabFragment1 extends Fragment {
 
         BarData data = new BarData(set);
         data.setBarWidth(0.5f); // set custom bar width
-        data.setValueTextSize(10f);
+        data.setValueTextSize(13f);
+        data.setValueFormatter(new MyValueFormatter());
 
         initAxisThree();
 
@@ -301,7 +314,10 @@ public class TabFragment1 extends Fragment {
      */
     public void initAxisThree() {
 
-        final String[] xProperties = new String[] { "6월", "7월", "8월"};
+        final String[] xProperties = new String[] {
+                getCalendarMonth(mMonth-2)[1]+"월",
+                getCalendarMonth(mMonth-1)[1]+"월",
+                getCalendarMonth(mMonth)[1]+"월"};
         AxisValueFormatter formatter = new AxisValueFormatter() {
             @Override
             public String getFormattedValue(float value, AxisBase axis) {
@@ -330,7 +346,7 @@ public class TabFragment1 extends Fragment {
 
     }
 
-    public int getDate(int time) {
+    public int getDataChart1(int time) {
         int result = 0;
 
         for(int i=0; i<list.size(); i++) {
@@ -360,8 +376,39 @@ public class TabFragment1 extends Fragment {
         return result;
     }
 
-    public int getWeek(int date) {
+    public int getDataChart2(int input) {
         int result = 0;
+
+        int year = getCalendarDate(input)[0];
+        int month = getCalendarDate(input)[1];
+        int date = getCalendarDate(input)[2];
+
+        for(int i=0; i<list.size(); i++) {
+            if(list.get(i).getmYear() == year &&
+                    list.get(i).getmMonth() == month &&
+                    list.get(i).getmDay() == date ) {
+                result += list.get(i).getmDist();
+            }
+        }
+        return result;
+    }
+
+    public int getDataChart3(int input) {
+        int result = 0;
+
+        int year = getCalendarMonth(input)[0];
+        int month = getCalendarMonth(input)[1];
+
+        for(int i=0; i<list.size(); i++) {
+            if(list.get(i).getmYear() == year &&
+                    list.get(i).getmMonth() == month) {
+                result += list.get(i).getmDist();
+            }
+        }
+        return result;
+    }
+
+    public int[] getCalendarDate(int date) {
 
         int year = mYear;
         int month = mMonth;
@@ -388,22 +435,16 @@ public class TabFragment1 extends Fragment {
             }
         }
 
-        for(int i=0; i<list.size(); i++) {
-            if(list.get(i).getmYear() == year &&
-                    list.get(i).getmMonth() == month &&
-                    list.get(i).getmDay() == date ) {
-                result += list.get(i).getmDist();
-            }
-        }
+        int result[] = {year, month, date};
+
         return result;
     }
 
-    public int getMonth(int month) {
-        int result = 0;
+    public int[] getCalendarMonth(int month) {
 
         int year = mYear;
 
-        // 날짜 예외처리 --> 달이 바뀌는 경우
+        // 날짜 예외처리 --> 연도가 바뀌는 경우
         if(month <= 0) {
             year--;
             if(month == 0) {
@@ -414,12 +455,18 @@ public class TabFragment1 extends Fragment {
             }
         }
 
-        for(int i=0; i<list.size(); i++) {
-            if(list.get(i).getmYear() == year &&
-                    list.get(i).getmMonth() == month) {
-                result += list.get(i).getmDist();
-            }
-        }
+        int result[] = {year, month};
+
         return result;
+    }
+
+    /**
+     * float형으로 나오던 바의 값을 int형으로 변환
+     */
+    public class MyValueFormatter implements ValueFormatter {
+        @Override
+        public String getFormattedValue(float value, Entry entry, int dataSetIndex, ViewPortHandler viewPortHandler) {
+            return "" + ((int) value);
+        }
     }
 }

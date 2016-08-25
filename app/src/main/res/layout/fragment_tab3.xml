@@ -29,8 +29,8 @@
 
         <com.github.mikephil.charting.charts.PieChart
             android:id="@+id/tab3_chart1"
-            android:layout_width="250dp"
-            android:layout_height="250dp"
+            android:layout_width="280dp"
+            android:layout_height="280dp"
             android:layout_centerHorizontal="true"
             android:layout_centerVertical="true" />
 
