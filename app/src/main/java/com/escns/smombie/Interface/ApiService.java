@@ -30,6 +30,10 @@ public interface ApiService {
     @GET("/select_user_id_text.php")
     Call<User> selectUserIdText (@Query("USER_ID_TEXT") String user_id_text);
 
+    @FormUrlEncoded
+    @POST("/insert_record.php")
+    Call<String> insertRecord (@Field("USER_ID_INT") int user_id_int, @Field("YEAR") int year, @Field("MONTH") int month, @Field("DAY") int day, @Field("HOUR") int hour, @Field("DIST") int dist);
+
     @GET("/select_record.php")
     Call<List<Record>> selectRecord(@Query("USER_ID_INT") int user_id_int);
 
