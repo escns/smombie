@@ -16,11 +16,20 @@ import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.escns.smombie.DAO.Record;
+import com.escns.smombie.Interface.ApiService;
+import com.escns.smombie.MainActivity;
 import com.escns.smombie.Manager.DBManager;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 import java.util.Calendar;
 import java.util.Timer;
 import java.util.TimerTask;
+
+import retrofit2.Call;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 /**
  * Created by hyo99 on 2016-08-24.
@@ -30,6 +39,9 @@ public class PedometerCheckService extends Service {
 
     private Context mContext;
     private SharedPreferences pref;         // 화면 꺼짐 및 이동 시 switch가 초기화되기 때문에 파일에 따로 저장하기 위한 객체
+
+    private Retrofit mRetrofit;
+    private ApiService mApiService;
 
     private long lastTime; // 만보기: 이전 시간
     private float speed; // 만보기: 가속도
@@ -46,21 +58,22 @@ public class PedometerCheckService extends Service {
     private SensorManager sensorManager; // 만보기: 센서를 쓰기위한 관리클래스
     private Sensor accelerormeterSensor; // 만보기: 센서
 
-    Calendar c;
+    private Calendar c;
     private int mIdInt;
     private int mYear;
     private int mMonth;
     private int mDate;
     private int mHour;
     private int mDist;
-    DBManager mDbManger;
-    Record record;
+    private DBManager mDbManger;
+    private Record record;
 
     boolean isWalkingNow = false; // 만보기: 제자리이면 false / 걷는상태이면 true
 
     private TimerTask myTimer;
     private Handler handler;
-    boolean isWalkingPast = false;
+    private boolean isWalkingPast = false;
+    private boolean isSave = false;
 
 
     // 다른 프로세스들도 Service에 접근이 가능하게 해주는 Binder를 리턴해주기 위한 Binder 생성
@@ -90,6 +103,12 @@ public class PedometerCheckService extends Service {
         mDbManger = new DBManager(mContext);
         record = new Record(0,0,0,0,0,0);
 
+        Gson gson = new GsonBuilder()
+                .setLenient()
+                .create();
+        mRetrofit = new Retrofit.Builder().baseUrl(mApiService.API_URL).addConverterFactory(GsonConverterFactory.create(gson)).build();
+        mApiService = mRetrofit.create(ApiService.class);
+
         // 만보기: 가속도센서 초기화
         sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
         accelerormeterSensor = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
@@ -118,6 +137,7 @@ public class PedometerCheckService extends Service {
                     mDate = c.get(Calendar.DATE);
                     mHour = c.get(Calendar.HOUR_OF_DAY);
                     mDist = 0;
+                    isSave = true;
 
                     Intent intent = new Intent("com.escns.smombie.LOCK_SCREEN_ON");
                     sendBroadcast(intent);
@@ -126,20 +146,28 @@ public class PedometerCheckService extends Service {
                 else {
                     if(!isWalkingPast) {
 
-                        record.setmIdInt(mIdInt);
-                        record.setmYear(mYear);
-                        record.setmMonth(mMonth);
-                        record.setmDay(mDate);
-                        record.setmHour(mHour);
-                        record.setmDist(mDist/5);
-                        mDbManger.insertRecord(record);
+                        if(isSave) {
+                            record.setmIdInt(mIdInt);
+                            record.setmYear(mYear);
+                            record.setmMonth(mMonth);
+                            record.setmDay(mDate);
+                            record.setmHour(mHour);
+                            record.setmDist(mDist);
+                            mDbManger.insertRecord(record);
 
-                        Log.d("tag","값 한번 보자 mIdInt = " + record.getmIdInt());
-                        Log.d("tag","값 한번 보자 mYear = " + record.getmYear());
-                        Log.d("tag","값 한번 보자 mMonth = " + record.getmMonth());
-                        Log.d("tag","값 한번 보자 mDate = " + record.getmDay());
-                        Log.d("tag","값 한번 보자 mHour = " + record.getmHour());
-                        Log.d("tag","값 한번 보자 mDist = " + record.getmDist());
+                            insertRecordData();
+
+                            Log.d("tag", "값 한번 보자 mIdInt = " + record.getmIdInt());
+                            Log.d("tag", "값 한번 보자 mYear = " + record.getmYear());
+                            Log.d("tag", "값 한번 보자 mMonth = " + record.getmMonth());
+                            Log.d("tag", "값 한번 보자 mDate = " + record.getmDay());
+                            Log.d("tag", "값 한번 보자 mHour = " + record.getmHour());
+                            Log.d("tag", "값 한번 보자 mDist = " + record.getmDist());
+                            isSave = false;
+                        }
+                        else {
+                            isSave = false;
+                        }
 
                         Intent intent = new Intent("com.escns.smombie.LOCK_SCREEN_OFF");
                         sendBroadcast(intent);
@@ -222,6 +250,23 @@ public class PedometerCheckService extends Service {
     @Override
     public IBinder onBind(Intent intent) {
         return mBinder;
+    }
+
+
+    public void insertRecordData() {
+        Call<String> currentPoint = mApiService.insertRecord(mIdInt, mYear, mMonth, mDate, mHour, mDist);
+        currentPoint.enqueue(new retrofit2.Callback<String>() {
+            @Override
+            public void onResponse(Call<String> call, Response<String> response) {
+                Log.i("tag", "insertRecordData onResponse");
+            }
+
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
+                Log.i("tag", "insertRecordData onFailure");
+                Log.i("tag", t.getMessage());
+            }
+        });
     }
 
 }
