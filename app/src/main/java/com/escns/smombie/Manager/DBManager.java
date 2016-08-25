@@ -115,6 +115,7 @@ public class DBManager extends SQLiteOpenHelper {
 
         SQLiteDatabase db = null;
         List<Record> list = new ArrayList<>();
+        list = null;
         Record record = null;
 
         try {

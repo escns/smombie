@@ -36,9 +36,9 @@ import java.util.List;
 
 public class TabFragment1 extends Fragment {
 
-    Context mContext;
-    DBManager mDbManager;
-    List<Record> list;
+    private Context mContext;
+    private DBManager mDbManager;
+    private List<Record> list;
 
     int mYear, mMonth, mDate, mTime;
 
@@ -104,6 +104,10 @@ public class TabFragment1 extends Fragment {
         mContext = getActivity().getApplicationContext();
         mDbManager = new DBManager(mContext);
 
+        //list = new ArrayList<>();
+        //
+        //for(int i=0; i<mDbManager.getRecord().size(); i++)
+
         list = mDbManager.getRecord();
 
         Calendar c = Calendar.getInstance();
@@ -111,11 +115,6 @@ public class TabFragment1 extends Fragment {
         mMonth = c.get(Calendar.MONTH)+1;
         mDate = c.get(Calendar.DATE);
         mTime = c.get(Calendar.HOUR_OF_DAY);
-
-        Log.d("tag", "Year : " + mYear);
-        Log.d("tag", "Month : " + mMonth);
-        Log.d("tag", "Date : " + mDate);
-        Log.d("tag", "Time : " + mTime);
 
         layout1 = (RelativeLayout) rootView.findViewById(R.id.tab1_charLayout1);
         layout2 = (RelativeLayout) rootView.findViewById(R.id.tab1_charLayout2);
@@ -129,9 +128,22 @@ public class TabFragment1 extends Fragment {
         buttonTwo = (ImageView) rootView.findViewById(R.id.tab1_button2);
         buttonThree = (ImageView) rootView.findViewById(R.id.tab1_button3);
 
-        chartOne();
-        chartTwo();
-        chartThree();
+        //Log.d("tag", "사이즈 : " + mDbManager.getRecord().size());
+        //Log.d("tag", "사이즈 : " + list.size());
+        ////for(int i=0; i< list.size(); i++) {
+        //    Log.d("tag", "ID : " + list.get(0).getmIdInt());
+        //    Log.d("tag", "Year : " + list.get(0).getmYear());
+        //    Log.d("tag", "Month : " + list.get(0).getmMonth());
+        //    Log.d("tag", "Date : " + list.get(0).getmDay());
+        //    Log.d("tag", "Time : " + list.get(0).getmHour());
+        //    Log.d("tag", "Dist : " + list.get(0).getmDist());
+        ////}
+
+        if(list != null) {
+            chartOne();
+            chartTwo();
+            chartThree();
+        }
     }
 
     /**
@@ -139,15 +151,15 @@ public class TabFragment1 extends Fragment {
      */
     public void chartOne() {
         List<BarEntry> entries = new ArrayList<>();
-        entries.add(new BarEntry(0, 2.0f));
-        entries.add(new BarEntry(1, 1.0f));
-        entries.add(new BarEntry(2, 3.0f));
-        entries.add(new BarEntry(3, 5.0f));
+        //entries.add(new BarEntry(0, 2.0f));
+        //entries.add(new BarEntry(1, 1.0f));
+        //entries.add(new BarEntry(2, 3.0f));
+        //entries.add(new BarEntry(3, 5.0f));
 
-        //entries.add(new BarEntry(0, getDate(0)));
-        //entries.add(new BarEntry(1, getDate(6)));
-        //entries.add(new BarEntry(2, getDate(12)));
-        //entries.add(new BarEntry(3, getDate(18)));
+        entries.add(new BarEntry(0, getDataChart1(0)));
+        entries.add(new BarEntry(1, getDataChart1(6)));
+        entries.add(new BarEntry(2, getDataChart1(12)));
+        entries.add(new BarEntry(3, getDataChart1(18)));
 
         BarDataSet set = new BarDataSet(entries, "이동거리");
 
@@ -205,21 +217,21 @@ public class TabFragment1 extends Fragment {
      */
     public void chartTwo() {
         List<BarEntry> entries = new ArrayList<>();
-        entries.add(new BarEntry(0, 20.000f));
-        entries.add(new BarEntry(1, 10.000f));
-        entries.add(new BarEntry(2, 40.000f));
-        entries.add(new BarEntry(3, 50.000f));
-        entries.add(new BarEntry(4, 40.000f));
-        entries.add(new BarEntry(5, 30.000f));
-        entries.add(new BarEntry(6, 50.000f));
+        //entries.add(new BarEntry(0, 20.000f));
+        //entries.add(new BarEntry(1, 10.000f));
+        //entries.add(new BarEntry(2, 40.000f));
+        //entries.add(new BarEntry(3, 50.000f));
+        //entries.add(new BarEntry(4, 40.000f));
+        //entries.add(new BarEntry(5, 30.000f));
+        //entries.add(new BarEntry(6, 50.000f));
 
-        //entries.add(new BarEntry(0, getDataChart2(mDate-6)));
-        //entries.add(new BarEntry(1, getDataChart2(mDate-5)));
-        //entries.add(new BarEntry(2, getDataChart2(mDate-4)));
-        //entries.add(new BarEntry(3, getDataChart2(mDate-3)));
-        //entries.add(new BarEntry(4, getDataChart2(mDate-2)));
-        //entries.add(new BarEntry(5, getDataChart2(mDate-1)));
-        //entries.add(new BarEntry(6, getDataChart2(mDate)));
+        entries.add(new BarEntry(0, getDataChart2(mDate-6)));
+        entries.add(new BarEntry(1, getDataChart2(mDate-5)));
+        entries.add(new BarEntry(2, getDataChart2(mDate-4)));
+        entries.add(new BarEntry(3, getDataChart2(mDate-3)));
+        entries.add(new BarEntry(4, getDataChart2(mDate-2)));
+        entries.add(new BarEntry(5, getDataChart2(mDate-1)));
+        entries.add(new BarEntry(6, getDataChart2(mDate)));
 
         BarDataSet set = new BarDataSet(entries, "이동거리");
 
@@ -284,13 +296,13 @@ public class TabFragment1 extends Fragment {
      */
     public void chartThree() {
         List<BarEntry> entries = new ArrayList<>();
-        entries.add(new BarEntry(0, 300));
-        entries.add(new BarEntry(1, 100));
-        entries.add(new BarEntry(2, 130));
+        //entries.add(new BarEntry(0, 300));
+        //entries.add(new BarEntry(1, 100));
+        //entries.add(new BarEntry(2, 130));
 
-       //entries.add(new BarEntry(0, getMonth(mMonth-2)));
-       //entries.add(new BarEntry(1, getMonth(mMonth-1)));
-       //entries.add(new BarEntry(2, getMonth(mMonth)));
+       entries.add(new BarEntry(0, getDataChart3(mMonth-2)));
+       entries.add(new BarEntry(1, getDataChart3(mMonth-1)));
+       entries.add(new BarEntry(2, getDataChart3(mMonth)));
 
         BarDataSet set = new BarDataSet(entries, "이동거리");
 

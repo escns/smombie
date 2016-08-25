@@ -16,6 +16,7 @@ import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.escns.smombie.DAO.Record;
+import com.escns.smombie.Manager.DBManager;
 
 import java.util.Calendar;
 import java.util.Timer;
@@ -52,6 +53,7 @@ public class PedometerCheckService extends Service {
     private int mDate;
     private int mHour;
     private int mDist;
+    DBManager mDbManger;
     Record record;
 
     boolean isWalkingNow = false; // 만보기: 제자리이면 false / 걷는상태이면 true
@@ -85,6 +87,7 @@ public class PedometerCheckService extends Service {
         mContext = getApplicationContext();
         pref = mContext.getSharedPreferences("pref", mContext.MODE_PRIVATE);
         c = Calendar.getInstance();
+        mDbManger = new DBManager(mContext);
         record = new Record(0,0,0,0,0,0);
 
         // 만보기: 가속도센서 초기화
@@ -123,13 +126,20 @@ public class PedometerCheckService extends Service {
                 else {
                     if(!isWalkingPast) {
 
-
                         record.setmIdInt(mIdInt);
                         record.setmYear(mYear);
                         record.setmMonth(mMonth);
                         record.setmDay(mDate);
                         record.setmHour(mHour);
-                        record.setmDist(mDist);
+                        record.setmDist(mDist/5);
+                        mDbManger.insertRecord(record);
+
+                        Log.d("tag","값 한번 보자 mIdInt = " + record.getmIdInt());
+                        Log.d("tag","값 한번 보자 mYear = " + record.getmYear());
+                        Log.d("tag","값 한번 보자 mMonth = " + record.getmMonth());
+                        Log.d("tag","값 한번 보자 mDate = " + record.getmDay());
+                        Log.d("tag","값 한번 보자 mHour = " + record.getmHour());
+                        Log.d("tag","값 한번 보자 mDist = " + record.getmDist());
 
                         Intent intent = new Intent("com.escns.smombie.LOCK_SCREEN_OFF");
                         sendBroadcast(intent);

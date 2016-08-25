@@ -133,7 +133,7 @@ public class TabFragment2 extends Fragment {
 
         entries.add(new BarEntry(2, pref.getInt("AVGDIST", 0)));
         entries.add(new BarEntry(1, 0));
-        if(  pref.getString("GENDER", "").compareTo("male") == 0 ) {
+        if(  pref.getString("GENDER", "").compareTo("남자") == 0 ) {
             entries.add(new BarEntry(0, pref.getFloat("AVGMALE", 0)));
             userGender = 1;
         }
