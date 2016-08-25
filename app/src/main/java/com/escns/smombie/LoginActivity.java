@@ -137,10 +137,25 @@ public class LoginActivity extends Activity {
                                     mFbId = object.getString("id");
                                     mFbName = object.getString("name");
                                     mFbEmail = object.getString("email");
-                                    mFbGender = object.getString("gender");
-                                    strAge = object.getString("birthday");
-                                    strRAge = strAge.replace("/","");
-                                    mFbAge = 2016 - (Integer.parseInt(strRAge)%10000);
+
+                                    try {
+                                        mFbGender = object.getString("gender");
+                                        if (mFbGender.compareTo("male") == 0) {
+                                            mFbGender = "남자";
+                                        } else {
+                                            mFbGender = "여자";
+                                        }
+                                    } catch (JSONException e) {
+                                        mFbGender = "남자";
+                                    }
+
+                                    try {
+                                        strAge = object.getString("birthday");
+                                        strRAge = strAge.replace("/", "");
+                                        mFbAge = 2016 - (Integer.parseInt(strRAge) % 10000);
+                                    } catch (JSONException e) {
+                                        mFbAge = 20;
+                                    }
 
                                     Log.d("tag", "User ID : " + mFbId);
                                     Log.d("tag", "User Name : " + mFbName);

@@ -39,15 +39,15 @@ public class InfoFragment extends Fragment {
         mContext = getActivity().getApplicationContext();
         pref = mContext.getSharedPreferences(getResources().getString(R.string.app_name), mContext.MODE_PRIVATE);
 
-        ((TextView) rootView.findViewById(R.id.info_name)).setText("홍길동");
-        ((TextView) rootView.findViewById(R.id.info_gender)).setText("남성");
-        ((TextView) rootView.findViewById(R.id.info_age)).setText("25"+"세");
-        ((TextView) rootView.findViewById(R.id.info_email)).setText("hyo99075@naver.com");
+        //((TextView) rootView.findViewById(R.id.info_name)).setText("홍길동");
+        //((TextView) rootView.findViewById(R.id.info_gender)).setText("남성");
+        //((TextView) rootView.findViewById(R.id.info_age)).setText("25"+"세");
+        //((TextView) rootView.findViewById(R.id.info_email)).setText("hyo99075@naver.com");
 
-        //((TextView) rootView.findViewById(R.id.info_name)).setText(pref.getString("NAME",""));
-        //((TextView) rootView.findViewById(R.id.info_gender)).setText(pref.getString("GENDER",""));
-        //((TextView) rootView.findViewById(R.id.info_age)).setText(pref.getString("AGE","")+"세");
-        //((TextView) rootView.findViewById(R.id.info_email)).setText(pref.getString("EMAIL",""));
+        ((TextView) rootView.findViewById(R.id.info_name)).setText(pref.getString("NAME",""));
+        ((TextView) rootView.findViewById(R.id.info_gender)).setText(pref.getString("GENDER",""));
+        ((TextView) rootView.findViewById(R.id.info_age)).setText(pref.getInt("AGE",20)+"세");
+        ((TextView) rootView.findViewById(R.id.info_email)).setText(pref.getString("EMAIL",""));
 
     }
 }
