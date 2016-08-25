@@ -39,11 +39,10 @@ public class DBManager extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
 
-        CreateRecordTable(db);
     }
 
-    public void CreateRecordTable(SQLiteDatabase db) {
-        db = getWritableDatabase();
+    public void CreateRecordTable() {
+        SQLiteDatabase db = getWritableDatabase();
 
         StringBuffer sb = new StringBuffer();
 
