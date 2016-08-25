@@ -10,7 +10,7 @@ public class ItemMain {
     private String mTitle;
     private int mIcon;
 
-    private int mImage;
+    private String mUrl;
 
 
     public ItemMain(boolean isHeader, String mTitle, int mIcon) {
@@ -19,9 +19,9 @@ public class ItemMain {
         this.mIcon = mIcon;
     }
 
-    public ItemMain(boolean isHeader, int mImage) {
+    public ItemMain(boolean isHeader, String mUrl) {
         this.isHeader = isHeader;
-        this.mImage = mImage;
+        this.mUrl = mUrl;
     }
 
     public boolean isHeader() {
@@ -48,11 +48,11 @@ public class ItemMain {
         this.mIcon = mIcon;
     }
 
-    public int getmImage() {
-        return mImage;
+    public String getmUrl() {
+        return mUrl;
     }
 
-    public void setmImage(int mImage) {
-        this.mImage = mImage;
+    public void setmUrl(String mUrl) {
+        this.mUrl = mUrl;
     }
 }

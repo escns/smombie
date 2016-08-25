@@ -2,20 +2,13 @@ package com.escns.smombie.ScreenFragment;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.escns.smombie.Adapter.ItemMainAdpater;
-import com.escns.smombie.Item.ItemMain;
 import com.escns.smombie.R;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by Administrator on 2016-08-25.
@@ -55,6 +48,7 @@ public class DetailFragment1 extends Fragment {
 
         mRecyclerView = (RecyclerView) view.findViewById(R.id.recyclerview);
 
+        /*
         final List<ItemMain> ItemMains = new ArrayList<>();
         ItemMains.add(new ItemMain(true, "이벤트", R.drawable.title_icon_event));
         ItemMains.add(new ItemMain(false, R.drawable.img_event1));
@@ -89,7 +83,7 @@ public class DetailFragment1 extends Fragment {
         lp.height = AppDetailFragment.STICKY_HEIGHT2;
         scrollView.setScrollCallBack(scrollListener);
 
-
+        */
     }
 
 

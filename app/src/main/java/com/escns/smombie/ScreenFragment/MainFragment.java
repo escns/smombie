@@ -12,22 +12,24 @@ import android.os.IBinder;
 import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
-import com.escns.smombie.Adapter.ItemMainAdpater;
+import com.escns.smombie.Adapter.ItemMainAdapter2;
 import com.escns.smombie.Interface.ApiService;
 import com.escns.smombie.Item.ItemMain;
 import com.escns.smombie.Manager.DBManager;
 import com.escns.smombie.R;
+import com.escns.smombie.Utils.RandomAd;
 import com.escns.smombie.View.CustomImageView;
+
+import org.lucasr.twowayview.TwoWayView;
 
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -63,7 +65,7 @@ public class MainFragment extends Fragment {
 
     View rootView;
 
-    RecyclerView mRecyclerView;
+    ScrollView mRecyclerView;
     FrameLayout mHeader;
 
     private Handler handler = new Handler() {
@@ -80,7 +82,7 @@ public class MainFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        rootView = inflater.inflate(R.layout.fragment_main2, container, false);
+        rootView = inflater.inflate(R.layout.fragment_main6, container, false);
 
         pref = getActivity().getSharedPreferences(getResources().getString(R.string.app_name), MODE_PRIVATE);
 
@@ -91,7 +93,7 @@ public class MainFragment extends Fragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        mRecyclerView = (RecyclerView) view.findViewById(R.id.recyclerview);
+        mRecyclerView = (ScrollView) view.findViewById(R.id.recyclerview);
         mHeader = (FrameLayout) view.findViewById(R.id.header);
     }
 
@@ -106,6 +108,8 @@ public class MainFragment extends Fragment {
             actionBarHeight = TypedValue.complexToDimensionPixelSize(tv.data,getResources().getDisplayMetrics());
         }
         Log.i("tag", "height : " + actionBarHeight);
+
+
         StikkyHeaderBuilder.stickTo(mRecyclerView)
                 .setHeader(mHeader)
                 .minHeightHeaderPixel(actionBarHeight+35)
@@ -172,35 +176,40 @@ public class MainFragment extends Fragment {
         });
         thread.start();
 
-        final List<ItemMain> ItemMains = new ArrayList<>();
-        ItemMains.add(new ItemMain(true, "이벤트", R.drawable.title_icon_event));
-        ItemMains.add(new ItemMain(false, R.drawable.img_event1));
-        ItemMains.add(new ItemMain(false, R.drawable.img_event2));
-        ItemMains.add(new ItemMain(false, R.drawable.img_event2));
-        ItemMains.add(new ItemMain(false, R.drawable.img_event1));
-        ItemMains.add(new ItemMain(false, R.drawable.img_event2));
-        ItemMains.add(new ItemMain(false, R.drawable.img_event2));
-        ItemMains.add(new ItemMain(false, R.drawable.img_event1));
+        RandomAd randomAd = new RandomAd();
+        List<String> adUrlList1 = randomAd.getRandomAdUrl(3);
 
-        ItemMains.add(new ItemMain(true, "제휴 서비스", R.drawable.title_icon_service));
-        ItemMains.add(new ItemMain(false, R.drawable.img_event2));
-        ItemMains.add(new ItemMain(false, R.drawable.img_event2));
-        ItemMains.add(new ItemMain(false, R.drawable.img_event1));
-        ItemMains.add(new ItemMain(false, R.drawable.img_event2));
-        ItemMains.add(new ItemMain(false, R.drawable.img_event2));
-        ItemMains.add(new ItemMain(false, R.drawable.img_event1));
+        final List<ItemMain> ItemMains1 = new ArrayList<>();
+        ItemMains1.add(new ItemMain(false, adUrlList1.get(0)));
+        ItemMains1.add(new ItemMain(false, adUrlList1.get(1)));
+        ItemMains1.add(new ItemMain(false, adUrlList1.get(2)));
 
-        final GridLayoutManager gridLayoutManager = new GridLayoutManager(mContext,2);
+        TwoWayView twoWayView1 = (TwoWayView) rootView.findViewById(R.id.item_main_detail1);
+        twoWayView1.setAdapter(new ItemMainAdapter2(mContext, 0, ItemMains1));
+
+        final List<ItemMain> ItemMains2 = new ArrayList<>();
+        List<String> adUrlList2 = randomAd.getRandomAdUrl(4);
+        ItemMains2.add(new ItemMain(false, adUrlList2.get(0)));
+        ItemMains2.add(new ItemMain(false, adUrlList2.get(1)));
+        ItemMains2.add(new ItemMain(false, adUrlList2.get(2)));
+        ItemMains2.add(new ItemMain(false, adUrlList2.get(3)));
+
+        TwoWayView twoWayView2 = (TwoWayView) rootView.findViewById(R.id.item_main_detail2);
+        twoWayView2.setAdapter(new ItemMainAdapter2(mContext, 0, ItemMains2));
+
+
+        /*
+        final GridLayoutManager gridLayoutManager = new GridLayoutManager(mContext,1);
         gridLayoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
             @Override
             public int getSpanSize(int position) {
-                if(position==2) return 1;
                 if(ItemMains.get(position).isHeader()) return gridLayoutManager.getSpanCount();
                 return 1;
             }
         });
         mRecyclerView.setLayoutManager(gridLayoutManager);
         mRecyclerView.setAdapter(new ItemMainAdpater(ItemMains));
+        */
     }
 
     // ThreadService와 MainActivity를 연결 시켜줄 ServiceConnection

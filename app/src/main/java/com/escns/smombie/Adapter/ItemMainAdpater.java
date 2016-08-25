@@ -46,7 +46,7 @@ public class ItemMainAdpater extends RecyclerView.Adapter<ItemMainAdpater.ViewHo
             holder.mItemMainText.setText(mItems.get(position).getmTitle());
             holder.mItemMainIcon.setImageResource(mItems.get(position).getmIcon());
         } else {
-            holder.mItemDetailImage.setImageResource(mItems.get(position).getmImage());
+            //holder.mItemDetailImage.setImageResource(mItems.get(position).getmImage());
         }
     }
 
@@ -68,8 +68,8 @@ public class ItemMainAdpater extends RecyclerView.Adapter<ItemMainAdpater.ViewHo
         public ViewHolder(View itemView, int viewType) {
             super(itemView);
             if(viewType==ITEM_VIEW_TYPE_HEADER) {
-                mItemMainText = (TextView) itemView.findViewById(R.id.item_main_text);
-                mItemMainIcon = (ImageView) itemView.findViewById(R.id.item_main_icon);
+                //mItemMainText = (TextView) itemView.findViewById(R.id.item_main_text);
+                //mItemMainIcon = (ImageView) itemView.findViewById(R.id.item_main_icon);
             } else {
                 mItemDetailImage = (ImageView) itemView.findViewById(R.id.item_detail_image);
             }

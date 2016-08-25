@@ -21,14 +21,14 @@
             android:gravity="center_vertical">
 
             <ImageView
-                android:id="@+id/item_main_icon"
+                android:id="@+id/item_main_icon22222"
                 android:layout_width="20sp"
                 android:layout_height="20sp"
                 android:layout_marginLeft="10dp"
                 android:src="@drawable/title_icon_event"/>
 
             <TextView
-                android:id="@+id/item_main_text"
+                android:id="@+id/item_main_text22222"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
