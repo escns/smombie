@@ -1,7 +1,9 @@
 package com.escns.smombie.Service;
 
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -13,6 +15,9 @@ import android.os.Message;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
+import com.escns.smombie.DAO.Record;
+
+import java.util.Calendar;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -21,6 +26,9 @@ import java.util.TimerTask;
  */
 
 public class PedometerCheckService extends Service {
+
+    private Context mContext;
+    private SharedPreferences pref;         // 화면 꺼짐 및 이동 시 switch가 초기화되기 때문에 파일에 따로 저장하기 위한 객체
 
     private long lastTime; // 만보기: 이전 시간
     private float speed; // 만보기: 가속도
@@ -36,6 +44,15 @@ public class PedometerCheckService extends Service {
 
     private SensorManager sensorManager; // 만보기: 센서를 쓰기위한 관리클래스
     private Sensor accelerormeterSensor; // 만보기: 센서
+
+    Calendar c;
+    private int mIdInt;
+    private int mYear;
+    private int mMonth;
+    private int mDate;
+    private int mHour;
+    private int mDist;
+    Record record;
 
     boolean isWalkingNow = false; // 만보기: 제자리이면 false / 걷는상태이면 true
 
@@ -65,6 +82,11 @@ public class PedometerCheckService extends Service {
         super.onCreate();
         Log.d("tag", "WalkCheckThread onCreate");
 
+        mContext = getApplicationContext();
+        pref = mContext.getSharedPreferences("pref", mContext.MODE_PRIVATE);
+        c = Calendar.getInstance();
+        record = new Record(0,0,0,0,0,0);
+
         // 만보기: 가속도센서 초기화
         sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
         accelerormeterSensor = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
@@ -86,12 +108,29 @@ public class PedometerCheckService extends Service {
         handler = new Handler() {
             public void handleMessage(Message msg) {
                 if(isWalkingNow) {
+
+                    mIdInt = pref.getInt("USER_ID_INT", 0);
+                    mYear = c.get(Calendar.YEAR);
+                    mMonth = c.get(Calendar.MONTH)+1;
+                    mDate = c.get(Calendar.DATE);
+                    mHour = c.get(Calendar.HOUR_OF_DAY);
+                    mDist = 0;
+
                     Intent intent = new Intent("com.escns.smombie.LOCK_SCREEN_ON");
                     sendBroadcast(intent);
                     isWalkingPast = true;
                 }
                 else {
                     if(!isWalkingPast) {
+
+
+                        record.setmIdInt(mIdInt);
+                        record.setmYear(mYear);
+                        record.setmMonth(mMonth);
+                        record.setmDay(mDate);
+                        record.setmHour(mHour);
+                        record.setmDist(mDist);
+
                         Intent intent = new Intent("com.escns.smombie.LOCK_SCREEN_OFF");
                         sendBroadcast(intent);
                     }
@@ -142,6 +181,8 @@ public class PedometerCheckService extends Service {
                     if(speed > SHAKE_THRESHOLD) {
                         // 가속도센서를 이용해 걸음수를 측정
                         Log.d("tag", "onSensorChanged SHAKE !!");
+
+                        mDist++;
 
                         isWalkingNow = true;
                     }

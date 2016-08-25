@@ -59,6 +59,8 @@ public class MainFragment extends Fragment {
     private boolean isProfileDataLoaded;
     private Bitmap mFbProfileImage;
 
+    private boolean statAppFirst = true;
+
     View rootView;
 
     RecyclerView mRecyclerView;
@@ -121,6 +123,21 @@ public class MainFragment extends Fragment {
         ((TextView) rootView.findViewById(R.id.section2_text)).setText(""+pref.getInt("GOAL", 0));
         ((TextView) rootView.findViewById(R.id.section3_text)).setText(""+pref.getInt("REWORD", 0));
 
+        if (!statAppFirst) {
+            try {
+                Thread.sleep(100);
+
+                Message message = handler.obtainMessage();
+                message.what = UPDATE_PROFILE_DATA;
+                handler.sendMessage(message);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        else {
+            statAppFirst = false;
+        }
+
         super.onResume();
     }
 
@@ -135,6 +152,7 @@ public class MainFragment extends Fragment {
             public void run() {
                 while(!isProfileDataLoaded) {
                     try{
+                        Log.d("tag","몇번 오나 보자!!!!!");
                         URL url = new URL("https://graph.facebook.com/" + pref.getString("USER_ID_TEXT", "1111") + "/picture?type=large"); // URL 주소를 이용해서 URL 객체 생성
                         HttpURLConnection conn = (HttpURLConnection) url.openConnection();              //  아래 코드는 웹에서 이미지를 가져온 뒤
                         conn.setDoInput(true);

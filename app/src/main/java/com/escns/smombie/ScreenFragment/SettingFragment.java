@@ -25,7 +25,6 @@ import com.escns.smombie.Service.LockScreenService;
 public class SettingFragment extends Fragment {
 
     private Context mContext;
-
     private SharedPreferences pref;         // 화면 꺼짐 및 이동 시 switch가 초기화되기 때문에 파일에 따로 저장하기 위한 객체
 
     View rootView;
@@ -61,6 +60,7 @@ public class SettingFragment extends Fragment {
 
                     mContext.unbindService(mConnection);
                     mContext.stopService(new Intent(mContext, LockScreenService.class));
+
                 }
             }
         });
