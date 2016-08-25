@@ -128,7 +128,9 @@ public class TabFragment1 extends Fragment {
         buttonTwo = (ImageView) rootView.findViewById(R.id.tab1_button2);
         buttonThree = (ImageView) rootView.findViewById(R.id.tab1_button3);
 
-        //Log.d("tag", "사이즈 : " + mDbManager.getRecord().size());
+        if (mDbManager.getRecord() != null) {
+            Log.d("tag", "사이즈 : " + mDbManager.getRecord().size());
+        }
         //Log.d("tag", "사이즈 : " + list.size());
         ////for(int i=0; i< list.size(); i++) {
         //    Log.d("tag", "ID : " + list.get(0).getmIdInt());
@@ -139,11 +141,11 @@ public class TabFragment1 extends Fragment {
         //    Log.d("tag", "Dist : " + list.get(0).getmDist());
         ////}
 
-        if(list != null) {
+        //if(list != null) {
             chartOne();
             chartTwo();
             chartThree();
-        }
+        //}
     }
 
     /**

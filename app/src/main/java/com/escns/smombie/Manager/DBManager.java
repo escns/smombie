@@ -81,21 +81,27 @@ public class DBManager extends SQLiteOpenHelper {
         SQLiteDatabase db = null;
         try {
             db = getWritableDatabase();
+            db.execSQL("INSERT INTO " + RECORD_TABLE + " (USER_ID_INT, YEAR, MONTH, DAY, HOUR, DIST) VALUES (" +
+                    data.getmIdInt() + "," +
+                    data.getmYear() + "," +
+                    data.getmMonth() + "," +
+                    data.getmDay() + "," +
+                    data.getmHour() + "," +
+                    data.getmDist() + ")" );
 
-            StringBuffer sb = new StringBuffer();
-            sb.append(" INSERT INTO " + RECORD_TABLE + " ( ");
-            sb.append(" USER_ID_INT, YEAR, MONTH, DAY, HOUR, DIST) ");
-            sb.append(" VALUES ( ?, ?, ?, ?, ?, ?, ? ) ");
-
-            db.execSQL(sb.toString(),
-                    new Object[]{
-                            data.getmIdInt(),
-                            data.getmYear(),
-                            data.getmMonth(),
-                            data.getmDay(),
-                            data.getmHour(),
-                            data.getmDist()
-                    });
+            //StringBuffer sb = new StringBuffer();
+            //sb.append(" INSERT INTO " + RECORD_TABLE + " ( ");
+            //sb.append(" USER_ID_INT, YEAR, MONTH, DAY, HOUR, DIST) ");
+            //sb.append(" VALUES ( ?, ?, ?, ?, ?, ?, ? ) ");
+            //db.execSQL(sb.toString(),
+            //        new Object[]{
+            //                data.getmIdInt(),
+            //                data.getmYear(),
+            //                data.getmMonth(),
+            //                data.getmDay(),
+            //                data.getmHour(),
+            //                data.getmDist()
+            //        });
 
         } catch (Exception e) {
             e.printStackTrace();
