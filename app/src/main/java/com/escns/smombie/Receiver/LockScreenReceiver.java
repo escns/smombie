@@ -3,25 +3,18 @@ package com.escns.smombie.Receiver;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.support.v4.view.PagerAdapter;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 
 import com.escns.smombie.R;
 import com.escns.smombie.Utils.RandomAd;
 import com.escns.smombie.View.LoopViewPager2;
-import com.squareup.picasso.Callback;
-import com.squareup.picasso.Picasso;
-
-import java.util.List;
 
 /**
  * Created by Administrator on 2016-08-04.
@@ -43,6 +36,7 @@ public class LockScreenReceiver extends BroadcastReceiver {
 
     private static boolean isLock;                  // lock의 상태
     private static boolean isWalking;
+    private static boolean isRinging;
 
     /**
      * BroadcastReceiver에 메시지가 왔을 때
@@ -59,20 +53,29 @@ public class LockScreenReceiver extends BroadcastReceiver {
 
         // 어떤 메시지인지 확인
         if(action.equals(intent.ACTION_SCREEN_OFF)) {
-            if(isWalking) {
+            if(isWalking && !isRinging) {
 
                 drawLockScreen(context);
 
             }
         } else if(action.equals("com.escns.smombie.CALL_STATE_RINGING")) {
+            isRinging = true;
             if(mWindowManager!=null && isLock) {
                 mWindowManager.removeView(mLockScreenView);
                 mWindowManager = null;
                 isLock=false;
             }
+
         } else if(action.equals("com.escns.smombie.CALL_STATE_OFFHOOK")) {
+            isRinging = true;
+            if(mWindowManager!=null && isLock) {
+                mWindowManager.removeView(mLockScreenView);
+                mWindowManager = null;
+                isLock=false;
+            }
 
         } else if(action.equals("com.escns.smombie.CALL_STATE_IDLE")) {
+            isRinging = false;
 
         } else if(action.equals("com.escns.smombie.LOCK_SCREEN_ON")) {
 
@@ -81,7 +84,7 @@ public class LockScreenReceiver extends BroadcastReceiver {
             if(isWalking) Log.i("tag", "isWalking = true");
             else Log.i("tag", "isWalking = false");
 
-            if(!isLock) {
+            if(!isLock && !isRinging) {
                 isWalking=true;
                 drawLockScreen(context);
             }
@@ -183,60 +186,5 @@ public class LockScreenReceiver extends BroadcastReceiver {
                 return true;
             }
         });
-    }
-
-    public class CustomPagerAdapter extends PagerAdapter {
-
-        private Context mContext;
-        private LayoutInflater mLayoutInflater;
-        private List<String> list;
-
-        public CustomPagerAdapter(Context mContext) {
-            this.mContext = mContext;
-            mLayoutInflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-
-            RandomAd randomAd = new RandomAd();
-            list = randomAd.getRandomAdUrl(VIEWPAGER_COUNT);
-        }
-
-        @Override
-        public Object instantiateItem(ViewGroup collection, int position) {
-
-            ViewGroup layout = (ViewGroup) mLayoutInflater.inflate(R.layout.lockscreen_view, collection, false);
-            ImageView background = (ImageView) layout.findViewById(R.id.lockscreen_background);
-
-            final ProgressBar progressBar = (ProgressBar) layout.findViewById(R.id.lockscreen_loading);
-            progressBar.setVisibility(View.VISIBLE);
-
-            Picasso.with(mContext)
-                    .load(list.get(position))
-                    .into(background, new Callback() {
-                        @Override
-                        public void onSuccess() {
-                            progressBar.setVisibility(View.GONE);
-                        }
-                        @Override
-                        public void onError() {
-                            Log.i("tag", "onERROR");
-                        }
-                    });
-
-            collection.addView(layout);
-            return layout;
-        }
-        @Override
-        public void destroyItem(ViewGroup collection, int position, Object view) {
-            collection.removeView((View) view);
-        }
-
-        @Override
-        public int getCount() {
-            return VIEWPAGER_COUNT;
-        }
-
-        @Override
-        public boolean isViewFromObject(View view, Object object) {
-            return view==object;
-        }
     }
 }
