@@ -59,6 +59,8 @@ public class LoginActivity extends Activity {
     private String mFbGender;       // 페이스북 성별
     private int mFbAge;             // 페이스북 나이
 
+    private boolean isAutoLogin;
+
     ImageView mLoginBackground;
     LoginButton mLoginButtonInvisible;      // 페이스북 로그인 버튼
     ImageView mLoginButtonVisible;          // 커스텀 로그인 버튼
@@ -86,6 +88,7 @@ public class LoginActivity extends Activity {
         mApiService = mRetrofit.create(ApiService.class);
 
         pref = getSharedPreferences(getResources().getString(R.string.app_name), MODE_PRIVATE);
+        isAutoLogin = false;
 
         mLoginBackground = (ImageView) findViewById(R.id.login_background);
 
@@ -186,6 +189,7 @@ public class LoginActivity extends Activity {
         if(isLogin()) {
             Toast.makeText(getApplicationContext(), "로그인 체크", Toast.LENGTH_SHORT).show();
             com.facebook.login.LoginManager.getInstance().logOut();
+            isAutoLogin = true;
             mLoginButtonInvisible.performClick();
             //Intent intent = new Intent(getApplicationContext(), MainActivity.class);
             //startActivity(intent);
@@ -305,6 +309,7 @@ public class LoginActivity extends Activity {
         });
 
         Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+        intent.putExtra("AutoLogin",isAutoLogin);
         startActivity(intent);
         finish();
     }

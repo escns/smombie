@@ -212,13 +212,18 @@ public class MainActivity extends AppCompatActivity {
      */
     public void init() {
 
+        Intent intent = getIntent();
+        boolean auto = intent.getBooleanExtra("AutoLogin",true);
+
         pref = getSharedPreferences(getResources().getString(R.string.app_name), MODE_PRIVATE);
 
-        if( pref.getBoolean("switch",true) ) {
-            pref.edit().putBoolean("switch", true).commit();
+        if(!auto) {
+            //if (pref.getBoolean("switch", true)) {
+                pref.edit().putBoolean("switch", true).commit();
 
-            startService(new Intent((MainActivity.this), PedometerCheckService.class));
-            startService(new Intent((MainActivity.this), LockScreenService.class));
+                startService(new Intent((MainActivity.this), PedometerCheckService.class));
+                startService(new Intent((MainActivity.this), LockScreenService.class));
+            //}
         }
 
         mMainFragment = new MainFragment();
