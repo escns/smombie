@@ -19,10 +19,13 @@ import com.escns.smombie.Service.PedometerCheckService;
  * Created by hyo99 on 2016-08-23.
  */
 
+/**
+ * 설정 화면
+ */
 public class SettingFragment extends Fragment {
 
     private Context mContext;
-    private SharedPreferences pref;         // 화면 꺼짐 및 이동 시 switch가 초기화되기 때문에 파일에 따로 저장하기 위한 객체
+    private SharedPreferences pref; // 화면 꺼짐 및 이동 시 switch가 초기화되기 때문에 파일에 따로 저장하기 위한 객체
 
     View rootView;
 
@@ -35,13 +38,18 @@ public class SettingFragment extends Fragment {
         return rootView;
     }
 
+    /**
+     * 초기화 함수
+     */
     public void init() {
 
         mContext = getActivity().getApplicationContext();
 
+
         SwitchCompat swc = (SwitchCompat) rootView.findViewById(R.id.switch_lock_setting);
         pref = mContext.getSharedPreferences(getResources().getString(R.string.app_name), mContext.MODE_PRIVATE);
 
+        // 잠금화면 활성화/비활성화 스위치
         boolean state = pref.getBoolean("switch", true);
         if (state) {
             swc.setChecked(true);
@@ -49,8 +57,6 @@ public class SettingFragment extends Fragment {
         else {
             swc.setChecked(false);
         }
-
-
         swc.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {

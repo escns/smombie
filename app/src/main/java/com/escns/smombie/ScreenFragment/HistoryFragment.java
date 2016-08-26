@@ -21,6 +21,9 @@ import com.squareup.picasso.Picasso;
  * Created by hyo99 on 2016-08-16.
  */
 
+/**
+ * 히스토리 화면
+ */
 public class HistoryFragment extends Fragment {
 
     TabLayout tabLayout; // 탭메뉴가 있을 레이아웃
@@ -61,6 +64,9 @@ public class HistoryFragment extends Fragment {
                 });
     }
 
+    /**
+     * 화면이 다시 출력되었을 때 탭메뉴 재구성
+     */
     @Override
     public void onStart() {
 

@@ -39,13 +39,16 @@ import retrofit2.converter.gson.GsonConverterFactory;
  * Created by hyo99 on 2016-08-24.
  */
 
+/**
+ * 가속도 센서를 이용해 걷는지 안걷는지를 판단하기 위한 class
+ */
 public class PedometerCheckService extends Service {
 
     private Context mContext;
     private SharedPreferences pref;         // 화면 꺼짐 및 이동 시 switch가 초기화되기 때문에 파일에 따로 저장하기 위한 객체
 
-    private Retrofit mRetrofit;
-    private ApiService mApiService;
+    private Retrofit mRetrofit;     // 서버와 통신을 위한 Retrofit
+    private ApiService mApiService; // 서버와 통신을 위한 ApiService
 
     private long lastTime; // 만보기: 이전 시간
     private float speed; // 만보기: 가속도
@@ -62,23 +65,25 @@ public class PedometerCheckService extends Service {
     private SensorManager sensorManager; // 만보기: 센서를 쓰기위한 관리클래스
     private Sensor accelerormeterSensor; // 만보기: 센서
 
-    private Calendar c;
-    private int mIdInt;
-    private int mYear;
-    private int mMonth;
-    private int mDate;
-    private int mHour;
-    private int mDist;
+    private Calendar c; // 날짜를 받아오기위한 객체
+    private int mIdInt; // 사용자 아이디
+    private int mYear; // 현재 날짜
+    private int mMonth; // 현재 달
+    private int mDate; // 현재 일
+    private int mHour; // 현재 시간
+    private int mDist; // 걸은 거리
+
     private DBManager mDbManger;
     private Record record;
     List<Record> list;
 
     boolean isWalkingNow = false; // 만보기: 제자리이면 false / 걷는상태이면 true
 
-    private TimerTask myTimer;
-    private Handler handler;
-    private boolean isWalkingPast = false;
-    private boolean isSave = false;
+    private TimerTask myTimer; // 주기적으로 데이터를 DB에 저장해주기 위한 시간변수
+    private Handler handler; // 데이터 값을 DB에 저장하기 위한 핸들러
+
+    private boolean isWalkingPast = false;  // 쓸데없는 데이터를 저장하지 않기 위함
+    private boolean isSave = false; // 데이터가 저장되었는지 아닌지 판단
 
     /*
     // 다른 프로세스들도 Service에 접근이 가능하게 해주는 Binder를 리턴해주기 위한 Binder 생성
@@ -110,6 +115,7 @@ public class PedometerCheckService extends Service {
         super.onCreate();
         Log.d("tag", "WalkCheckThread onCreate");
 
+        // 객체 할당
         mContext = getApplicationContext();
         pref = mContext.getSharedPreferences(getResources().getString(R.string.app_name), mContext.MODE_PRIVATE);
         c = Calendar.getInstance();
@@ -119,6 +125,7 @@ public class PedometerCheckService extends Service {
         list = new ArrayList<>();
         list = mDbManger.getRecord();
 
+        // 서버와의 통신
         Gson gson = new GsonBuilder()
                 .setLenient()
                 .create();
@@ -133,6 +140,7 @@ public class PedometerCheckService extends Service {
         if (accelerormeterSensor != null)
             sensorManager.registerListener(sensorEventListener, accelerormeterSensor, SensorManager.SENSOR_DELAY_GAME);
 
+        // 주기적으로 데이터를 저장하기 위함
         myTimer = new TimerTask() {
             @Override
             public void run() {
@@ -141,8 +149,9 @@ public class PedometerCheckService extends Service {
             }
         };
         Timer timer = new Timer();
-        timer.schedule(myTimer,1000,1000); // App 시작 3초 이후에 3초마다 실행
+        timer.schedule(myTimer,1000,1000); // App 시작 1초 이후에 1초마다 실행
 
+        // 데이터를 DB에 저장하기 위함
         handler = new Handler() {
             public void handleMessage(Message msg) {
                 if(isWalkingNow) {
@@ -247,6 +256,9 @@ public class PedometerCheckService extends Service {
 
     }
 
+    /**
+     * 스위치가 OFF가 되면 가속도센서, 주기시간, 잠금화면이 비활성화
+     */
     @Override
     public void onDestroy() {
         Log.d("tag", "WalkCheckThread onDestroy");
@@ -308,12 +320,17 @@ public class PedometerCheckService extends Service {
         }
     };
 
+    /**
+     * 가속도센서가 동작하는지 아닌지 판단
+     * @return
+     */
     public boolean isWalking() {
         return isWalkingNow;
     }
 
-
-
+    /**
+     * 서버 DB에 record를 저장하기 위함
+     */
     public void insertRecordData() {
         Call<String> currentPoint = mApiService.insertRecord(mIdInt, mYear, mMonth, mDate, mHour, mDist);
         currentPoint.enqueue(new retrofit2.Callback<String>() {
@@ -330,6 +347,9 @@ public class PedometerCheckService extends Service {
         });
     }
 
+    /**
+     * 파일에 유저정보를 갱신하기 위함
+     */
     public void updateUserData(User user) {
         Call<String> currentPoint = mApiService.updateUser(user.getmIdInt(), user.getmName(), user.getmEmail(), user.getmGender(), user.getmAge(), user.getmGoal(), user.getmPoint(), user.getmReword(), user.getmSuccessCnt(), user.getmFailCnt(), user.getmAvgDist());
         currentPoint.enqueue(new retrofit2.Callback<String>() {

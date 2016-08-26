@@ -42,6 +42,9 @@ import static android.content.Context.MODE_PRIVATE;
  * Created by hyo99 on 2016-08-23.
  */
 
+/**
+ * 홈 화면
+ */
 public class MainFragment extends Fragment {
 
     public final static int UPDATE_PROFILE_DATA = 1;

@@ -16,6 +16,10 @@ import java.util.List;
  * Created by hyo99 on 2016-08-02.
  */
 
+
+/**
+ * Local DataBase
+ */
 public class DBManager extends SQLiteOpenHelper {
 
     private String DB_NAME; // 테이블 이름
@@ -162,44 +166,4 @@ public class DBManager extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS " + RECORD_TABLE); // 쿼리문 입력
         db.close();
     }
-
-    /*
-    public List<Record> getRecord(int id) {
-
-        SQLiteDatabase db = null;
-        List<Record> list = new ArrayList<>();
-        Record record = null;
-
-        try {
-            db = getReadableDatabase();
-
-            StringBuffer sb = new StringBuffer();
-            sb.append(" SELECT * FROM " + RECORD_TABLE);
-            sb.append(" WHERE USER_ID_INT is ? ");
-
-            Cursor cursor = db.rawQuery(sb.toString(),
-                    new String[]{
-                            "" + id
-                    });
-
-            while (cursor.moveToNext()) {
-                record = new Record(cursor.getInt(0),
-                        cursor.getInt(1),
-                        cursor.getInt(2),
-                        cursor.getInt(3),
-                        cursor.getInt(4),
-                        cursor.getInt(5));
-                list.add(record);
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            if (db != null) {
-                db.close();
-            }
-        }
-        return list;
-    }
-    */
 }

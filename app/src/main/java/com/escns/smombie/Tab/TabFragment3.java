@@ -2,10 +2,8 @@ package com.escns.smombie.Tab;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,12 +27,12 @@ import java.util.List;
 
 public class TabFragment3 extends Fragment {
 
-    Context mContext;
-    private SharedPreferences pref;
+    Context mContext; // MainActiviy의 context를 받아올 객체
+    private SharedPreferences pref; // 파일에 있는 정보를 불러오기위한 객체
 
-    RelativeLayout layout1;
+    RelativeLayout layout1; // 레이아웃 : 성공률
 
-    PieChart chart1;
+    PieChart chart1; // 그래프 : 성공률
 
     View rootView;
 
@@ -42,14 +40,19 @@ public class TabFragment3 extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.fragment_tab3, container, false);
 
-        init();
+        init(); // 초기화
 
         return rootView;
     }
 
+    /**
+     * 초기화 함수
+     */
     public void init() {
 
-        mContext = getActivity().getApplicationContext();
+        mContext = getActivity().getApplicationContext(); // MainActivity의 context를 받아옴
+
+        // 'smombie'란 파일을 읽음
         pref = mContext.getSharedPreferences(getResources().getString(R.string.app_name), mContext.MODE_PRIVATE);
 
         layout1 = (RelativeLayout) rootView.findViewById(R.id.tab3_charLayout1);
@@ -57,19 +60,17 @@ public class TabFragment3 extends Fragment {
         chart1 = (PieChart) rootView.findViewById(R.id.tab3_chart1);
         chart1.setTouchEnabled(false);
 
-        Log.d("tag", "Tab3_Chart Fail " + pref.getInt("FAILCNT", 999));
-        Log.d("tag", "Tab3_Chart Success " + pref.getInt("SUCCESSCNT", 999));
-
+        // 데이터가 없으면 그래프를 출력하지 않는다
         if(pref.getInt("FAILCNT",999) != 0 || pref.getInt("SUCCESSCNT",999) != 0) {
             chart();
         }
     }
 
+    /**
+     * 성공률을 나타내는 PieChart
+     */
     public void chart() {
         List<PieEntry> entries = new ArrayList<>();
-
-        //entries.add(new PieEntry(1, "실패"));
-        //entries.add(new PieEntry(3, "성공"));
         entries.add(new PieEntry(pref.getInt("FAILCNT",999), "실패"));
         entries.add(new PieEntry(pref.getInt("SUCCESSCNT",999), "성공"));
 
@@ -80,9 +81,6 @@ public class TabFragment3 extends Fragment {
             percent = 0;
         else
             percent = (float) successCnt / ((float)failCnt + (float)successCnt) * 100;
-
-        Log.d("tag", "Tab3_Chart percent " + percent);
-
 
         PieDataSet set = new PieDataSet(entries, "Election Results");
         set.setColors(new int[]{getResources().getColor(R.color.tab_PieChart_Success), getResources().getColor(R.color.tab_PieChart_Fail)});

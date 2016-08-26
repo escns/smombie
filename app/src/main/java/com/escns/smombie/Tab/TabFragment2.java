@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,17 +11,14 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.escns.smombie.MainActivity;
 import com.escns.smombie.R;
 import com.github.mikephil.charting.charts.HorizontalBarChart;
-import com.github.mikephil.charting.components.AxisBase;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.BarData;
 import com.github.mikephil.charting.data.BarDataSet;
 import com.github.mikephil.charting.data.BarEntry;
 import com.github.mikephil.charting.data.Entry;
-import com.github.mikephil.charting.formatter.AxisValueFormatter;
 import com.github.mikephil.charting.formatter.ValueFormatter;
 import com.github.mikephil.charting.utils.ViewPortHandler;
 
@@ -35,16 +31,16 @@ import java.util.List;
 
 public class TabFragment2 extends Fragment {
 
-    Context mContext;
-    private SharedPreferences pref;
+    Context mContext; // MainActiviy의 context를 받아올 객체
+    private SharedPreferences pref; // 파일에 있는 정보를 불러오기위한 객체
 
-    ImageView buttonOne, buttonTwo;
+    ImageView buttonOne, buttonTwo; // 버튼 : 성별/나이
 
-    RelativeLayout layout1, layout2;
+    RelativeLayout layout1, layout2; // 레이아웃 : 성별/나이
 
-    HorizontalBarChart chart1, chart2;
+    HorizontalBarChart chart1, chart2; // 그래프 : 일/주/달
 
-    TextView textProperty;
+    TextView textProperty; // 텍스트 : 남자/여자/나이대
 
     View rootView;
 
@@ -55,8 +51,9 @@ public class TabFragment2 extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.fragment_tab2, container, false);
 
-        init();
+        init(); // 초기화
 
+        // 성별(버튼)을 눌렀을 때 성별그래프)을 출력
         buttonOne.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -71,6 +68,7 @@ public class TabFragment2 extends Fragment {
             }
         });
 
+        // 나이(버튼)를 눌렀을 때 나이(그래프)를 출력
         buttonTwo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -96,9 +94,14 @@ public class TabFragment2 extends Fragment {
         return rootView;
     }
 
+    /**
+     * 초기화 함수
+     */
     public void init() {
 
-        mContext = getActivity().getApplicationContext();
+        mContext = getActivity().getApplicationContext(); // MainActivity의 context를 받아옴
+
+        // 'smombie'란 파일을 읽음
         pref = mContext.getSharedPreferences(getResources().getString(R.string.app_name), mContext.MODE_PRIVATE);
 
         layout1 = (RelativeLayout) rootView.findViewById(R.id.tab2_charLayout1);
@@ -121,16 +124,6 @@ public class TabFragment2 extends Fragment {
      */
     public void chartOne() {
         List<BarEntry> entries = new ArrayList<>();
-        //entries.add(new BarEntry(0, 30));
-        //entries.add(new BarEntry(1, 0));
-        //entries.add(new BarEntry(2,  80));
-        //userGender = 1;
-
-        Log.d("tag", "Tab2_Chart1 Dist " + pref.getInt("AVGDIST", 0));
-        Log.d("tag", "Tab2_Chart1 Gender " + pref.getString("GENDER", ""));
-        Log.d("tag", "Tab2_Chart1 Male " + pref.getFloat("AVGMALE" ,0));
-        Log.d("tag", "Tab2_Chart1 Female " + pref.getFloat("AVGFEMALE", 0));
-
         entries.add(new BarEntry(2, pref.getInt("AVGDIST", 0)));
         entries.add(new BarEntry(1, 0));
         if(  pref.getString("GENDER", "").compareTo("남자") == 0 ) {
@@ -145,7 +138,7 @@ public class TabFragment2 extends Fragment {
         BarDataSet set = new BarDataSet(entries, "이동거리");
 
         BarData data = new BarData(set);
-        data.setBarWidth(0.8f); // set custom bar width
+        data.setBarWidth(0.8f);
         data.setValueTextSize(14f);
         data.setValueFormatter(new MyValueFormatter());
 
@@ -179,19 +172,6 @@ public class TabFragment2 extends Fragment {
      */
     public void chartTwo() {
         List<BarEntry> entries = new ArrayList<>();
-        //entries.add(new BarEntry(0, 40));
-        //entries.add(new BarEntry(1, 0));
-        //entries.add(new BarEntry(2, 10));
-        //userAge = 2;
-
-        Log.d("tag", "Tab2_Chart2 Dist " + pref.getInt("AVGDIST", 0));
-        Log.d("tag", "Tab2_Chart2 Age " + pref.getInt("AGE", 0));
-        Log.d("tag", "Tab2_Chart2 10 " + pref.getFloat("AVG10S" ,0));
-        Log.d("tag", "Tab2_Chart2 20 " + pref.getFloat("AVG20S" ,0));
-        Log.d("tag", "Tab2_Chart2 30 " + pref.getFloat("AVG30S" ,0));
-        Log.d("tag", "Tab2_Chart2 40 " + pref.getFloat("AVG40S" ,0));
-        Log.d("tag", "Tab2_Chart2 50 " + pref.getFloat("AVG50S" ,0));
-
         entries.add(new BarEntry(2, pref.getInt("AVGDIST", 0)));
         entries.add(new BarEntry(1, 0));
         if(pref.getInt("AGE", 10) < 20) {
@@ -218,7 +198,7 @@ public class TabFragment2 extends Fragment {
         BarDataSet set = new BarDataSet(entries, "이동거리");
 
         BarData data = new BarData(set);
-        data.setBarWidth(0.8f); // set custom bar width
+        data.setBarWidth(0.8f);
         data.setValueTextSize(14f);
         data.setValueFormatter(new MyValueFormatter());
 

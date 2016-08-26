@@ -17,6 +17,9 @@ import com.escns.smombie.R;
  * Created by hyo99 on 2016-08-23.
  */
 
+/**
+ * 내정보 화면
+ */
 public class InfoFragment extends Fragment {
 
     Context mContext;
@@ -29,21 +32,20 @@ public class InfoFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.fragment_info, container, false);
 
-        init();
+        init(); // 초기화
 
         return rootView;
     }
 
+    /**
+     * 초기화 함수
+     */
     public void init() {
 
         mContext = getActivity().getApplicationContext();
         pref = mContext.getSharedPreferences(getResources().getString(R.string.app_name), mContext.MODE_PRIVATE);
 
-        //((TextView) rootView.findViewById(R.id.info_name)).setText("홍길동");
-        //((TextView) rootView.findViewById(R.id.info_gender)).setText("남성");
-        //((TextView) rootView.findViewById(R.id.info_age)).setText("25"+"세");
-        //((TextView) rootView.findViewById(R.id.info_email)).setText("hyo99075@naver.com");
-
+        // 내정보 출력
         ((TextView) rootView.findViewById(R.id.info_name)).setText(pref.getString("NAME",""));
         ((TextView) rootView.findViewById(R.id.info_gender)).setText(pref.getString("GENDER",""));
         ((TextView) rootView.findViewById(R.id.info_age)).setText(pref.getInt("AGE",20)+"세");
