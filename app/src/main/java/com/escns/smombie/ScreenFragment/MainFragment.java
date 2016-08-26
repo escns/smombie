@@ -21,7 +21,7 @@ import android.widget.FrameLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
-import com.escns.smombie.Adapter.ItemMainAdapter2;
+import com.escns.smombie.Adapter.ItemMainAdapter;
 import com.escns.smombie.Interface.ApiService;
 import com.escns.smombie.Item.ItemMain;
 import com.escns.smombie.Manager.DBManager;
@@ -82,7 +82,7 @@ public class MainFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        rootView = inflater.inflate(R.layout.fragment_main6, container, false);
+        rootView = inflater.inflate(R.layout.fragment_main, container, false);
 
         pref = getActivity().getSharedPreferences(getResources().getString(R.string.app_name), MODE_PRIVATE);
 
@@ -185,7 +185,7 @@ public class MainFragment extends Fragment {
         ItemMains1.add(new ItemMain(false, adUrlList1.get(2)));
 
         TwoWayView twoWayView1 = (TwoWayView) rootView.findViewById(R.id.item_main_detail1);
-        twoWayView1.setAdapter(new ItemMainAdapter2(mContext, 0, ItemMains1));
+        twoWayView1.setAdapter(new ItemMainAdapter(mContext, 0, ItemMains1));
 
         final List<ItemMain> ItemMains2 = new ArrayList<>();
         List<String> adUrlList2 = randomAd.getRandomAdUrl(4);
@@ -195,7 +195,7 @@ public class MainFragment extends Fragment {
         ItemMains2.add(new ItemMain(false, adUrlList2.get(3)));
 
         TwoWayView twoWayView2 = (TwoWayView) rootView.findViewById(R.id.item_main_detail2);
-        twoWayView2.setAdapter(new ItemMainAdapter2(mContext, 0, ItemMains2));
+        twoWayView2.setAdapter(new ItemMainAdapter(mContext, 0, ItemMains2));
 
 
         /*

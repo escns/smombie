@@ -24,11 +24,12 @@ public class RandomAd {
         Random random = new Random();
 
         for(int i=0; i<cnt; i++) {
-            int j=-1;
+            int j;
             do{
                 j = random.nextInt(cnt);
             } while(check[j]==true);
 
+            check[j]=true;
             list.add(BASE_URL+"ad_"+(j+1)+".png");
             Log.i("tag", "get URL is " + list.get(i));
         }

@@ -1,16 +1,138 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:id="@+id/layout_container">
 
-    <com.escns.smombie.View.StickyNavLayout
+    <ScrollView
+        android:id="@+id/recyclerview"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content"
+        android:scrollbars="none">
 
         <LinearLayout
-            android:id="@+id/id_stickynavlayout_topview"
+            android:id="@+id/id_stickynavlayout_viewpager"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical" >
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="18sp"
+                    android:background="@color/grey"
+                    android:layout_marginBottom="20sp"/>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical">
+
+                    <ImageView
+                        android:id="@+id/item_main_icon1"
+                        android:layout_width="20sp"
+                        android:layout_height="20sp"
+                        android:layout_marginLeft="10dp"
+                        android:src="@drawable/title_icon_event"/>
+
+                    <TextView
+                        android:id="@+id/item_main_text1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="10dp"
+                        android:text="이벤트"
+                        android:textSize="20sp"
+                        android:textColor="@color/main_color"/>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="2sp"
+                    android:background="@color/line_color"
+                    android:layout_margin="6dp"/>
+
+            </LinearLayout>
+
+            <org.lucasr.twowayview.TwoWayView
+                android:id="@+id/item_main_detail1"
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:orientation="horizontal">
+
+            </org.lucasr.twowayview.TwoWayView>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical" >
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="18sp"
+                    android:background="@color/grey"
+                    android:layout_marginBottom="20sp"/>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical">
+
+                    <ImageView
+                        android:id="@+id/item_main_icon2"
+                        android:layout_width="20sp"
+                        android:layout_height="20sp"
+                        android:layout_marginLeft="10dp"
+                        android:src="@drawable/title_icon_service"/>
+
+                    <TextView
+                        android:id="@+id/item_main_text2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="10dp"
+                        android:text="제휴 서비스"
+                        android:textSize="20sp"
+                        android:textColor="@color/main_color"/>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="2sp"
+                    android:background="@color/line_color"
+                    android:layout_margin="6dp"/>
+
+            </LinearLayout>
+
+            <org.lucasr.twowayview.TwoWayView
+                android:id="@+id/item_main_detail2"
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:orientation="horizontal">
+
+            </org.lucasr.twowayview.TwoWayView>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:background="@color/white"/>
+        </LinearLayout>
+
+    </ScrollView>
+
+    <FrameLayout
+        android:id="@+id/header"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
@@ -23,7 +145,7 @@
                     android:id="@+id/profile_view"
                     android:layout_width="100dp"
                     android:layout_height="100dp"
-                    android:layout_margin="6sp"
+                    android:layout_margin="6dp"
                     android:src="@drawable/img_profile"
                     android:scaleType="fitXY"
                     app:customImageViewType="circle"
@@ -58,153 +180,140 @@
 
             </RelativeLayout>
 
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/id_stickynavlayout_indicator"
-            android:layout_width="match_parent"
-            android:layout_height="70dp"
-            android:orientation="horizontal" >
-
             <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:background="@color/section1"
-                android:orientation="vertical"
-                android:gravity="center">
-
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center">
-
-                    <ImageView
-                        android:id="@+id/section1_image"
-                        android:layout_width="30dp"
-                        android:layout_height="30dp"
-                        android:src="@drawable/main_icon1"/>
-
-                    <TextView
-                        android:id="@+id/section1_main_text"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="6sp"
-                        android:layout_centerVertical="true"
-                        android:text="Point"
-                        android:textSize="15sp"
-                        android:layout_toRightOf="@id/section1_image"
-                        style="@style/sectionText"/>
-
-                </RelativeLayout>
-
-                <TextView
-                    android:id="@+id/section1_text"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textSize="20sp"
-                    style="@style/sectionText"/>
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:background="@color/section2"
-                android:orientation="vertical"
-                android:gravity="center">
-
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center">
-
-                    <ImageView
-                        android:id="@+id/section2_image"
-                        android:layout_width="30dp"
-                        android:layout_height="30dp"
-                        android:src="@drawable/main_icon2"/>
-
-                    <TextView
-                        android:id="@+id/section2_main_text"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="6sp"
-                        android:layout_centerVertical="true"
-                        android:text="Goal"
-                        android:textSize="15sp"
-                        android:layout_toRightOf="@id/section2_image"
-                        style="@style/sectionText"/>
-
-                </RelativeLayout>
-
-                <TextView
-                    android:id="@+id/section2_text"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textSize="20sp"
-                    style="@style/sectionText"/>
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:background="@color/section3"
-                android:orientation="vertical"
-                android:gravity="center">
-
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center">
-
-                    <ImageView
-                        android:id="@+id/section3_image"
-                        android:layout_width="30dp"
-                        android:layout_height="30dp"
-                        android:src="@drawable/main_icon3"/>
-
-                    <TextView
-                        android:id="@+id/section3_main_text"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="6sp"
-                        android:layout_centerVertical="true"
-                        android:text="Reword"
-                        android:textSize="15sp"
-                        android:layout_toRightOf="@id/section3_image"
-                        style="@style/sectionText"/>
-
-                </RelativeLayout>
-
-                <TextView
-                    android:id="@+id/section3_text"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textSize="20sp"
-                    style="@style/sectionText"/>
-
-            </LinearLayout>
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/id_stickynavlayout_viewpager"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/id_stickynavlayout_innerscrollview"
+                android:id="@+id/id_stickynavlayout_indicator"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:scrollbars="none">
+                android:layout_height="70dp"
+                android:orientation="horizontal" >
 
-            </android.support.v7.widget.RecyclerView>
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:background="@color/section1"
+                    android:orientation="vertical"
+                    android:gravity="center">
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center">
+
+                        <ImageView
+                            android:id="@+id/section1_image"
+                            android:layout_width="30dp"
+                            android:layout_height="30dp"
+                            android:src="@drawable/main_icon1"/>
+
+                        <TextView
+                            android:id="@+id/section1_main_text"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="6sp"
+                            android:layout_centerVertical="true"
+                            android:text="Point"
+                            android:textSize="15sp"
+                            android:layout_toRightOf="@id/section1_image"
+                            style="@style/sectionText"/>
+
+                    </RelativeLayout>
+
+                    <TextView
+                        android:id="@+id/section1_text"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="20sp"
+                        style="@style/sectionText"/>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:background="@color/section2"
+                    android:orientation="vertical"
+                    android:gravity="center">
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center">
+
+                        <ImageView
+                            android:id="@+id/section2_image"
+                            android:layout_width="30dp"
+                            android:layout_height="30dp"
+                            android:src="@drawable/main_icon2"/>
+
+                        <TextView
+                            android:id="@+id/section2_main_text"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="6sp"
+                            android:layout_centerVertical="true"
+                            android:text="Goal"
+                            android:textSize="15sp"
+                            android:layout_toRightOf="@id/section2_image"
+                            style="@style/sectionText"/>
+
+                    </RelativeLayout>
+
+                    <TextView
+                        android:id="@+id/section2_text"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="20sp"
+                        style="@style/sectionText"/>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:background="@color/section3"
+                    android:orientation="vertical"
+                    android:gravity="center">
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center">
+
+                        <ImageView
+                            android:id="@+id/section3_image"
+                            android:layout_width="30dp"
+                            android:layout_height="30dp"
+                            android:src="@drawable/main_icon3"/>
+
+                        <TextView
+                            android:id="@+id/section3_main_text"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="6sp"
+                            android:layout_centerVertical="true"
+                            android:text="Reword"
+                            android:textSize="15sp"
+                            android:layout_toRightOf="@id/section3_image"
+                            style="@style/sectionText"/>
+
+                    </RelativeLayout>
+
+                    <TextView
+                        android:id="@+id/section3_text"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="20sp"
+                        style="@style/sectionText"/>
+
+                </LinearLayout>
+
+            </LinearLayout>
+
         </LinearLayout>
 
-    </com.escns.smombie.View.StickyNavLayout>
 
-</LinearLayout>
+    </FrameLayout>
+
+</FrameLayout>

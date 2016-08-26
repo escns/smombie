@@ -3,22 +3,18 @@ package com.escns.smombie.Receiver;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.support.v4.view.PagerAdapter;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 
 import com.escns.smombie.R;
-import com.escns.smombie.View.LockViewPager;
-import com.squareup.picasso.Callback;
-import com.squareup.picasso.Picasso;
+import com.escns.smombie.Utils.RandomAd;
+import com.escns.smombie.View.LoopViewPager2;
 
 /**
  * Created by Administrator on 2016-08-04.
@@ -26,18 +22,21 @@ import com.squareup.picasso.Picasso;
 
 public class LockScreenReceiver extends BroadcastReceiver {
 
+    private static final int VIEWPAGER_COUNT = 5;
+
     private Context mContext;
 
     private WindowManager.LayoutParams mParams;     // 최상단에 그려질 뷰의 파라미터
     private WindowManager mWindowManager;           // 최상단에 뷰를 그릴 WindowManager
     private View mLockScreenView;                   // 최상단 뷰
-    private LockViewPager mLockViewPager;            // Viewpager
+    private LoopViewPager2 mLoopViewPager2;           // Viewpager
 
     int windowWidth;                                // 전체 윈도우 너비
     int windowHeight;                               // 전체 윈도우 높이
 
     private static boolean isLock;                  // lock의 상태
     private static boolean isWalking;
+    private static boolean isRinging;
 
     /**
      * BroadcastReceiver에 메시지가 왔을 때
@@ -54,20 +53,29 @@ public class LockScreenReceiver extends BroadcastReceiver {
 
         // 어떤 메시지인지 확인
         if(action.equals(intent.ACTION_SCREEN_OFF)) {
-            if(isWalking) {
+            if(isWalking && !isRinging) {
 
                 drawLockScreen(context);
 
             }
         } else if(action.equals("com.escns.smombie.CALL_STATE_RINGING")) {
+            isRinging = true;
             if(mWindowManager!=null && isLock) {
                 mWindowManager.removeView(mLockScreenView);
                 mWindowManager = null;
                 isLock=false;
             }
+
         } else if(action.equals("com.escns.smombie.CALL_STATE_OFFHOOK")) {
+            isRinging = true;
+            if(mWindowManager!=null && isLock) {
+                mWindowManager.removeView(mLockScreenView);
+                mWindowManager = null;
+                isLock=false;
+            }
 
         } else if(action.equals("com.escns.smombie.CALL_STATE_IDLE")) {
+            isRinging = false;
 
         } else if(action.equals("com.escns.smombie.LOCK_SCREEN_ON")) {
 
@@ -76,7 +84,7 @@ public class LockScreenReceiver extends BroadcastReceiver {
             if(isWalking) Log.i("tag", "isWalking = true");
             else Log.i("tag", "isWalking = false");
 
-            if(!isLock) {
+            if(!isLock && !isRinging) {
                 isWalking=true;
                 drawLockScreen(context);
             }
@@ -104,8 +112,10 @@ public class LockScreenReceiver extends BroadcastReceiver {
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);   // Layout을 가져오기 위해 LayoutInflater 객체 생성
         mLockScreenView = (View) inflater.inflate(R.layout.lockscreen, null);                                   // LayoutInflater를 이용하여 R.layout.lockscreen을 불러온다
 
-        mLockViewPager = (LockViewPager) mLockScreenView.findViewById(R.id.lockscreen_viewpager);
-        mLockViewPager.setAdapter(new CustomPagerAdapter(mContext));
+        mLoopViewPager2 = (LoopViewPager2) mLockScreenView.findViewById(R.id.lockscreen_viewpager);
+        RandomAd randomAd = new RandomAd();
+        mLoopViewPager2.setSliders_url(randomAd.getRandomAdUrl(VIEWPAGER_COUNT));
+
 
         mParams = new WindowManager.LayoutParams(                                       // View의 파라미터 결정
                 WindowManager.LayoutParams.TYPE_SYSTEM_ERROR,                           // 최상단 뷰로 설정
@@ -137,7 +147,7 @@ public class LockScreenReceiver extends BroadcastReceiver {
                 switch(event.getAction())
                 {
                     case MotionEvent.ACTION_DOWN:
-                        mLockViewPager.setTouchFlag(false);
+                        mLoopViewPager2.setTouchFlag(false);
                         //layoutParams.height = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 60, mContext.getResources().getDisplayMetrics());
                         button_lock.setImageResource(R.drawable.btn_key_tap);
                         button_unlock.setImageResource(R.drawable.btn_unlock);
@@ -162,7 +172,7 @@ public class LockScreenReceiver extends BroadcastReceiver {
                         button_lock.setLayoutParams(layoutParams);
                         break;
                     case MotionEvent.ACTION_UP:
-                        mLockViewPager.setTouchFlag(true);
+                        mLoopViewPager2.setTouchFlag(true);
                         if(isLock) {
                             layoutParams.leftMargin = offsetLeft;
                             button_lock.setLayoutParams(layoutParams);
@@ -176,95 +186,5 @@ public class LockScreenReceiver extends BroadcastReceiver {
                 return true;
             }
         });
-    }
-
-    public enum CustomPagerEnum {
-
-        RED(0, R.drawable.test_image1),
-        BLUE(1, R.drawable.test_image2),
-        ORANGE(2, R.drawable.profile);
-
-        private int mTitleResId;
-        private int mLayoutResId;
-
-        CustomPagerEnum(int titleResId, int layoutResId) {
-            mTitleResId = titleResId;
-            mLayoutResId = layoutResId;
-        }
-
-        public int getTitleResId() {
-            return mTitleResId;
-        }
-
-        public int getLayoutResId() {
-            return mLayoutResId;
-        }
-
-    }
-
-    public class CustomPagerAdapter extends PagerAdapter {
-
-        private Context mContext;
-        LayoutInflater mLayoutInflater;
-
-        public CustomPagerAdapter(Context mContext) {
-            this.mContext = mContext;
-            mLayoutInflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        }
-
-        @Override
-        public Object instantiateItem(ViewGroup collection, int position) {
-            CustomPagerEnum customPagerEnum = CustomPagerEnum.values()[position];
-
-            ViewGroup layout = (ViewGroup) mLayoutInflater.inflate(R.layout.lockscreen_view, collection, false);
-            ImageView background = (ImageView) layout.findViewById(R.id.lockscreen_background);
-
-
-            final ProgressBar progressBar = (ProgressBar) layout.findViewById(R.id.lockscreen_loading);
-            progressBar.setVisibility(View.VISIBLE);
-
-            Picasso.with(mContext)
-                    .load(customPagerEnum.getLayoutResId())
-                    .into(background, new Callback() {
-                        @Override
-                        public void onSuccess() {
-                            progressBar.setVisibility(View.GONE);
-                        }
-                        @Override
-                        public void onError() {
-                            Log.i("tag", "onERROR");
-                        }
-                    });
-
-            /*
-            Picasso.Builder builder = new Picasso.Builder(mContext);
-            builder.listener(new Picasso.Listener()
-            {
-                @Override
-                public void onImageLoadFailed(Picasso picasso, Uri uri, Exception exception)
-                {
-                    exception.printStackTrace();
-                }
-            });
-            builder.build().load(R.drawable.bg_round_gray_age).fit().into(background);
-            */
-
-            collection.addView(layout);
-            return layout;
-        }
-        @Override
-        public void destroyItem(ViewGroup collection, int position, Object view) {
-            collection.removeView((View) view);
-        }
-
-        @Override
-        public int getCount() {
-            return CustomPagerEnum.values().length;
-        }
-
-        @Override
-        public boolean isViewFromObject(View view, Object object) {
-            return view==object;
-        }
     }
 }
