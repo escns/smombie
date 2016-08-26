@@ -161,6 +161,42 @@ public class DBManager extends SQLiteOpenHelper {
         db.close();
     }
 
+
+
+    public Record getRecord2() {
+
+        SQLiteDatabase db = null;
+        List<Record> list = new ArrayList<>();
+        list = null;
+        Record record = null;
+
+        try {
+            db = getReadableDatabase();
+
+            StringBuffer sb = new StringBuffer();
+            sb.append(" SELECT * FROM " + RECORD_TABLE);
+
+            Cursor cursor = db.rawQuery(sb.toString(),null);
+
+            while (cursor.moveToNext()) {
+                record = new Record(cursor.getInt(0),
+                        cursor.getInt(1),
+                        cursor.getInt(2),
+                        cursor.getInt(3),
+                        cursor.getInt(4),
+                        cursor.getInt(5));
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (db != null) {
+                db.close();
+            }
+        }
+        return record;
+    }
+
     /*
     public List<Record> getRecord(int id) {
 
