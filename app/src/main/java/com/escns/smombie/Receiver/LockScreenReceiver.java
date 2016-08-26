@@ -3,6 +3,7 @@ package com.escns.smombie.Receiver;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
@@ -12,9 +13,19 @@ import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
+import com.escns.smombie.Interface.ApiService;
+import com.escns.smombie.Manager.DBManager;
 import com.escns.smombie.R;
+import com.escns.smombie.Utils.Global;
 import com.escns.smombie.Utils.RandomAd;
 import com.escns.smombie.View.LoopViewPager2;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
+
+import static android.content.Context.MODE_PRIVATE;
 
 /**
  * Created by Administrator on 2016-08-04.
@@ -23,6 +34,11 @@ import com.escns.smombie.View.LoopViewPager2;
 public class LockScreenReceiver extends BroadcastReceiver {
 
     private static final int VIEWPAGER_COUNT = 5;
+
+    private DBManager mDbManger;
+    private Retrofit mRetrofit;
+    private ApiService mApiService;
+    private SharedPreferences pref;
 
     private Context mContext;
 
@@ -38,6 +54,8 @@ public class LockScreenReceiver extends BroadcastReceiver {
     private static boolean isWalking;
     private static boolean isRinging;
 
+    private boolean isInit;
+
     /**
      * BroadcastReceiver에 메시지가 왔을 때 분류
      * @param context
@@ -46,8 +64,9 @@ public class LockScreenReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         Log.d("Tag", "LockReceiver - onReceive "+intent.getAction());
-
         mContext = context;
+
+        if(!isInit) initUtils();
 
         String action = intent.getAction();
 
@@ -164,13 +183,15 @@ public class LockScreenReceiver extends BroadcastReceiver {
                         int btnWidth = button_lock.getWidth();
 
                         if(x_cord>windowWidth - btnWidth- offsetRight) {
-                            mWindowManager.removeView(mLockScreenView);
-                            mWindowManager = null;
-                            isLock=false;
+                            if(mWindowManager != null) {
+                                mWindowManager.removeView(mLockScreenView);
+                                mWindowManager = null;
+                                isLock=false;
 
+                                queryFail();
 
-
-                            break;
+                                break;
+                            }
                         }
                         if(x_cord - btnWidth - offsetLeft < 0) {x_cord=offsetLeft+btnWidth;}
 
@@ -195,5 +216,40 @@ public class LockScreenReceiver extends BroadcastReceiver {
                 return true;
             }
         });
+    }
+
+    public void initUtils() {
+        isInit = true;
+
+        mDbManger = new DBManager(mContext);
+        Gson gson = new GsonBuilder()
+                .setLenient()
+                .create();
+        mRetrofit = new Retrofit.Builder().baseUrl(mApiService.API_URL).addConverterFactory(GsonConverterFactory.create(gson)).build();
+        mApiService = mRetrofit.create(ApiService.class);
+
+        pref = mContext.getSharedPreferences(mContext.getResources().getString(R.string.app_name), MODE_PRIVATE);
+    }
+
+    public void queryFail() {
+
+        Global global = Global.getInstance();
+        global.setIsWalking(0);
+
+        /*
+        Call<String> updateUser = mApiService.updateUser(pref.getInt("USER_ID_INT", 0), pref.getString("NAME", "사용자 이름"), pref.getString("EMAIL", "사용자 이메일"), pref.getString("GENDER", "성별"), pref.getInt("AGE", 0), pref.getInt("POINT", 0), pref.getInt("GOAL", MainActivity.DEFAULT_GOAL), pref.getInt("REWORD", 0), pref.getInt("SUCCESSCNT", 0), pref.getInt("FAILCNT", 0)+1, pref.getInt("AVGDIST", 0));
+        updateUser.enqueue(new retrofit2.Callback<String>() {
+            @Override
+            public void onResponse(Call<String> call, Response<String> response) {
+                Log.i("tag", "fail query success");
+            }
+
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
+                Log.i("tag", "fail query fail");
+            }
+        });
+        */
+
     }
 }
