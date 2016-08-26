@@ -85,11 +85,13 @@ public class CustomImageView extends ImageView {
 
         Bitmap b = ((BitmapDrawable)drawable).getBitmap();
 
-        Bitmap bitmap = b.copy(Bitmap.Config.ARGB_8888, true);
+        if(b != null) {
+            Bitmap bitmap = b.copy(Bitmap.Config.ARGB_8888, true);
 
-        Bitmap roundBitmap = getRoundedCroppedBitmap(bitmap, getWidth(), getHeight());
+            Bitmap roundBitmap = getRoundedCroppedBitmap(bitmap, getWidth(), getHeight());
 
-        canvas.drawBitmap(roundBitmap,0,0,null);
+            canvas.drawBitmap(roundBitmap,0,0,null);
+        }
     }
 
     /**
