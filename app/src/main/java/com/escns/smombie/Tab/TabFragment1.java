@@ -104,15 +104,13 @@ public class TabFragment1 extends Fragment {
         mContext = getActivity().getApplicationContext();
         mDbManager = new DBManager(mContext);
 
-        //list = new ArrayList<>();
-        //
-        //for(int i=0; i<mDbManager.getRecord().size(); i++)
-
+        list = null;
+        list = new ArrayList<>();
         list = mDbManager.getRecord();
 
         Calendar c = Calendar.getInstance();
         mYear = c.get(Calendar.YEAR);
-        mMonth = c.get(Calendar.MONTH)+1;
+        mMonth = c.get(Calendar.MONTH) + 1;
         mDate = c.get(Calendar.DATE);
         mTime = c.get(Calendar.HOUR_OF_DAY);
 
@@ -128,24 +126,12 @@ public class TabFragment1 extends Fragment {
         buttonTwo = (ImageView) rootView.findViewById(R.id.tab1_button2);
         buttonThree = (ImageView) rootView.findViewById(R.id.tab1_button3);
 
-        if (mDbManager.getRecord() != null) {
-            Log.d("tag", "사이즈 : " + mDbManager.getRecord().size());
-        }
-        //Log.d("tag", "사이즈 : " + list.size());
-        ////for(int i=0; i< list.size(); i++) {
-        //    Log.d("tag", "ID : " + list.get(0).getmIdInt());
-        //    Log.d("tag", "Year : " + list.get(0).getmYear());
-        //    Log.d("tag", "Month : " + list.get(0).getmMonth());
-        //    Log.d("tag", "Date : " + list.get(0).getmDay());
-        //    Log.d("tag", "Time : " + list.get(0).getmHour());
-        //    Log.d("tag", "Dist : " + list.get(0).getmDist());
-        ////}
 
-        //if(list != null) {
+        if(list != null) {
             chartOne();
             chartTwo();
             chartThree();
-        //}
+        }
     }
 
     /**
@@ -185,7 +171,7 @@ public class TabFragment1 extends Fragment {
      */
     public void initAxisOne() {
 
-        final String[] xProperties = new String[] {"0:00~6:00", "6:00~12:00", "12:00~18:00", "18:00~24:00"};
+        final String[] xProperties = new String[]{"0:00~6:00", "6:00~12:00", "12:00~18:00", "18:00~24:00"};
         AxisValueFormatter formatter = new AxisValueFormatter() {
             @Override
             public String getFormattedValue(float value, AxisBase axis) {
@@ -194,7 +180,9 @@ public class TabFragment1 extends Fragment {
 
             // we don't draw numbers, so no decimal digits needed
             @Override
-            public int getDecimalDigits() {  return 0; }
+            public int getDecimalDigits() {
+                return 0;
+            }
         };
 
         XAxis xAxis = chart1.getXAxis();
@@ -227,12 +215,12 @@ public class TabFragment1 extends Fragment {
         //entries.add(new BarEntry(5, 30.000f));
         //entries.add(new BarEntry(6, 50.000f));
 
-        entries.add(new BarEntry(0, getDataChart2(mDate-6)));
-        entries.add(new BarEntry(1, getDataChart2(mDate-5)));
-        entries.add(new BarEntry(2, getDataChart2(mDate-4)));
-        entries.add(new BarEntry(3, getDataChart2(mDate-3)));
-        entries.add(new BarEntry(4, getDataChart2(mDate-2)));
-        entries.add(new BarEntry(5, getDataChart2(mDate-1)));
+        entries.add(new BarEntry(0, getDataChart2(mDate - 6)));
+        entries.add(new BarEntry(1, getDataChart2(mDate - 5)));
+        entries.add(new BarEntry(2, getDataChart2(mDate - 4)));
+        entries.add(new BarEntry(3, getDataChart2(mDate - 3)));
+        entries.add(new BarEntry(4, getDataChart2(mDate - 2)));
+        entries.add(new BarEntry(5, getDataChart2(mDate - 1)));
         entries.add(new BarEntry(6, getDataChart2(mDate)));
 
         BarDataSet set = new BarDataSet(entries, "이동거리");
@@ -257,14 +245,14 @@ public class TabFragment1 extends Fragment {
      */
     public void initAxisTwo() {
 
-        final String[] xProperties = new String[] {
-                getCalendarDate(mDate-6)[1] +"/"+ getCalendarDate(mDate-6)[2],
-                getCalendarDate(mDate-5)[1] +"/"+ getCalendarDate(mDate-5)[2],
-                getCalendarDate(mDate-4)[1] +"/"+ getCalendarDate(mDate-4)[2],
-                getCalendarDate(mDate-3)[1] +"/"+ getCalendarDate(mDate-3)[2],
-                getCalendarDate(mDate-2)[1] +"/"+ getCalendarDate(mDate-2)[2],
-                getCalendarDate(mDate-1)[1] +"/"+ getCalendarDate(mDate-1)[2],
-                getCalendarDate(mDate)[1] +"/"+ getCalendarDate(mDate)[2] };
+        final String[] xProperties = new String[]{
+                getCalendarDate(mDate - 6)[1] + "/" + getCalendarDate(mDate - 6)[2],
+                getCalendarDate(mDate - 5)[1] + "/" + getCalendarDate(mDate - 5)[2],
+                getCalendarDate(mDate - 4)[1] + "/" + getCalendarDate(mDate - 4)[2],
+                getCalendarDate(mDate - 3)[1] + "/" + getCalendarDate(mDate - 3)[2],
+                getCalendarDate(mDate - 2)[1] + "/" + getCalendarDate(mDate - 2)[2],
+                getCalendarDate(mDate - 1)[1] + "/" + getCalendarDate(mDate - 1)[2],
+                getCalendarDate(mDate)[1] + "/" + getCalendarDate(mDate)[2]};
         AxisValueFormatter formatter = new AxisValueFormatter() {
             @Override
             public String getFormattedValue(float value, AxisBase axis) {
@@ -273,7 +261,9 @@ public class TabFragment1 extends Fragment {
 
             // we don't draw numbers, so no decimal digits needed
             @Override
-            public int getDecimalDigits() {  return 0; }
+            public int getDecimalDigits() {
+                return 0;
+            }
         };
 
         XAxis xAxis = chart2.getXAxis();
@@ -302,9 +292,9 @@ public class TabFragment1 extends Fragment {
         //entries.add(new BarEntry(1, 100));
         //entries.add(new BarEntry(2, 130));
 
-       entries.add(new BarEntry(0, getDataChart3(mMonth-2)));
-       entries.add(new BarEntry(1, getDataChart3(mMonth-1)));
-       entries.add(new BarEntry(2, getDataChart3(mMonth)));
+        entries.add(new BarEntry(0, getDataChart3(mMonth - 2)));
+        entries.add(new BarEntry(1, getDataChart3(mMonth - 1)));
+        entries.add(new BarEntry(2, getDataChart3(mMonth)));
 
         BarDataSet set = new BarDataSet(entries, "이동거리");
 
@@ -324,14 +314,14 @@ public class TabFragment1 extends Fragment {
     }
 
     /**
-     *달을 기준으로 하는 BarChart의 가로축
+     * 달을 기준으로 하는 BarChart의 가로축
      */
     public void initAxisThree() {
 
-        final String[] xProperties = new String[] {
-                getCalendarMonth(mMonth-2)[1]+"월",
-                getCalendarMonth(mMonth-1)[1]+"월",
-                getCalendarMonth(mMonth)[1]+"월"};
+        final String[] xProperties = new String[]{
+                getCalendarMonth(mMonth - 2)[1] + "월",
+                getCalendarMonth(mMonth - 1)[1] + "월",
+                getCalendarMonth(mMonth)[1] + "월"};
         AxisValueFormatter formatter = new AxisValueFormatter() {
             @Override
             public String getFormattedValue(float value, AxisBase axis) {
@@ -340,7 +330,9 @@ public class TabFragment1 extends Fragment {
 
             // we don't draw numbers, so no decimal digits needed
             @Override
-            public int getDecimalDigits() {  return 0; }
+            public int getDecimalDigits() {
+                return 0;
+            }
         };
 
         XAxis xAxis = chart3.getXAxis();
@@ -363,8 +355,8 @@ public class TabFragment1 extends Fragment {
     public int getDataChart1(int time) {
         int result = 0;
 
-        for(int i=0; i<list.size(); i++) {
-            if(list.get(i).getmYear() == mYear &&
+        for (int i = 0; i < list.size(); i++) {
+            if (list.get(i).getmYear() == mYear &&
                     list.get(i).getmMonth() == mMonth &&
                     list.get(i).getmDay() == mDate) {
                 if (time >= 0 && time < 6) {
@@ -377,7 +369,7 @@ public class TabFragment1 extends Fragment {
                     }
                 }
             } else if (time >= 12 && time < 18) {
-                if (list.get(i).getmHour() >=12 && list.get(i).getmHour() < 18) {
+                if (list.get(i).getmHour() >= 12 && list.get(i).getmHour() < 18) {
                     result += list.get(i).getmDist();
                 }
             } else {
@@ -397,10 +389,10 @@ public class TabFragment1 extends Fragment {
         int month = getCalendarDate(input)[1];
         int date = getCalendarDate(input)[2];
 
-        for(int i=0; i<list.size(); i++) {
-            if(list.get(i).getmYear() == year &&
+        for (int i = 0; i < list.size(); i++) {
+            if (list.get(i).getmYear() == year &&
                     list.get(i).getmMonth() == month &&
-                    list.get(i).getmDay() == date ) {
+                    list.get(i).getmDay() == date) {
                 result += list.get(i).getmDist();
             }
         }
@@ -413,8 +405,8 @@ public class TabFragment1 extends Fragment {
         int year = getCalendarMonth(input)[0];
         int month = getCalendarMonth(input)[1];
 
-        for(int i=0; i<list.size(); i++) {
-            if(list.get(i).getmYear() == year &&
+        for (int i = 0; i < list.size(); i++) {
+            if (list.get(i).getmYear() == year &&
                     list.get(i).getmMonth() == month) {
                 result += list.get(i).getmDist();
             }
@@ -428,22 +420,24 @@ public class TabFragment1 extends Fragment {
         int month = mMonth;
 
         // 날짜 예외처리 --> 달이 바뀌는 경우
-        if(date <= 0) {
+        if (date <= 0) {
             month--;
-            if(month == 0) {
+            if (month == 0) {
                 year--;
                 month = 12;
-            }
-            else {
+            } else {
                 if (month == 1 || month == 3 || month == 5 || month == 7 || month == 8 || month == 10 || month == 12) {
-                    date = 31+date;
+                    date = 31 + date;
                 } else if (month == 4 || month == 6 || month == 7 || month == 11) {
-                    date = 30+date;;
+                    date = 30 + date;
+                    ;
                 } else {
                     if (year % 4 == 0) {
-                        date = 29+date;;
+                        date = 29 + date;
+                        ;
                     } else {
-                        date = 28+date;;
+                        date = 28 + date;
+                        ;
                     }
                 }
             }
@@ -459,12 +453,11 @@ public class TabFragment1 extends Fragment {
         int year = mYear;
 
         // 날짜 예외처리 --> 연도가 바뀌는 경우
-        if(month <= 0) {
+        if (month <= 0) {
             year--;
-            if(month == 0) {
+            if (month == 0) {
                 month = 12;
-            }
-            else {
+            } else {
                 month = 11;
             }
         }
