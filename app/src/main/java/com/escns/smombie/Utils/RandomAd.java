@@ -24,8 +24,8 @@ public class RandomAd {
         List<String> list = new ArrayList<>();
 
         Boolean[] check;
-        check = new Boolean[cnt];
-        for(int i=0; i<cnt; i++) {
+        check = new Boolean[AD_TOTAL_CNT];
+        for(int i=0; i<AD_TOTAL_CNT; i++) {
             check[i]=false;
         }
         Random random = new Random();
