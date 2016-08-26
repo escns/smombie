@@ -304,9 +304,6 @@ public class LoginActivity extends Activity {
             }
         });
 
-
-
-
         Intent intent = new Intent(getApplicationContext(), MainActivity.class);
         startActivity(intent);
         finish();

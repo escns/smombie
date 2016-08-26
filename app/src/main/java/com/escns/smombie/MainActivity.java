@@ -1,14 +1,11 @@
 package com.escns.smombie;
 
-import android.content.ComponentName;
 import android.content.Intent;
-import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.IBinder;
 import android.os.Message;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
@@ -181,8 +178,8 @@ public class MainActivity extends AppCompatActivity {
 
                         if( pref.getBoolean("switch",true) ) {
                             pref.edit().putBoolean("switch", false).commit();
-                            (MainActivity.this).unbindService(mConnection);
-                            (MainActivity.this).stopService(new Intent((MainActivity.this), LockScreenService.class));
+                            stopService(new Intent((MainActivity.this), PedometerCheckService.class));
+                            stopService(new Intent((MainActivity.this), LockScreenService.class));
                         }
 
                         com.facebook.login.LoginManager.getInstance().logOut();
@@ -220,8 +217,8 @@ public class MainActivity extends AppCompatActivity {
         if( pref.getBoolean("switch",true) ) {
             pref.edit().putBoolean("switch", true).commit();
 
-            (MainActivity.this).startService(new Intent((MainActivity.this), PedometerCheckService.class));
-            (MainActivity.this).startService(new Intent((MainActivity.this), LockScreenService.class));
+            startService(new Intent((MainActivity.this), PedometerCheckService.class));
+            startService(new Intent((MainActivity.this), LockScreenService.class));
         }
 
         mMainFragment = new MainFragment();
@@ -259,24 +256,4 @@ public class MainActivity extends AppCompatActivity {
         // 홈 화면 실행
         getSupportFragmentManager().beginTransaction().replace(R.id.frame_layout, mMainFragment).commit();
     }
-
-    // ThreadService와 MainActivity를 연결 시켜줄 ServiceConnection
-    /** Defines callbacks for service binding, passed to bindService() */
-    private ServiceConnection mConnection = new ServiceConnection() {
-
-        // 리턴되는 Binder를 다시 Service로 꺼내서 ThreadSerivce내부의 함수 사용이 가능하다.
-        @Override
-        public void onServiceConnected(ComponentName className, IBinder service) {
-            //WalkCheckService.LocalBinder binder = (WalkCheckService.LocalBinder) service;
-            //mService = binder.getService();
-            //mBound = true;
-            Log.d("tag", "onServiceConnected");
-        }
-
-        @Override
-        public void onServiceDisconnected(ComponentName arg0) {
-            //mBound = false;
-            Log.d("tag", "onServiceDisconnected");
-        }
-    };
 }

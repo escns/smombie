@@ -40,7 +40,7 @@ public class SettingFragment extends Fragment {
         mContext = getActivity().getApplicationContext();
 
         SwitchCompat swc = (SwitchCompat) rootView.findViewById(R.id.switch_lock_setting);
-        pref = mContext.getSharedPreferences("pref", mContext.MODE_PRIVATE);
+        pref = mContext.getSharedPreferences(getResources().getString(R.string.app_name), mContext.MODE_PRIVATE);
 
         boolean state = pref.getBoolean("switch", true);
         if (state) {
