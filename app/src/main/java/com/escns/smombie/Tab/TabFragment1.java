@@ -370,14 +370,14 @@ public class TabFragment1 extends Fragment {
                     if (list.get(i).getmHour() >= 6 && list.get(i).getmHour() < 12) {
                         result += list.get(i).getmDist();
                     }
-                }
-            } else if (time >= 12 && time < 18) {
-                if (list.get(i).getmHour() >= 12 && list.get(i).getmHour() < 18) {
-                    result += list.get(i).getmDist();
-                }
-            } else {
-                if (list.get(i).getmHour() >= 18 && list.get(i).getmHour() < 24) {
-                    result += list.get(i).getmDist();
+                } else if (time >= 12 && time < 18) {
+                    if (list.get(i).getmHour() >= 12 && list.get(i).getmHour() < 18) {
+                        result += list.get(i).getmDist();
+                    }
+                } else {
+                    if (list.get(i).getmHour() >= 18 && list.get(i).getmHour() < 24) {
+                        result += list.get(i).getmDist();
+                    }
                 }
             }
         }
