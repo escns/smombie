@@ -22,9 +22,7 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.escns.smombie.Adapter.ItemMainAdapter;
-import com.escns.smombie.Interface.ApiService;
 import com.escns.smombie.Item.ItemMain;
-import com.escns.smombie.Manager.DBManager;
 import com.escns.smombie.R;
 import com.escns.smombie.Utils.RandomAd;
 import com.escns.smombie.View.CustomImageView;
@@ -37,7 +35,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import it.carlom.stikkyheader.core.StikkyHeaderBuilder;
-import retrofit2.Retrofit;
 
 import static android.content.Context.MODE_PRIVATE;
 
@@ -53,10 +50,6 @@ public class MainFragment extends Fragment {
     private Context mContext;
 
     private SharedPreferences pref;         // 화면 꺼짐 및 이동 시 switch가 초기화되기 때문에 파일에 따로 저장하기 위한 객체
-    private DBManager mDbManager;            // DB 선언
-
-    private Retrofit mRetrofit;
-    private ApiService mApiService;
 
     private boolean isProfileDataLoaded;
     private Bitmap mFbProfileImage;
@@ -68,6 +61,9 @@ public class MainFragment extends Fragment {
     ScrollView mRecyclerView;
     FrameLayout mHeader;
 
+    /**
+     * Profile Image 다운 성공 시 호출하여 profile update를 수행한다.
+     */
     private Handler handler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
@@ -80,6 +76,13 @@ public class MainFragment extends Fragment {
         }
     };
 
+    /**
+     * 최초로 실행되는 생명주기. 뷰를 그려야 하기 때문에 inflater 객체 설정이 필요하다.
+     * @param inflater
+     * @param container
+     * @param savedInstanceState
+     * @return
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.fragment_main, container, false);
@@ -88,6 +91,11 @@ public class MainFragment extends Fragment {
         return rootView;
     }
 
+    /**
+     * View가 생성되고 난 다음에 수행되어야 할 것들이다.
+     * @param view
+     * @param savedInstanceState
+     */
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -96,6 +104,10 @@ public class MainFragment extends Fragment {
         mHeader = (FrameLayout) view.findViewById(R.id.header);
     }
 
+    /**
+     * Activity가 생성되고 난 다음에 수행되어야 할 것들이다.
+     * @param savedInstanceState
+     */
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
@@ -117,6 +129,9 @@ public class MainFragment extends Fragment {
         init();
     }
 
+    /**
+     * 화면이 꺼졌다가 살아났을 때 유지되어야 하는 View들을 그려준다.
+     */
     @Override
     public void onResume() {
 
@@ -142,11 +157,12 @@ public class MainFragment extends Fragment {
         super.onResume();
     }
 
+    /**
+     * 최초의 View 설정들을 해준다.
+     */
     public void init() {
 
         mContext = getContext();
-
-        mDbManager = new DBManager(mContext);
 
         Thread thread =  new Thread(new Runnable() {
             @Override
@@ -180,6 +196,11 @@ public class MainFragment extends Fragment {
         twoWayView2.setAdapter(new ItemMainAdapter(mContext, 0, getItemMains(4)));
     }
 
+    /**
+     * 사용하고자 하는 광고의 수 cnt를 넣어주면 그 개수만큼 랜덤하게 List에 담아 Url을 리턴 해준다.
+     * @param cnt
+     * @return
+     */
     public List<ItemMain> getItemMains(int cnt) {
         RandomAd randomAd = new RandomAd();
         List<String> adUrlList1 = randomAd.getRandomAdUrl(cnt);
@@ -191,23 +212,30 @@ public class MainFragment extends Fragment {
         return ItemMains;
     }
 
-    // ThreadService와 MainActivity를 연결 시켜줄 ServiceConnection
-    /** Defines callbacks for service binding, passed to bindService() */
+    /**
+     * ThreadService와 MainActivity를 연결 시켜줄 ServiceConnection
+     *
+     * Defines callbacks for service binding, passed to bindService()
+     */
     private ServiceConnection mConnection = new ServiceConnection() {
 
-        // 리턴되는 Binder를 다시 Service로 꺼내서 ThreadSerivce내부의 함수 사용이 가능하다.
+        /**
+         * 리턴되는 Binder를 다시 Service로 꺼내서 ThreadSerivce내부의 함수 사용이 가능하다.
+         * @param className
+         * @param service
+         */
         @Override
         public void onServiceConnected(ComponentName className, IBinder service) {
+            Log.d("tag", "onServiceConnected");
             //WalkCheckService.LocalBinder binder = (WalkCheckService.LocalBinder) service;
             //mService = binder.getService();
             //mBound = true;
-            Log.d("tag", "onServiceConnected");
         }
 
         @Override
         public void onServiceDisconnected(ComponentName arg0) {
-            //mBound = false;
             Log.d("tag", "onServiceDisconnected");
+            //mBound = false;
         }
     };
 }

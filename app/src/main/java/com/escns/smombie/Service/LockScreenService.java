@@ -24,6 +24,9 @@ public class LockScreenService extends Service {
         return null;
     }
 
+    /**
+     * 사용할 intentfilter 설정을 해주고 broadcastreceiver를 등록해준다.
+     */
     @Override
     public void onCreate() {
         Log.d("Tag", "LockScreenService - onCreate");

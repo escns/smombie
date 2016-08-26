@@ -39,7 +39,7 @@ public class LockScreenReceiver extends BroadcastReceiver {
     private static boolean isRinging;
 
     /**
-     * BroadcastReceiver에 메시지가 왔을 때
+     * BroadcastReceiver에 메시지가 왔을 때 분류
      * @param context
      * @param intent
      */
@@ -98,6 +98,10 @@ public class LockScreenReceiver extends BroadcastReceiver {
         }
     }
 
+    /**
+     * LockScreen 을 그린다.
+     * @param context
+     */
     private void drawLockScreen(Context context) {
 
         // lock이 활성화 된 상태라면 지우고 다시
@@ -130,6 +134,9 @@ public class LockScreenReceiver extends BroadcastReceiver {
         mWindowManager.addView(mLockScreenView, mParams);
     }
 
+    /**
+     * LockScreen 내부의 View들의 초기설정을 해준다.
+     */
     public void init() {
 
         final ImageView button_lock = (ImageView) mLockScreenView.findViewById(R.id.button_lock);

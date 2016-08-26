@@ -50,6 +50,9 @@ public class MainActivity extends AppCompatActivity {
     private double mbackPressedTime = 0;            // 연속으로 두번 누르면 종료 시 사용하는 변수
     private Bitmap mFbProfileImage;
 
+    /**
+     * Profile Image 다운 성공 시 호출하여 profile update를 수행한다.
+     */
     private Handler handler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
@@ -65,22 +68,22 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
+    /**
+     * view들의 설정을 해주는 함수들을 호출
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        pref = getSharedPreferences(getResources().getString(R.string.app_name), MODE_PRIVATE);
-
-        mMainFragment = new MainFragment();
-        mHistoryFragment = new HistoryFragment();
-        mSettingFragment = new SettingFragment();
-        mInfoFragment = new InfoFragment();
-
         initDrawer(); // 툴바 구현
         init();
     }
 
+    /**
+     * back key 2번에 종료되게 key event를 가로챈다.
+     */
     @Override
     public void onBackPressed() {
 
@@ -106,7 +109,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
-     *  Initialize toolbar and navigation drawer
+     *  Navigation Drawer와 Toolbar 설정을 해준다.
      */
     public void initDrawer() {
 
@@ -182,6 +185,11 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    /**
+     * 파라미터로 받은 fragment로 이동
+     * @param i
+     * @param fragment
+     */
     private void moveFragment(int i, Fragment fragment) {
         if(mMenuState != i) {
             mMenuState = i;
@@ -191,9 +199,16 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
-     *  Initialize layout
+     *  View들의 초기설정을 해준다.
      */
     public void init() {
+
+        pref = getSharedPreferences(getResources().getString(R.string.app_name), MODE_PRIVATE);
+
+        mMainFragment = new MainFragment();
+        mHistoryFragment = new HistoryFragment();
+        mSettingFragment = new SettingFragment();
+        mInfoFragment = new InfoFragment();
 
         Thread thread =  new Thread(new Runnable() {
             @Override
