@@ -60,7 +60,7 @@ public class TabFragment3 extends Fragment {
         Log.d("tag", "Tab3_Chart Fail " + pref.getInt("FAILCNT", 999));
         Log.d("tag", "Tab3_Chart Success " + pref.getInt("SUCCESSCNT", 999));
 
-        if(pref.getInt("FAILCNT",999) != 0 && pref.getInt("SUCCESSCNT",999) != 0) {
+        if(pref.getInt("FAILCNT",999) != 0 || pref.getInt("SUCCESSCNT",999) != 0) {
             chart();
         }
     }

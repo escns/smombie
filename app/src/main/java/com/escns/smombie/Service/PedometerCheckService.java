@@ -22,6 +22,7 @@ import com.escns.smombie.Interface.ApiService;
 import com.escns.smombie.MainActivity;
 import com.escns.smombie.Manager.DBManager;
 import com.escns.smombie.R;
+import com.escns.smombie.Utils.Global;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -140,6 +141,9 @@ public class PedometerCheckService extends Service {
             public void handleMessage(Message msg) {
                 if(isWalkingNow) {
 
+                    Global global = Global.getInstance();
+                    global.setIsWalking(1);
+
                     mIdInt = pref.getInt("USER_ID_INT", 0);
                     mYear = c.get(Calendar.YEAR);
                     mMonth = c.get(Calendar.MONTH)+1;
@@ -184,10 +188,16 @@ public class PedometerCheckService extends Service {
                                 pref.edit().putInt("POINT", cnt+mDist).commit();
                             }
 
-                            
-
-                            cnt = pref.getInt("SUCCESSCNT", 0);
-                            pref.edit().putInt("SUCCESSCNT", cnt+1).commit();
+                            Global global = Global.getInstance();
+                            if(global.getIsWalking() == 0) {
+                                cnt = pref.getInt("FAILCNT", 0);
+                                pref.edit().putInt("FAILCNT", cnt+1).commit();
+                                global.setIsWalking(1);
+                            }
+                            else {
+                                cnt = pref.getInt("SUCCESSCNT", 0);
+                                pref.edit().putInt("SUCCESSCNT", cnt+1).commit();
+                            }
 
                             int totalDist = 0;
                             for(int i=0; i<list.size(); i++) {
