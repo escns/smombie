@@ -6,30 +6,13 @@ package com.escns.smombie.Item;
 
 public class ItemMain {
 
-    private boolean isHeader;
     private String mTitle;
     private int mIcon;
 
     private String mUrl;
 
-
-    public ItemMain(boolean isHeader, String mTitle, int mIcon) {
-        this.isHeader = isHeader;
-        this.mTitle = mTitle;
-        this.mIcon = mIcon;
-    }
-
-    public ItemMain(boolean isHeader, String mUrl) {
-        this.isHeader = isHeader;
+    public ItemMain(String mUrl) {
         this.mUrl = mUrl;
-    }
-
-    public boolean isHeader() {
-        return isHeader;
-    }
-
-    public void setHeader(boolean header) {
-        isHeader = header;
     }
 
     public String getmTitle() {

@@ -83,7 +83,6 @@ public class MainFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.fragment_main, container, false);
-
         pref = getActivity().getSharedPreferences(getResources().getString(R.string.app_name), MODE_PRIVATE);
 
         return rootView;
@@ -114,8 +113,6 @@ public class MainFragment extends Fragment {
                 .setHeader(mHeader)
                 .minHeightHeaderPixel(actionBarHeight+35)
                 .build();
-
-
 
         init();
     }
@@ -156,18 +153,18 @@ public class MainFragment extends Fragment {
             public void run() {
                 while(!isProfileDataLoaded) {
                     try{
-                        Log.d("tag","몇번 오나 보자!!!!!");
+                        Log.i("tag","requset profile image of FACEBOOK");
                         URL url = new URL("https://graph.facebook.com/" + pref.getString("USER_ID_TEXT", "1111") + "/picture?type=large"); // URL 주소를 이용해서 URL 객체 생성
                         HttpURLConnection conn = (HttpURLConnection) url.openConnection();              //  아래 코드는 웹에서 이미지를 가져온 뒤
                         conn.setDoInput(true);
                         conn.connect();
                         mFbProfileImage = BitmapFactory.decodeStream(conn.getInputStream());               //  이미지 뷰에 지정할 Bitmap을 생성하는 과정
 
-                        Thread.sleep(100);
-
                         Message message = handler.obtainMessage();
                         message.what = UPDATE_PROFILE_DATA;
                         handler.sendMessage(message);
+
+                        Thread.sleep(100);
                     } catch (Exception e){
                         e.printStackTrace();
                     }
@@ -176,40 +173,22 @@ public class MainFragment extends Fragment {
         });
         thread.start();
 
-        RandomAd randomAd = new RandomAd();
-        List<String> adUrlList1 = randomAd.getRandomAdUrl(3);
-
-        final List<ItemMain> ItemMains1 = new ArrayList<>();
-        ItemMains1.add(new ItemMain(false, adUrlList1.get(0)));
-        ItemMains1.add(new ItemMain(false, adUrlList1.get(1)));
-        ItemMains1.add(new ItemMain(false, adUrlList1.get(2)));
-
         TwoWayView twoWayView1 = (TwoWayView) rootView.findViewById(R.id.item_main_detail1);
-        twoWayView1.setAdapter(new ItemMainAdapter(mContext, 0, ItemMains1));
-
-        final List<ItemMain> ItemMains2 = new ArrayList<>();
-        List<String> adUrlList2 = randomAd.getRandomAdUrl(4);
-        ItemMains2.add(new ItemMain(false, adUrlList2.get(0)));
-        ItemMains2.add(new ItemMain(false, adUrlList2.get(1)));
-        ItemMains2.add(new ItemMain(false, adUrlList2.get(2)));
-        ItemMains2.add(new ItemMain(false, adUrlList2.get(3)));
+        twoWayView1.setAdapter(new ItemMainAdapter(mContext, 0, getItemMains(3)));
 
         TwoWayView twoWayView2 = (TwoWayView) rootView.findViewById(R.id.item_main_detail2);
-        twoWayView2.setAdapter(new ItemMainAdapter(mContext, 0, ItemMains2));
+        twoWayView2.setAdapter(new ItemMainAdapter(mContext, 0, getItemMains(4)));
+    }
 
+    public List<ItemMain> getItemMains(int cnt) {
+        RandomAd randomAd = new RandomAd();
+        List<String> adUrlList1 = randomAd.getRandomAdUrl(cnt);
 
-        /*
-        final GridLayoutManager gridLayoutManager = new GridLayoutManager(mContext,1);
-        gridLayoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
-            @Override
-            public int getSpanSize(int position) {
-                if(ItemMains.get(position).isHeader()) return gridLayoutManager.getSpanCount();
-                return 1;
-            }
-        });
-        mRecyclerView.setLayoutManager(gridLayoutManager);
-        mRecyclerView.setAdapter(new ItemMainAdpater(ItemMains));
-        */
+        final List<ItemMain> ItemMains = new ArrayList<>();
+        for(int i=0; i<cnt; i++) {
+            ItemMains.add(new ItemMain(adUrlList1.get(i)));
+        }
+        return ItemMains;
     }
 
     // ThreadService와 MainActivity를 연결 시켜줄 ServiceConnection

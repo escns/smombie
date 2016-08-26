@@ -116,7 +116,6 @@ public class LockScreenReceiver extends BroadcastReceiver {
         RandomAd randomAd = new RandomAd();
         mLoopViewPager2.setSliders_url(randomAd.getRandomAdUrl(VIEWPAGER_COUNT));
 
-
         mParams = new WindowManager.LayoutParams(                                       // View의 파라미터 결정
                 WindowManager.LayoutParams.TYPE_SYSTEM_ERROR,                           // 최상단 뷰로 설정
                 WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN                     // 풀 스크린으로 설정

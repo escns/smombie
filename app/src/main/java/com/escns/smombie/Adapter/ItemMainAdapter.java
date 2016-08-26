@@ -24,12 +24,24 @@ public class ItemMainAdapter extends ArrayAdapter<ItemMain> {
 
     private LayoutInflater mLayoutInflater;
 
+    /**
+     * 생성자에서 LayoutInflater 객체를 생성해 둔다. 파라미터로 List 형태의 오브젝트 변수가 필수
+     * @param context
+     * @param resource
+     * @param objects
+     */
     public ItemMainAdapter(Context context, int resource, List<ItemMain> objects) {
         super(context, resource, objects);
         mLayoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
 
-
+    /**
+     * 현재 위치에서 그려야 할 정보를 List에서 가져와 그린 View를 리턴
+     * @param position
+     * @param convertView
+     * @param parent
+     * @return
+     */
     @NonNull
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
@@ -57,10 +69,6 @@ public class ItemMainAdapter extends ArrayAdapter<ItemMain> {
                     }
                 });
 
-
-
         return convertView;
     }
-
-
 }
