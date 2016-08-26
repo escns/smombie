@@ -17,7 +17,7 @@ import android.widget.RelativeLayout;
 
 import com.escns.smombie.R;
 import com.escns.smombie.Utils.RandomAd;
-import com.escns.smombie.View.LockViewPager;
+import com.escns.smombie.View.LoopViewPager2;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
@@ -36,7 +36,7 @@ public class LockScreenReceiver extends BroadcastReceiver {
     private WindowManager.LayoutParams mParams;     // 최상단에 그려질 뷰의 파라미터
     private WindowManager mWindowManager;           // 최상단에 뷰를 그릴 WindowManager
     private View mLockScreenView;                   // 최상단 뷰
-    private LockViewPager mLockViewPager;            // Viewpager
+    private LoopViewPager2 mLoopViewPager2;           // Viewpager
 
     int windowWidth;                                // 전체 윈도우 너비
     int windowHeight;                               // 전체 윈도우 높이
@@ -109,8 +109,10 @@ public class LockScreenReceiver extends BroadcastReceiver {
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);   // Layout을 가져오기 위해 LayoutInflater 객체 생성
         mLockScreenView = (View) inflater.inflate(R.layout.lockscreen, null);                                   // LayoutInflater를 이용하여 R.layout.lockscreen을 불러온다
 
-        mLockViewPager = (LockViewPager) mLockScreenView.findViewById(R.id.lockscreen_viewpager);
-        mLockViewPager.setAdapter(new CustomPagerAdapter(mContext));
+        mLoopViewPager2 = (LoopViewPager2) mLockScreenView.findViewById(R.id.lockscreen_viewpager);
+        RandomAd randomAd = new RandomAd();
+        mLoopViewPager2.setSliders_url(randomAd.getRandomAdUrl(VIEWPAGER_COUNT));
+
 
         mParams = new WindowManager.LayoutParams(                                       // View의 파라미터 결정
                 WindowManager.LayoutParams.TYPE_SYSTEM_ERROR,                           // 최상단 뷰로 설정
@@ -142,7 +144,7 @@ public class LockScreenReceiver extends BroadcastReceiver {
                 switch(event.getAction())
                 {
                     case MotionEvent.ACTION_DOWN:
-                        mLockViewPager.setTouchFlag(false);
+                        mLoopViewPager2.setTouchFlag(false);
                         //layoutParams.height = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 60, mContext.getResources().getDisplayMetrics());
                         button_lock.setImageResource(R.drawable.btn_key_tap);
                         button_unlock.setImageResource(R.drawable.btn_unlock);
@@ -167,7 +169,7 @@ public class LockScreenReceiver extends BroadcastReceiver {
                         button_lock.setLayoutParams(layoutParams);
                         break;
                     case MotionEvent.ACTION_UP:
-                        mLockViewPager.setTouchFlag(true);
+                        mLoopViewPager2.setTouchFlag(true);
                         if(isLock) {
                             layoutParams.leftMargin = offsetLeft;
                             button_lock.setLayoutParams(layoutParams);

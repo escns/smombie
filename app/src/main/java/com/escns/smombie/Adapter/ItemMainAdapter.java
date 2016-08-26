@@ -20,11 +20,11 @@ import java.util.List;
  * Created by Administrator on 2016-08-25.
  */
 
-public class ItemMainAdapter2 extends ArrayAdapter<ItemMain> {
+public class ItemMainAdapter extends ArrayAdapter<ItemMain> {
 
     private LayoutInflater mLayoutInflater;
 
-    public ItemMainAdapter2(Context context, int resource, List<ItemMain> objects) {
+    public ItemMainAdapter(Context context, int resource, List<ItemMain> objects) {
         super(context, resource, objects);
         mLayoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
