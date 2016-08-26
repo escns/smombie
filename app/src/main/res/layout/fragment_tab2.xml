@@ -35,7 +35,7 @@
         android:layout_weight="2"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:layout_above="@+id/imageView"
+        android:layout_above="@+id/history_adview"
         android:layout_below="@+id/linearLayout">
 
         <com.github.mikephil.charting.charts.HorizontalBarChart
@@ -54,7 +54,7 @@
         android:layout_weight="2"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:layout_above="@+id/imageView"
+        android:layout_above="@+id/history_adview"
         android:layout_below="@+id/linearLayout">
 
 

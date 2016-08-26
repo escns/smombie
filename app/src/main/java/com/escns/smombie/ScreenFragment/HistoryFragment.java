@@ -1,6 +1,5 @@
 package com.escns.smombie.ScreenFragment;
 
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -9,9 +8,14 @@ import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.ProgressBar;
 
 import com.escns.smombie.R;
 import com.escns.smombie.Tab.TabPagerAdapter;
+import com.escns.smombie.Utils.RandomAd;
+import com.squareup.picasso.Callback;
+import com.squareup.picasso.Picasso;
 
 /**
  * Created by hyo99 on 2016-08-16.
@@ -30,6 +34,31 @@ public class HistoryFragment extends Fragment {
         initTab(); // 탭메뉴 구현
 
         return rootView;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        RandomAd randomAd = new RandomAd();
+        ImageView historyAdView = (ImageView) rootView.findViewById(R.id.history_adview);
+        final ProgressBar progressBar = (ProgressBar) rootView.findViewById(R.id.ad_loading);
+        progressBar.setVisibility(View.VISIBLE);
+
+        Picasso.with(getContext())
+                .load(randomAd.getRandomAdUrl(1).get(0))
+                .fit()
+                .into(historyAdView, new Callback() {
+                    @Override
+                    public void onSuccess() {
+                        progressBar.setVisibility(View.INVISIBLE);
+                    }
+
+                    @Override
+                    public void onError() {
+
+                    }
+                });
     }
 
     @Override

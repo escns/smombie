@@ -11,10 +11,10 @@
 
     <android.support.design.widget.TabLayout
         android:id="@+id/tab_layout"
-        style="@style/MyCustomTabLayout"
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:background="@color/white"
+        style="@style/MyCustomTabLayout"
         app:tabGravity="fill"
         app:tabMode="fixed" />
 
@@ -24,14 +24,31 @@
         android:layout_height="430dp"
         app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
-    <ImageView
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:srcCompat="@drawable/aqua"
-        android:id="@+id/imageView"
-        android:scaleType="fitXY"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
+        android:layout_height="match_parent">
+
+        <ImageView
+            android:id="@+id/history_adview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="fitXY"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true" />
+
+        <ProgressBar
+            android:id="@+id/ad_loading"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:layout_centerInParent="true"
+            android:indeterminate="true"
+            android:indeterminateDrawable="@drawable/costum_progress_bar"
+            android:padding="3dp"
+            android:visibility="gone" />
+
+    </RelativeLayout>
+
+
 
 </LinearLayout>
