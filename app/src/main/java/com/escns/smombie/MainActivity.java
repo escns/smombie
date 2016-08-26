@@ -176,7 +176,7 @@ public class MainActivity extends AppCompatActivity {
                     case R.id.drawer_menu4 : // 로그아웃
                         mMenuState = 5;
 
-                        if( pref.getBoolean("switch",false) ) {
+                        if( pref.getBoolean("switch",true) ) {
                             pref.edit().putBoolean("switch", false).commit();
                             (MainActivity.this).stopService(new Intent((MainActivity.this), PedometerCheckService.class));
                             (MainActivity.this).stopService(new Intent((MainActivity.this), LockScreenService.class));
@@ -214,13 +214,12 @@ public class MainActivity extends AppCompatActivity {
 
         pref = getSharedPreferences(getResources().getString(R.string.app_name), MODE_PRIVATE);
 
-        //if( pref.getBoolean("switch",false) ) {
-        //    pref.edit().putBoolean("switch", true).commit();
-        //
-        //    Intent intent = new Intent("com.escns.smombie.service").setPackage("com.escns.smombie");
-        //    (MainActivity.this).bindService(intent, mConnection, Context.BIND_AUTO_CREATE); // 만보기 동작
-        //    (MainActivity.this).startService(new Intent((MainActivity.this), LockScreenService.class));
-        //}
+        if( pref.getBoolean("switch",true) ) {
+            pref.edit().putBoolean("switch", true).commit();
+
+            (MainActivity.this).startService(new Intent((MainActivity.this), PedometerCheckService.class));
+            (MainActivity.this).startService(new Intent((MainActivity.this), LockScreenService.class));
+        }
 
         mMainFragment = new MainFragment();
         mHistoryFragment = new HistoryFragment();
