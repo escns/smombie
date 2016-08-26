@@ -19,6 +19,7 @@ import com.escns.smombie.DAO.Record;
 import com.escns.smombie.Interface.ApiService;
 import com.escns.smombie.MainActivity;
 import com.escns.smombie.Manager.DBManager;
+import com.escns.smombie.R;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -98,7 +99,7 @@ public class PedometerCheckService extends Service {
         Log.d("tag", "WalkCheckThread onCreate");
 
         mContext = getApplicationContext();
-        pref = mContext.getSharedPreferences("pref", mContext.MODE_PRIVATE);
+        pref = mContext.getSharedPreferences(getResources().getString(R.string.app_name), mContext.MODE_PRIVATE);
         c = Calendar.getInstance();
         mDbManger = new DBManager(mContext);
         record = new Record(0,0,0,0,0,0);

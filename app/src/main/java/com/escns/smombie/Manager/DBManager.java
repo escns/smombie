@@ -4,6 +4,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 import com.escns.smombie.DAO.Record;
 import com.escns.smombie.R;
@@ -120,8 +121,8 @@ public class DBManager extends SQLiteOpenHelper {
     public List<Record> getRecord() {
 
         SQLiteDatabase db = null;
-        List<Record> list = new ArrayList<>();
-        list = null;
+        List<Record> list = null;
+        list = new ArrayList<>();
         Record record = null;
 
         try {
@@ -129,18 +130,19 @@ public class DBManager extends SQLiteOpenHelper {
 
             StringBuffer sb = new StringBuffer();
             sb.append(" SELECT * FROM " + RECORD_TABLE);
-
             Cursor cursor = db.rawQuery(sb.toString(),null);
 
             while (cursor.moveToNext()) {
-                record = new Record(cursor.getInt(0),
-                        cursor.getInt(1),
+                Log.d("tag", "Turn!!!!!" + cursor.getInt(6));
+                record = new Record(cursor.getInt(1),
                         cursor.getInt(2),
                         cursor.getInt(3),
                         cursor.getInt(4),
-                        cursor.getInt(5));
+                        cursor.getInt(5),
+                        cursor.getInt(6));
                 list.add(record);
             }
+            cursor.close();
 
         } catch (Exception e) {
             e.printStackTrace();
