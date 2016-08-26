@@ -77,15 +77,6 @@ public class LoginActivity extends Activity {
 
         setContentView(R.layout.activity_login);
 
-        // 이미 로그인 상태면 loginButton 자동실행
-        if(isLogin()) {
-            //com.facebook.login.LoginManager.getInstance().logOut();
-            //mLoginButtonInvisible.performClick();
-            Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-            startActivity(intent);
-            finish();
-        }
-
         // DB 생성
         mDbManger = new DBManager(this);
         Gson gson = new GsonBuilder()
@@ -93,6 +84,7 @@ public class LoginActivity extends Activity {
                 .create();
         mRetrofit = new Retrofit.Builder().baseUrl(mApiService.API_URL).addConverterFactory(GsonConverterFactory.create(gson)).build();
         mApiService = mRetrofit.create(ApiService.class);
+
         pref = getSharedPreferences(getResources().getString(R.string.app_name), MODE_PRIVATE);
 
         mLoginBackground = (ImageView) findViewById(R.id.login_background);
@@ -119,20 +111,13 @@ public class LoginActivity extends Activity {
         mLoginButtonInvisible = (LoginButton) findViewById(R.id.login_button_invisible);
         mLoginButtonVisible = (ImageView) findViewById(R.id.login_button_visible);
 
-        mLoginButtonVisible.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mLoginButtonInvisible.callOnClick();
-            }
-        });
-
         // 페이스북에서 제공할 데이터 권한
         mLoginButtonInvisible.setReadPermissions(Arrays.asList("public_profile","email"));
 
         mLoginButtonInvisible.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
             @Override
             public void onSuccess(LoginResult loginResult) {
-                Toast.makeText(getApplicationContext(), "환영합니다", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), "로그인 중....", Toast.LENGTH_SHORT).show();
                 mLoginButtonInvisible.setVisibility(View.INVISIBLE);
 
                 //GraphRequest 클래스에는 지정된 액세스 토큰의 사용자 데이터를 가져오는 newMeRequest 메서드가 있다
@@ -194,6 +179,23 @@ public class LoginActivity extends Activity {
             public void onError(FacebookException error) {
                 Toast.makeText(getApplicationContext(), "에러가 발생하였습니다", Toast.LENGTH_SHORT).show();
                 Log.d("fb_login_sdk", "callback onError");
+            }
+        });
+
+        // 이미 로그인 상태면 loginButton 자동실행
+        if(isLogin()) {
+            Toast.makeText(getApplicationContext(), "로그인 체크", Toast.LENGTH_SHORT).show();
+            com.facebook.login.LoginManager.getInstance().logOut();
+            mLoginButtonInvisible.performClick();
+            //Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+            //startActivity(intent);
+            //finish();
+        }
+
+        mLoginButtonVisible.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mLoginButtonInvisible.callOnClick();
             }
         });
 
