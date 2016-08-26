@@ -8,13 +8,11 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
-import android.os.Binder;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 import android.support.annotation.Nullable;
 import android.util.Log;
-import android.widget.RelativeLayout;
 
 import com.escns.smombie.DAO.Record;
 import com.escns.smombie.DAO.User;
@@ -82,7 +80,7 @@ public class PedometerCheckService extends Service {
     private boolean isWalkingPast = false;
     private boolean isSave = false;
 
-
+    /*
     // 다른 프로세스들도 Service에 접근이 가능하게 해주는 Binder를 리턴해주기 위한 Binder 생성
     private final IBinder mBinder = new LocalBinder();
 
@@ -90,6 +88,14 @@ public class PedometerCheckService extends Service {
         PedometerCheckService getService() {
             return PedometerCheckService.this;
         }
+    }
+    */
+
+    // Binder 리턴
+    @Nullable
+    @Override
+    public IBinder onBind(Intent intent) {
+        return null;
     }
 
     /**
@@ -306,12 +312,6 @@ public class PedometerCheckService extends Service {
         return isWalkingNow;
     }
 
-    // Binder 리턴
-    @Nullable
-    @Override
-    public IBinder onBind(Intent intent) {
-        return mBinder;
-    }
 
 
     public void insertRecordData() {
