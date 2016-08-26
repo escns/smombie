@@ -1,6 +1,7 @@
 package com.escns.smombie;
 
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
@@ -215,6 +216,14 @@ public class MainActivity extends AppCompatActivity {
     public void init() {
 
         pref = getSharedPreferences(getResources().getString(R.string.app_name), MODE_PRIVATE);
+
+        //if( pref.getBoolean("switch",false) ) {
+        //    pref.edit().putBoolean("switch", true).commit();
+        //
+        //    Intent intent = new Intent("com.escns.smombie.service").setPackage("com.escns.smombie");
+        //    (MainActivity.this).bindService(intent, mConnection, Context.BIND_AUTO_CREATE); // 만보기 동작
+        //    (MainActivity.this).startService(new Intent((MainActivity.this), LockScreenService.class));
+        //}
 
         mMainFragment = new MainFragment();
         mHistoryFragment = new HistoryFragment();
