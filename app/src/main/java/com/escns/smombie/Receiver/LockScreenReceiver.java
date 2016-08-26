@@ -16,15 +16,20 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 
 import com.escns.smombie.R;
+import com.escns.smombie.Utils.RandomAd;
 import com.escns.smombie.View.LockViewPager;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
+
+import java.util.List;
 
 /**
  * Created by Administrator on 2016-08-04.
  */
 
 public class LockScreenReceiver extends BroadcastReceiver {
+
+    private static final int VIEWPAGER_COUNT = 5;
 
     private Context mContext;
 
@@ -178,53 +183,31 @@ public class LockScreenReceiver extends BroadcastReceiver {
         });
     }
 
-    public enum CustomPagerEnum {
-
-        RED(0, R.drawable.test_image1),
-        BLUE(1, R.drawable.test_image2),
-        ORANGE(2, R.drawable.profile);
-
-        private int mTitleResId;
-        private int mLayoutResId;
-
-        CustomPagerEnum(int titleResId, int layoutResId) {
-            mTitleResId = titleResId;
-            mLayoutResId = layoutResId;
-        }
-
-        public int getTitleResId() {
-            return mTitleResId;
-        }
-
-        public int getLayoutResId() {
-            return mLayoutResId;
-        }
-
-    }
-
     public class CustomPagerAdapter extends PagerAdapter {
 
         private Context mContext;
-        LayoutInflater mLayoutInflater;
+        private LayoutInflater mLayoutInflater;
+        private List<String> list;
 
         public CustomPagerAdapter(Context mContext) {
             this.mContext = mContext;
             mLayoutInflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+
+            RandomAd randomAd = new RandomAd();
+            list = randomAd.getRandomAdUrl(VIEWPAGER_COUNT);
         }
 
         @Override
         public Object instantiateItem(ViewGroup collection, int position) {
-            CustomPagerEnum customPagerEnum = CustomPagerEnum.values()[position];
 
             ViewGroup layout = (ViewGroup) mLayoutInflater.inflate(R.layout.lockscreen_view, collection, false);
             ImageView background = (ImageView) layout.findViewById(R.id.lockscreen_background);
-
 
             final ProgressBar progressBar = (ProgressBar) layout.findViewById(R.id.lockscreen_loading);
             progressBar.setVisibility(View.VISIBLE);
 
             Picasso.with(mContext)
-                    .load(customPagerEnum.getLayoutResId())
+                    .load(list.get(position))
                     .into(background, new Callback() {
                         @Override
                         public void onSuccess() {
@@ -236,19 +219,6 @@ public class LockScreenReceiver extends BroadcastReceiver {
                         }
                     });
 
-            /*
-            Picasso.Builder builder = new Picasso.Builder(mContext);
-            builder.listener(new Picasso.Listener()
-            {
-                @Override
-                public void onImageLoadFailed(Picasso picasso, Uri uri, Exception exception)
-                {
-                    exception.printStackTrace();
-                }
-            });
-            builder.build().load(R.drawable.bg_round_gray_age).fit().into(background);
-            */
-
             collection.addView(layout);
             return layout;
         }
@@ -259,7 +229,7 @@ public class LockScreenReceiver extends BroadcastReceiver {
 
         @Override
         public int getCount() {
-            return CustomPagerEnum.values().length;
+            return VIEWPAGER_COUNT;
         }
 
         @Override
