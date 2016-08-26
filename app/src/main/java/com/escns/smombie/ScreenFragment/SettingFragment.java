@@ -29,6 +29,8 @@ public class SettingFragment extends Fragment {
 
     View rootView;
 
+    private ServiceConnection mConnection;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.fragment_setting, container, false);
@@ -42,10 +44,18 @@ public class SettingFragment extends Fragment {
 
         mContext = getActivity().getApplicationContext();
 
-
+        SwitchCompat swc = (SwitchCompat) rootView.findViewById(R.id.switch_lock_setting);
         pref = mContext.getSharedPreferences("pref", mContext.MODE_PRIVATE);
 
-        SwitchCompat swc = (SwitchCompat) rootView.findViewById(R.id.switch_lock_setting);
+        boolean state = pref.getBoolean("switch", true);
+        if (state) {
+            swc.setChecked(true);
+        }
+        else {
+            swc.setChecked(false);
+        }
+
+
         swc.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -66,24 +76,4 @@ public class SettingFragment extends Fragment {
         });
 
     }
-
-    // ThreadService와 MainActivity를 연결 시켜줄 ServiceConnection
-    /** Defines callbacks for service binding, passed to bindService() */
-    private ServiceConnection mConnection = new ServiceConnection() {
-
-        // 리턴되는 Binder를 다시 Service로 꺼내서 ThreadSerivce내부의 함수 사용이 가능하다.
-        @Override
-        public void onServiceConnected(ComponentName className, IBinder service) {
-            //WalkCheckService.LocalBinder binder = (WalkCheckService.LocalBinder) service;
-            //mService = binder.getService();
-            //mBound = true;
-            Log.d("tag", "onServiceConnected");
-        }
-
-        @Override
-        public void onServiceDisconnected(ComponentName arg0) {
-            //mBound = false;
-            Log.d("tag", "onServiceDisconnected");
-        }
-    };
 }

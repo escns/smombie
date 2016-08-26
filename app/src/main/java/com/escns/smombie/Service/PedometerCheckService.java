@@ -176,12 +176,13 @@ public class PedometerCheckService extends Service {
                             Log.d("tag", "값 한번 보자 mHour = " + record.getmHour());
                             Log.d("tag", "값 한번 보자 mDist = " + record.getmDist());
 
-                            int cnt = pref.getInt("POINT", 0);
+                            int cnt = pref.getInt("POINT", 0)+mDist;
 
-                            if(cnt >= pref.getInt("GOAL", 1000))  {
-                                cnt -= pref.getInt("GOAL", 1000);
-                                pref.edit().putInt("POINT", cnt+mDist).commit();
-                                cnt = pref.getInt("REWORD", 1000);
+                            if(cnt >= pref.getInt("GOAL", MainActivity.DEFAULT_GOAL))  {
+                                cnt -= pref.getInt("GOAL", MainActivity.DEFAULT_GOAL);
+                                pref.edit().putInt("POINT", cnt).commit();
+
+                                cnt = pref.getInt("REWORD", MainActivity.DEFAULT_GOAL);
                                 pref.edit().putInt("REWORD", cnt+1).commit();
                             }
                             else {

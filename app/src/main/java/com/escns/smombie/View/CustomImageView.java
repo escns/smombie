@@ -105,7 +105,7 @@ public class CustomImageView extends ImageView {
 
         Bitmap sbmp;
 
-        if (bitmap.getWidth() != w || bitmap.getHeight() != w) {
+        if (bitmap.getWidth() != w || bitmap.getHeight() != h) {
             float smallest = Math.min(bitmap.getWidth(), bitmap.getHeight());
             float factor = smallest / w;
             sbmp = Bitmap.createScaledBitmap(bitmap, (int)(bitmap.getWidth() / factor), (int)(bitmap.getHeight() / factor), false);
