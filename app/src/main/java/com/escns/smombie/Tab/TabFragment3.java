@@ -55,7 +55,7 @@ public class TabFragment3 extends Fragment {
         layout1 = (RelativeLayout) rootView.findViewById(R.id.tab3_charLayout1);
 
         chart1 = (PieChart) rootView.findViewById(R.id.tab3_chart1);
-
+        chart1.setTouchEnabled(false);
 
         Log.d("tag", "Tab3_Chart Fail " + pref.getInt("FAILCNT", 999));
         Log.d("tag", "Tab3_Chart Success " + pref.getInt("SUCCESSCNT", 999));

@@ -20,8 +20,18 @@
 
     <android.support.v4.view.ViewPager
         android:id="@+id/tab_view"
+        android:layout_width="wrap_content"
+        android:layout_height="430dp"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+
+    <ImageView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+        app:srcCompat="@drawable/aqua"
+        android:id="@+id/imageView"
+        android:scaleType="fitXY"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
 
 </LinearLayout>

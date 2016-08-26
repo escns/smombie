@@ -121,6 +121,9 @@ public class TabFragment1 extends Fragment {
         chart1 = (BarChart) rootView.findViewById(R.id.tab1_chart1);
         chart2 = (BarChart) rootView.findViewById(R.id.tab1_chart2);
         chart3 = (BarChart) rootView.findViewById(R.id.tab1_chart3);
+        chart1.setTouchEnabled(false);
+        chart2.setTouchEnabled(false);
+        chart3.setTouchEnabled(false);
 
         buttonOne = (ImageView) rootView.findViewById(R.id.tab1_button1);
         buttonTwo = (ImageView) rootView.findViewById(R.id.tab1_button2);

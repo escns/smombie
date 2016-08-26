@@ -14,8 +14,10 @@ import android.os.IBinder;
 import android.os.Message;
 import android.support.annotation.Nullable;
 import android.util.Log;
+import android.widget.RelativeLayout;
 
 import com.escns.smombie.DAO.Record;
+import com.escns.smombie.DAO.User;
 import com.escns.smombie.Interface.ApiService;
 import com.escns.smombie.MainActivity;
 import com.escns.smombie.Manager.DBManager;
@@ -23,7 +25,9 @@ import com.escns.smombie.R;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -68,6 +72,7 @@ public class PedometerCheckService extends Service {
     private int mDist;
     private DBManager mDbManger;
     private Record record;
+    List<Record> list;
 
     boolean isWalkingNow = false; // 만보기: 제자리이면 false / 걷는상태이면 true
 
@@ -103,6 +108,9 @@ public class PedometerCheckService extends Service {
         c = Calendar.getInstance();
         mDbManger = new DBManager(mContext);
         record = new Record(0,0,0,0,0,0);
+        list = null;
+        list = new ArrayList<>();
+        list = mDbManger.getRecord();
 
         Gson gson = new GsonBuilder()
                 .setLenient()
@@ -155,7 +163,6 @@ public class PedometerCheckService extends Service {
                             record.setmHour(mHour);
                             record.setmDist(mDist);
                             mDbManger.insertRecord(record);
-
                             insertRecordData();
 
                             Log.d("tag", "값 한번 보자 mIdInt = " + record.getmIdInt());
@@ -164,6 +171,48 @@ public class PedometerCheckService extends Service {
                             Log.d("tag", "값 한번 보자 mDate = " + record.getmDay());
                             Log.d("tag", "값 한번 보자 mHour = " + record.getmHour());
                             Log.d("tag", "값 한번 보자 mDist = " + record.getmDist());
+
+                            int cnt = pref.getInt("POINT", 0);
+
+                            if(cnt >= pref.getInt("GOAL", 1000))  {
+                                cnt -= pref.getInt("GOAL", 1000);
+                                pref.edit().putInt("POINT", cnt+mDist).commit();
+                                cnt = pref.getInt("REWORD", 1000);
+                                pref.edit().putInt("REWORD", cnt+1).commit();
+                            }
+                            else {
+                                pref.edit().putInt("POINT", cnt+mDist).commit();
+                            }
+
+                            
+
+                            cnt = pref.getInt("SUCCESSCNT", 0);
+                            pref.edit().putInt("SUCCESSCNT", cnt+1).commit();
+
+                            int totalDist = 0;
+                            for(int i=0; i<list.size(); i++) {
+                                totalDist += list.get(i).getmDist();
+                            }
+                            totalDist /= list.size();
+                            pref.edit().putInt("AVGDIST", totalDist).commit();
+
+                            User user = new User(
+                                    pref.getInt("USER_ID_INT", 0),
+                                    pref.getString("USER_ID_TEXT", ""),
+                                    pref.getString("NAME", ""),
+                                    pref.getString("EMAIL", ""),
+                                    pref.getString("GENDER", ""),
+                                    pref.getInt("AGE", 0),
+                                    pref.getInt("POINT", 0),
+                                    pref.getInt("GOAL", 0),
+                                    pref.getInt("REWORD", 0),
+                                    pref.getInt("SUCCESSCNT", 0),
+                                    pref.getInt("FAILCNT", 0),
+                                    pref.getInt("AVGDIST", 0)
+                            );
+                            updateUserData(user);
+
+
                             isSave = false;
                         }
                         else {
@@ -270,4 +319,19 @@ public class PedometerCheckService extends Service {
         });
     }
 
+    public void updateUserData(User user) {
+        Call<String> currentPoint = mApiService.updateUser(user.getmIdInt(), user.getmName(), user.getmEmail(), user.getmGender(), user.getmAge(), user.getmGoal(), user.getmPoint(), user.getmReword(), user.getmSuccessCnt(), user.getmFailCnt(), user.getmAvgDist());
+        currentPoint.enqueue(new retrofit2.Callback<String>() {
+            @Override
+            public void onResponse(Call<String> call, Response<String> response) {
+                Log.i("tag", "updateUserData onResponse");
+            }
+
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
+                Log.i("tag", "updateUserData onFailure");
+                Log.i("tag", t.getMessage());
+            }
+        });
+    }
 }

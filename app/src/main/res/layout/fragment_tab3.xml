@@ -6,17 +6,6 @@
     android:layout_height="match_parent"
     android:layout="@+id/layoutTab3">
 
-    <ImageView
-        android:layout_width="match_parent"
-        android:layout_height="80dp"
-        android:layout_weight="3"
-        app:srcCompat="@drawable/aqua"
-        android:id="@+id/imageView"
-        android:scaleType="fitXY"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
-
     <RelativeLayout
         android:id="@+id/tab3_charLayout1"
         android:layout_width="match_parent"
