@@ -1,17 +1,27 @@
 package com.escns.smombie.Service;
 
+import android.annotation.TargetApi;
+import android.app.AlarmManager;
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.os.Build;
+import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
+import android.os.SystemClock;
 import android.support.annotation.Nullable;
+import android.telephony.TelephonyManager;
 import android.util.Log;
 
 import com.escns.smombie.DAO.Record;
@@ -20,6 +30,7 @@ import com.escns.smombie.Interface.ApiService;
 import com.escns.smombie.MainActivity;
 import com.escns.smombie.Manager.DBManager;
 import com.escns.smombie.R;
+import com.escns.smombie.Receiver.LockScreenReceiver;
 import com.escns.smombie.Utils.Global;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -49,6 +60,8 @@ public class PedometerCheckService extends Service {
 
     private Retrofit mRetrofit;     // 서버와 통신을 위한 Retrofit
     private ApiService mApiService; // 서버와 통신을 위한 ApiService
+
+    private LockScreenReceiver mReceiver;
 
     private long lastTime; // 만보기: 이전 시간
     private float speed; // 만보기: 가속도
@@ -85,57 +98,68 @@ public class PedometerCheckService extends Service {
     private boolean isWalkingPast = false;  // 쓸데없는 데이터를 저장하지 않기 위함
     private boolean isSave = false; // 데이터가 저장되었는지 아닌지 판단
 
-    /*
-    // 다른 프로세스들도 Service에 접근이 가능하게 해주는 Binder를 리턴해주기 위한 Binder 생성
-    private final IBinder mBinder = new LocalBinder();
-
-    public class LocalBinder extends Binder {
-        PedometerCheckService getService() {
-            return PedometerCheckService.this;
-        }
-    }
-    */
+    private CountDownTimer mCountDownTimer;
 
     // Binder 리턴
     @Nullable
     @Override
-    public IBinder onBind(Intent intent) {
-        return null;
-    }
-
-    /**
-     * 생성자
-     */
-    public PedometerCheckService() {
-        Log.d("tag", "Pedometer On");
-    }
+    public IBinder onBind(Intent intent) { return null; }
 
     @Override
     public void onCreate() {
+        unregisterRestartAlarm();
         super.onCreate();
         Log.d("tag", "WalkCheckThread onCreate");
 
-        // 객체 할당
-        mContext = getApplicationContext();
-        pref = mContext.getSharedPreferences(getResources().getString(R.string.app_name), mContext.MODE_PRIVATE);
-        c = Calendar.getInstance();
-        mDbManger = new DBManager(mContext);
-        record = new Record(0,0,0,0,0,0);
-        list = null;
-        list = new ArrayList<>();
-        list = mDbManger.getRecord();
+        init();
+        startSensor();
 
-        // 서버와의 통신
-        Gson gson = new GsonBuilder()
-                .setLenient()
-                .create();
-        mRetrofit = new Retrofit.Builder().baseUrl(mApiService.API_URL).addConverterFactory(GsonConverterFactory.create(gson)).build();
-        mApiService = mRetrofit.create(ApiService.class);
+        startReceiver();
+    }
 
-        // 만보기: 가속도센서 초기화
-        sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
-        accelerormeterSensor = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+    @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
 
+
+        NotificationManager nm = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
+        Notification notification;
+
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+            notification =  new Notification.Builder((getApplicationContext()))
+                    .setContentTitle("aaa")
+                    .setContentText("bbb")
+                    .build();
+        } else {
+            notification = new Notification(0, "", System.currentTimeMillis());
+        }
+        //startForeground(startId, new Notification());
+        startForeground(startId, notification);
+
+        nm.notify(startId, notification);
+        nm.cancel(startId);
+
+        return super.onStartCommand(intent, flags, startId);
+    }
+
+    private void startReceiver() {
+        try {
+            // BroadCastReceiver의 필터 설정
+            IntentFilter filter = new IntentFilter(Intent.ACTION_SCREEN_ON);
+            mReceiver = new LockScreenReceiver();
+            registerReceiver(mReceiver, filter);
+
+            PhoneStateListener phoneStateListener = new PhoneStateListener();
+            TelephonyManager telephonyManager = (TelephonyManager) getSystemService(TELEPHONY_SERVICE);
+            telephonyManager.listen(phoneStateListener, android.telephony.PhoneStateListener.LISTEN_CALL_STATE);
+
+        }catch (Exception e) {
+            // TODO: handle exception
+            e.printStackTrace();
+        }
+    }
+
+    private void startSensor() {
         // 만보기: 가속도센서 감지 시작 - 만보기
         if (accelerormeterSensor != null)
             sensorManager.registerListener(sensorEventListener, accelerormeterSensor, SensorManager.SENSOR_DELAY_GAME);
@@ -144,7 +168,7 @@ public class PedometerCheckService extends Service {
         myTimer = new TimerTask() {
             @Override
             public void run() {
-                Log.d("tag", "1초마다 한번씩 동작!!!");
+                //Log.d("tag", "startSensor - 1초마다 한번씩 동작!!!");
                 handler.sendMessage(handler.obtainMessage());
             }
         };
@@ -184,12 +208,12 @@ public class PedometerCheckService extends Service {
                             mDbManger.insertRecord(record);
                             insertRecordData();
 
-                            Log.d("tag", "값 한번 보자 mIdInt = " + record.getmIdInt());
-                            Log.d("tag", "값 한번 보자 mYear = " + record.getmYear());
-                            Log.d("tag", "값 한번 보자 mMonth = " + record.getmMonth());
-                            Log.d("tag", "값 한번 보자 mDate = " + record.getmDay());
-                            Log.d("tag", "값 한번 보자 mHour = " + record.getmHour());
-                            Log.d("tag", "값 한번 보자 mDist = " + record.getmDist());
+                            Log.d("tag", "startSensor - 값 한번 보자 mIdInt = " + record.getmIdInt());
+                            Log.d("tag", "startSensor - 값 한번 보자 mYear = " + record.getmYear());
+                            Log.d("tag", "startSensor - 값 한번 보자 mMonth = " + record.getmMonth());
+                            Log.d("tag", "startSensor - 값 한번 보자 mDate = " + record.getmDay());
+                            Log.d("tag", "startSensor - 값 한번 보자 mHour = " + record.getmHour());
+                            Log.d("tag", "startSensor - 값 한번 보자 mDist = " + record.getmDist());
 
                             int cnt = pref.getInt("POINT", 0)+mDist;
 
@@ -245,6 +269,7 @@ public class PedometerCheckService extends Service {
                             isSave = false;
                         }
 
+                        Log.d("tag", "startSensor - send LOCK_SCREEN_OFF to Broadcast");
                         Intent intent = new Intent("com.escns.smombie.LOCK_SCREEN_OFF");
                         sendBroadcast(intent);
                     }
@@ -253,7 +278,47 @@ public class PedometerCheckService extends Service {
             }
 
         };
+    }
 
+    private void init() {
+        // 객체 할당
+        mContext = getApplicationContext();
+        pref = mContext.getSharedPreferences(getResources().getString(R.string.app_name), mContext.MODE_PRIVATE);
+        c = Calendar.getInstance();
+        mDbManger = new DBManager(mContext);
+        record = new Record(0,0,0,0,0,0);
+        list = null;
+        list = new ArrayList<>();
+        list = mDbManger.getRecord();
+
+        // 서버와의 통신
+        Gson gson = new GsonBuilder()
+                .setLenient()
+                .create();
+        mRetrofit = new Retrofit.Builder().baseUrl(mApiService.API_URL).addConverterFactory(GsonConverterFactory.create(gson)).build();
+        mApiService = mRetrofit.create(ApiService.class);
+
+        // 만보기: 가속도센서 초기화
+        sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
+        accelerormeterSensor = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+
+        countDownTimer();
+        mCountDownTimer.start();
+
+    }
+
+    public void countDownTimer(){
+
+        mCountDownTimer = new CountDownTimer(1000*1000, 1000) {
+            public void onTick(long millisUntilFinished) {
+
+                //Log.i("PersistentService","onTick");
+            }
+            public void onFinish() {
+
+                Log.i("PersistentService","onFinish");
+            }
+        };
     }
 
     /**
@@ -272,6 +337,13 @@ public class PedometerCheckService extends Service {
         isWalkingNow = false;
         Intent intent = new Intent("com.escns.smombie.LOCK_SCREEN_OFF");
         sendBroadcast(intent);
+
+        if(pref.getBoolean("switch", false)) {
+            mCountDownTimer.cancel();
+            registerRestartAlarm();
+        } else {
+            unregisterReceiver(mReceiver);
+        }
 
         super.onDestroy();
     }
@@ -364,5 +436,56 @@ public class PedometerCheckService extends Service {
                 Log.i("tag", t.getMessage());
             }
         });
+    }
+
+    // 전화 상태를 체크하는 Listener
+    class PhoneStateListener extends android.telephony.PhoneStateListener {
+
+        @Override
+        public void onCallStateChanged(int state, String incomingNumber) {
+            super.onCallStateChanged(state, incomingNumber);
+            Intent intent;
+            switch (state) {
+                case TelephonyManager.CALL_STATE_RINGING:
+                    intent = new Intent("com.escns.smombie.CALL_STATE_RINGING");
+                    sendBroadcast(intent);
+                    break;
+                case TelephonyManager.CALL_STATE_OFFHOOK:
+                    intent = new Intent("com.escns.smombie.CALL_STATE_OFFHOOK");
+                    sendBroadcast(intent);
+                    break;
+                case TelephonyManager.CALL_STATE_IDLE:
+                    intent = new Intent("com.escns.smombie.CALL_STATE_IDLE");
+                    sendBroadcast(intent);
+                    break;
+            }
+        }
+    }
+
+    private void registerRestartAlarm() {
+        Log.i("tag", "registerRestartAlarm");
+
+        Intent i = new Intent(PedometerCheckService.this, LockScreenReceiver.class);
+        i.setAction("com.escns.smombie.RESTART_SERVICE");
+        PendingIntent sender = PendingIntent.getBroadcast(PedometerCheckService.this, 0, i, 0);
+
+        long firstTime = SystemClock.elapsedRealtime();
+        firstTime += 1*1000;
+
+        AlarmManager alarmManager = (AlarmManager)getSystemService(ALARM_SERVICE);
+
+        alarmManager.setRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP, firstTime, 1*1000, sender);
+    }
+
+    private void unregisterRestartAlarm() {
+        Log.i("tag", "unregisterRestartAlarm");
+
+        Intent i = new Intent(PedometerCheckService.this, LockScreenReceiver.class);
+        i.setAction("com.escns.smombie.RESTART_SERVICE");
+        PendingIntent sender = PendingIntent.getBroadcast(PedometerCheckService.this, 0, i, 0);
+
+        AlarmManager alarmManager = (AlarmManager)getSystemService(ALARM_SERVICE);
+
+        alarmManager.cancel(sender);
     }
 }

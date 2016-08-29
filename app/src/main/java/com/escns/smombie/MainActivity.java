@@ -23,7 +23,6 @@ import com.escns.smombie.ScreenFragment.HistoryFragment;
 import com.escns.smombie.ScreenFragment.InfoFragment;
 import com.escns.smombie.ScreenFragment.MainFragment;
 import com.escns.smombie.ScreenFragment.SettingFragment;
-import com.escns.smombie.Service.LockScreenService;
 import com.escns.smombie.Service.PedometerCheckService;
 import com.escns.smombie.View.CustomImageView;
 
@@ -89,25 +88,26 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
 
-        if(mMenuState == 1) {
+        if(drawerLayout.isDrawerOpen(navigationView)) {
             drawerLayout.closeDrawer(navigationView);
+        } else {
+            if(mMenuState == 1) {
 
-            double curTime = System.currentTimeMillis();
-            double intervalTime = curTime - mbackPressedTime;
+                double curTime = System.currentTimeMillis();
+                double intervalTime = curTime - mbackPressedTime;
 
-            if (intervalTime <= 1000) {
-                super.onBackPressed();
-            } else {
-                mbackPressedTime = System.currentTimeMillis();
-                Toast.makeText(getApplicationContext(), "종료하실려면 한번 더 눌러주십시오", Toast.LENGTH_SHORT).show();
+                if (intervalTime <= 1000) {
+                    super.onBackPressed();
+                } else {
+                    mbackPressedTime = System.currentTimeMillis();
+                    Toast.makeText(getApplicationContext(), "종료하실려면 한번 더 눌러주십시오", Toast.LENGTH_SHORT).show();
+                }
+            }
+            else {
+                mMenuState = 1;
+                getSupportFragmentManager().beginTransaction().replace(R.id.frame_layout, mMainFragment).commit();
             }
         }
-        else {
-            mMenuState = 1;
-            getSupportFragmentManager().beginTransaction().replace(R.id.frame_layout, mMainFragment).commit();
-            drawerLayout.closeDrawer(navigationView);
-        }
-
     }
 
     /**
@@ -179,7 +179,7 @@ public class MainActivity extends AppCompatActivity {
                         if( pref.getBoolean("switch", true) ) {
                             pref.edit().putBoolean("switch", false).commit();
                             stopService(new Intent((MainActivity.this), PedometerCheckService.class));
-                            stopService(new Intent((MainActivity.this), LockScreenService.class));
+                            //stopService(new Intent((MainActivity.this), LockScreenService.class));
                         }
 
                         com.facebook.login.LoginManager.getInstance().logOut();
@@ -257,7 +257,7 @@ public class MainActivity extends AppCompatActivity {
                 pref.edit().putBoolean("switch", true).commit();
 
                 startService(new Intent((MainActivity.this), PedometerCheckService.class));
-                startService(new Intent((MainActivity.this), LockScreenService.class));
+                //startService(new Intent((MainActivity.this), LockScreenService.class));
             }
         //}
 

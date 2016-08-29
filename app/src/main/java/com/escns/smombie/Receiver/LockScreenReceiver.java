@@ -16,6 +16,7 @@ import android.widget.RelativeLayout;
 import com.escns.smombie.Interface.ApiService;
 import com.escns.smombie.Manager.DBManager;
 import com.escns.smombie.R;
+import com.escns.smombie.Service.PedometerCheckService;
 import com.escns.smombie.Utils.Global;
 import com.escns.smombie.Utils.RandomAd;
 import com.escns.smombie.View.LoopViewPager2;
@@ -43,8 +44,8 @@ public class LockScreenReceiver extends BroadcastReceiver {
     private Context mContext;
 
     private WindowManager.LayoutParams mParams;     // 최상단에 그려질 뷰의 파라미터
-    private WindowManager mWindowManager;           // 최상단에 뷰를 그릴 WindowManager
-    private View mLockScreenView;                   // 최상단 뷰
+    private static WindowManager mWindowManager;           // 최상단에 뷰를 그릴 WindowManager
+    private static View mLockScreenView;                   // 최상단 뷰
     private LoopViewPager2 mLoopViewPager2;           // Viewpager
 
     int windowWidth;                                // 전체 윈도우 너비
@@ -64,6 +65,12 @@ public class LockScreenReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         Log.d("Tag", "LockReceiver - onReceive "+intent.getAction());
+
+        if(isLock) Log.i("tag", "isLock = true");
+        else Log.i("tag", "isLock = false");
+        if(isWalking) Log.i("tag", "isWalking = true");
+        else Log.i("tag", "isWalking = false");
+
         mContext = context;
 
         if(!isInit) initUtils();
@@ -80,7 +87,9 @@ public class LockScreenReceiver extends BroadcastReceiver {
         } else if(action.equals("com.escns.smombie.CALL_STATE_RINGING")) {
             isRinging = true;
             if(mWindowManager!=null && isLock) {
-                mWindowManager.removeView(mLockScreenView);
+                if(mLockScreenView != null) {
+                    mWindowManager.removeView(mLockScreenView);
+                }
                 mWindowManager = null;
                 isLock=false;
             }
@@ -88,7 +97,9 @@ public class LockScreenReceiver extends BroadcastReceiver {
         } else if(action.equals("com.escns.smombie.CALL_STATE_OFFHOOK")) {
             isRinging = true;
             if(mWindowManager!=null && isLock) {
-                mWindowManager.removeView(mLockScreenView);
+                if(mLockScreenView != null) {
+                    mWindowManager.removeView(mLockScreenView);
+                }
                 mWindowManager = null;
                 isLock=false;
             }
@@ -98,11 +109,6 @@ public class LockScreenReceiver extends BroadcastReceiver {
 
         } else if(action.equals("com.escns.smombie.LOCK_SCREEN_ON")) {
 
-            if(isLock) Log.i("tag", "isLock = true");
-            else Log.i("tag", "isLock = false");
-            if(isWalking) Log.i("tag", "isWalking = true");
-            else Log.i("tag", "isWalking = false");
-
             if(!isLock && !isRinging) {
                 isWalking=true;
                 drawLockScreen(context);
@@ -110,10 +116,24 @@ public class LockScreenReceiver extends BroadcastReceiver {
         } else if(action.equals("com.escns.smombie.LOCK_SCREEN_OFF")) {
             isWalking=false;
             if(mWindowManager!=null) {
-                mWindowManager.removeView(mLockScreenView);
+                if(mLockScreenView != null) {
+                    mWindowManager.removeView(mLockScreenView);
+                }
                 mWindowManager = null;
                 isLock=false;
+            } else {
+                Log.i("tag", "mWindowManager is null");
             }
+        } else if(action.equals("com.escns.smombie.RESTART_SERVICE")) {
+            Log.i("tag", "ACTION.RESTART.PedometerCheckService");
+
+            Intent i = new Intent(context, PedometerCheckService.class);
+            context.startService(i);
+        } else if(action.equals(Intent.ACTION_BOOT_COMPLETED)) {
+            Log.i("tag", "ACTION_BOOT_COMPLETED");
+
+            Intent i = new Intent(context, PedometerCheckService.class);
+            context.startService(i);
         }
     }
 
@@ -125,7 +145,9 @@ public class LockScreenReceiver extends BroadcastReceiver {
 
         // lock이 활성화 된 상태라면 지우고 다시
         if(mWindowManager!=null && isLock) {
-            mWindowManager.removeView(mLockScreenView);
+            if(mLockScreenView != null) {
+                mWindowManager.removeView(mLockScreenView);
+            }
             mWindowManager = null;
         }
 

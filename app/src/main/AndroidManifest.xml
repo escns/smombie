@@ -59,6 +59,7 @@
                 <action android:name="com.escns.smombie.CALL_STATE_IDLE" />
                 <action android:name="com.escns.smombie.LOCK_SCREEN_ON" />
                 <action android:name="com.escns.smombie.LOCK_SCREEN_OFF" />
+                <action android:name="com.escns.smombie.RESTART_SERVICE"/>
             </intent-filter>
         </receiver>
 
