@@ -33,7 +33,7 @@
 
     <Button
         android:id="@+id/button_NoAccount"
-        android:text="No Account"
+        android:text="Developer Button"
         android:textSize="20sp"
         android:background="@color/second_color"
         android:layout_width="300dp"
