@@ -137,7 +137,6 @@ public class DBManager extends SQLiteOpenHelper {
             Cursor cursor = db.rawQuery(sb.toString(),null);
 
             while (cursor.moveToNext()) {
-                Log.d("tag", "Turn!!!!!" + cursor.getInt(6));
                 record = new Record(cursor.getInt(1),
                         cursor.getInt(2),
                         cursor.getInt(3),

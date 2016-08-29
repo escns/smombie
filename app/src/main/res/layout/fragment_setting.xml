@@ -31,6 +31,7 @@
         android:background="@color/black" />
     -->
     <RelativeLayout
+        android:id="@+id/layout_swtich"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
@@ -57,7 +58,16 @@
 
         </LinearLayout>
 
+        <ToggleButton
+            android:text="ToggleButton"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:id="@+id/toggleButton"
+            android:layout_centerVertical="true"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true" />
 
+        <!--
         <android.support.v7.widget.SwitchCompat
             android:id="@+id/switch_lock_setting"
             android:layout_width="wrap_content"
@@ -67,6 +77,7 @@
             android:layout_alignParentRight="true"
             android:layout_alignParentEnd="true"
             android:layout_marginEnd="21dp" />
+            -->
 
     </RelativeLayout>
 

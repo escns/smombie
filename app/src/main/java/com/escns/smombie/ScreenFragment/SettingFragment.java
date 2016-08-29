@@ -6,10 +6,13 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.SwitchCompat;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CompoundButton;
+import android.widget.RelativeLayout;
+import android.widget.ToggleButton;
 
 import com.escns.smombie.R;
 import com.escns.smombie.Service.LockScreenService;
@@ -27,6 +30,9 @@ public class SettingFragment extends Fragment {
     private Context mContext;
     private SharedPreferences pref; // 화면 꺼짐 및 이동 시 switch가 초기화되기 때문에 파일에 따로 저장하기 위한 객체
 
+    RelativeLayout layoutSwitch;
+    ToggleButton swc;
+
     View rootView;
 
     @Override
@@ -38,25 +44,35 @@ public class SettingFragment extends Fragment {
         return rootView;
     }
 
+    @Override
+    public void onResume() {
+
+        super.onResume();
+    }
+
     /**
      * 초기화 함수
      */
     public void init() {
 
         mContext = getActivity().getApplicationContext();
-
-
-        SwitchCompat swc = (SwitchCompat) rootView.findViewById(R.id.switch_lock_setting);
         pref = mContext.getSharedPreferences(getResources().getString(R.string.app_name), mContext.MODE_PRIVATE);
 
+        layoutSwitch = (RelativeLayout) rootView.findViewById(R.id.layout_swtich);
+        swc = (ToggleButton) rootView.findViewById(R.id.toggleButton);
+
+        //layoutSwitch.setVisibility(View.INVISIBLE);
+        //if ( pref.getBoolean("switch", true )) {
+        //    Log.d("tag", "버튼상태 True");
+        //    swc.setChecked(true);
+        //}
+        //else {
+        //    Log.d("tag", "버튼상태 flase");
+        //    swc.setChecked(false);
+        //}
+        //layoutSwitch.setVisibility(View.VISIBLE);
+
         // 잠금화면 활성화/비활성화 스위치
-        boolean state = pref.getBoolean("switch", true);
-        if (state) {
-            swc.setChecked(true);
-        }
-        else {
-            swc.setChecked(false);
-        }
         swc.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
