@@ -18,6 +18,7 @@ import android.os.Message;
 import android.os.SystemClock;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.TaskStackBuilder;
 import android.telephony.TelephonyManager;
 import android.util.Log;
 
@@ -124,10 +125,18 @@ public class PedometerCheckService extends Service {
                         .setContentTitle("Smombie")
                         .setContentText("도보 시 잠금화면이 실행됩니다.");
 
-        /*
-        TODO
-        노티바 누르면 앱 실행되게
-         */
+        Intent resultIntent = new Intent(getApplicationContext(), MainActivity.class);
+
+        TaskStackBuilder taskStackBuilder = TaskStackBuilder.create(mContext);
+        taskStackBuilder.addParentStack(MainActivity.class);
+        taskStackBuilder.addNextIntent(resultIntent);
+
+        PendingIntent pendingIntent =
+                taskStackBuilder.getPendingIntent(
+                        0,
+                        PendingIntent.FLAG_UPDATE_CURRENT
+                );
+        builder.setContentIntent(pendingIntent);
 
         startForeground(9510, builder.build());
 
