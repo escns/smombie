@@ -1,9 +1,6 @@
 package com.escns.smombie.Service;
 
-import android.annotation.TargetApi;
 import android.app.AlarmManager;
-import android.app.Notification;
-import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
@@ -14,13 +11,13 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
-import android.os.Build;
 import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 import android.os.SystemClock;
 import android.support.annotation.Nullable;
+import android.support.v4.app.NotificationCompat;
 import android.telephony.TelephonyManager;
 import android.util.Log;
 
@@ -117,27 +114,19 @@ public class PedometerCheckService extends Service {
         startReceiver();
     }
 
-    @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
+    //@TargetApi(Build.VERSION_CODES.JELLY_BEAN)
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
 
+        NotificationCompat.Builder builder =
+                new NotificationCompat.Builder(this)
+                        .setSmallIcon(R.drawable.icon_logo)
+                        .setContentTitle("Smombie")
+                        .setContentText("도보 시 잠금화면이 실행됩니다.");
 
-        NotificationManager nm = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
-        Notification notification;
 
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-            notification =  new Notification.Builder((getApplicationContext()))
-                    .setContentTitle("aaa")
-                    .setContentText("bbb")
-                    .build();
-        } else {
-            notification = new Notification(0, "", System.currentTimeMillis());
-        }
-        //startForeground(startId, new Notification());
-        startForeground(startId, notification);
 
-        nm.notify(startId, notification);
-        nm.cancel(startId);
+        startForeground(9510, builder.build());
 
         return super.onStartCommand(intent, flags, startId);
     }
