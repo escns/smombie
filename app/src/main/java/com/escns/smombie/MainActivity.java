@@ -179,7 +179,6 @@ public class MainActivity extends AppCompatActivity {
                         if( pref.getBoolean("switch", true) ) {
                             pref.edit().putBoolean("switch", false).commit();
                             stopService(new Intent((MainActivity.this), PedometerCheckService.class));
-                            //stopService(new Intent((MainActivity.this), LockScreenService.class));
                         }
 
                         com.facebook.login.LoginManager.getInstance().logOut();
@@ -251,15 +250,12 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-        //if(!auto) {
-            if (pref.getBoolean("switch", true)) {
-                Log.d("tag" ,"강제실행!!!");
-                pref.edit().putBoolean("switch", true).commit();
+        if (pref.getBoolean("switch", true)) {
+            Log.d("tag", "강제실행!!!");
+            pref.edit().putBoolean("switch", true).commit();
 
-                startService(new Intent((MainActivity.this), PedometerCheckService.class));
-                //startService(new Intent((MainActivity.this), LockScreenService.class));
-            }
-        //}
+            startService(new Intent((MainActivity.this), PedometerCheckService.class));
+        }
 
         // 홈 화면 실행
         getSupportFragmentManager().beginTransaction().replace(R.id.frame_layout, mMainFragment).commit();
