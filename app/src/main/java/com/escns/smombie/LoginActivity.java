@@ -187,10 +187,11 @@ public class LoginActivity extends Activity {
 
         // 이미 로그인 상태면 loginButton 자동실행
         if(isLogin()) {
-            Toast.makeText(getApplicationContext(), "로그인 체크", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), "로그인 유뮤 체크", Toast.LENGTH_SHORT).show();
             com.facebook.login.LoginManager.getInstance().logOut();
             isAutoLogin = true;
-            mLoginButtonInvisible.performClick();
+            mLoginButtonInvisible.callOnClick();
+            //mLoginButtonInvisible.performClick();
             //Intent intent = new Intent(getApplicationContext(), MainActivity.class);
             //startActivity(intent);
             //finish();
@@ -309,7 +310,7 @@ public class LoginActivity extends Activity {
         });
 
         Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-        intent.putExtra("AutoLogin",isAutoLogin);
+        //intent.putExtra("AutoLogin",isAutoLogin);
         startActivity(intent);
         finish();
     }

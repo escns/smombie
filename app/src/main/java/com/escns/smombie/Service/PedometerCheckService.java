@@ -144,7 +144,7 @@ public class PedometerCheckService extends Service {
         myTimer = new TimerTask() {
             @Override
             public void run() {
-                Log.d("tag", "3초마다 한번씩 동작!!!");
+                Log.d("tag", "1초마다 한번씩 동작!!!");
                 handler.sendMessage(handler.obtainMessage());
             }
         };

@@ -176,7 +176,7 @@ public class MainActivity extends AppCompatActivity {
                     case R.id.drawer_menu4 : // 로그아웃
                         mMenuState = 5;
 
-                        if( pref.getBoolean("switch",true) ) {
+                        if( pref.getBoolean("switch", true) ) {
                             pref.edit().putBoolean("switch", false).commit();
                             stopService(new Intent((MainActivity.this), PedometerCheckService.class));
                             stopService(new Intent((MainActivity.this), LockScreenService.class));
@@ -212,19 +212,10 @@ public class MainActivity extends AppCompatActivity {
      */
     public void init() {
 
-        Intent intent = getIntent();
-        boolean auto = intent.getBooleanExtra("AutoLogin",true);
-
         pref = getSharedPreferences(getResources().getString(R.string.app_name), MODE_PRIVATE);
 
-        if(!auto) {
-            //if (pref.getBoolean("switch", true)) {
-                pref.edit().putBoolean("switch", true).commit();
-
-                startService(new Intent((MainActivity.this), PedometerCheckService.class));
-                startService(new Intent((MainActivity.this), LockScreenService.class));
-            //}
-        }
+        //Intent intent = getIntent();
+        //boolean auto = intent.getBooleanExtra("AutoLogin",true);
 
         mMainFragment = new MainFragment();
         mHistoryFragment = new HistoryFragment();
@@ -257,6 +248,18 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         thread.start();
+
+
+
+        //if(!auto) {
+            if (pref.getBoolean("switch", true)) {
+                Log.d("tag" ,"강제실행!!!");
+                pref.edit().putBoolean("switch", true).commit();
+
+                startService(new Intent((MainActivity.this), PedometerCheckService.class));
+                startService(new Intent((MainActivity.this), LockScreenService.class));
+            }
+        //}
 
         // 홈 화면 실행
         getSupportFragmentManager().beginTransaction().replace(R.id.frame_layout, mMainFragment).commit();
