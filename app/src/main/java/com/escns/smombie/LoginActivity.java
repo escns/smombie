@@ -79,6 +79,9 @@ public class LoginActivity extends Activity {
 
         setContentView(R.layout.activity_login);
 
+        final ProgressBar progressBar = (ProgressBar) findViewById(R.id.bg_loading);
+        progressBar.setVisibility(View.INVISIBLE);
+
         // DB 생성
         mDbManger = new DBManager(this);
         Gson gson = new GsonBuilder()
@@ -92,13 +95,11 @@ public class LoginActivity extends Activity {
 
         mLoginBackground = (ImageView) findViewById(R.id.login_background);
 
-        final ProgressBar progressBar = (ProgressBar) findViewById(R.id.bg_loading);
         final ImageView loginFacebook = (ImageView) findViewById(R.id.login_button_visible);
-        progressBar.setVisibility(View.VISIBLE);
         Picasso.with(this).load(R.drawable.bg_login_compressed).fit().into(mLoginBackground, new Callback() {
             @Override
             public void onSuccess() {
-                progressBar.setVisibility(View.GONE);
+                //progressBar.setVisibility(View.GONE);
                 loginFacebook.setVisibility(View.VISIBLE);
             }
 
@@ -187,7 +188,6 @@ public class LoginActivity extends Activity {
 
         // 이미 로그인 상태면 loginButton 자동실행
         if(isLogin()) {
-            Toast.makeText(getApplicationContext(), "로그인 유뮤 체크", Toast.LENGTH_SHORT).show();
             com.facebook.login.LoginManager.getInstance().logOut();
             isAutoLogin = true;
             mLoginButtonInvisible.callOnClick();
@@ -308,6 +308,10 @@ public class LoginActivity extends Activity {
 
             }
         });
+
+        if(!isAutoLogin) {
+            pref.edit().putBoolean("switch", true).commit();
+        }
 
         Intent intent = new Intent(getApplicationContext(), MainActivity.class);
         //intent.putExtra("AutoLogin",isAutoLogin);

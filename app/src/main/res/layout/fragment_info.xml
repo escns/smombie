@@ -167,17 +167,6 @@
         android:layout_height="1dp"
         android:background="@color/grey" />
 
-    <Button
-        android:id="@+id/button_test"
-        android:layout_width="100dp"
-        android:layout_height="50dp"
-        android:text="Test On"/>
-
-    <Button
-        android:id="@+id/button_test2"
-        android:layout_width="100dp"
-        android:layout_height="50dp"
-        android:text="Test Off"/>
 
 
 </LinearLayout>
