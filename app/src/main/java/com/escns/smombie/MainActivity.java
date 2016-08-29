@@ -1,6 +1,5 @@
 package com.escns.smombie;
 
-import android.Manifest;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
@@ -26,12 +25,9 @@ import com.escns.smombie.ScreenFragment.MainFragment;
 import com.escns.smombie.ScreenFragment.SettingFragment;
 import com.escns.smombie.Service.PedometerCheckService;
 import com.escns.smombie.View.CustomImageView;
-import com.gun0912.tedpermission.PermissionListener;
-import com.gun0912.tedpermission.TedPermission;
 
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.ArrayList;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -183,7 +179,6 @@ public class MainActivity extends AppCompatActivity {
                         if( pref.getBoolean("switch", true) ) {
                             pref.edit().putBoolean("switch", false).commit();
                             stopService(new Intent((MainActivity.this), PedometerCheckService.class));
-                            //stopService(new Intent((MainActivity.this), LockScreenService.class));
                         }
 
                         com.facebook.login.LoginManager.getInstance().logOut();
@@ -253,30 +248,14 @@ public class MainActivity extends AppCompatActivity {
         });
         thread.start();
 
-        new TedPermission(this)
-                .setPermissionListener(new PermissionListener() {
-                    @Override
-                    public void onPermissionGranted() {
-                        Log.d("tag" ,"onPermissionGranted");
-                        pref.edit().putBoolean("switch", true).commit();
 
-                        startService(new Intent((MainActivity.this), PedometerCheckService.class));
 
-                        if (pref.getBoolean("switch", true)) {
+        if (pref.getBoolean("switch", true)) {
+            Log.d("tag", "강제실행!!!");
+            pref.edit().putBoolean("switch", true).commit();
 
-                        }
-                    }
-
-                    @Override
-                    public void onPermissionDenied(ArrayList<String> arrayList) {
-                        Log.d("tag" ,"onPermissionDenied");
-                    }
-                })
-                .setRationaleMessage("잠금화면 기능을 위해 다음과 같은 권한이 필요 합니다.")
-                .setDeniedMessage("App의 기능을 제대로 사용할 수 없습니다.")
-                .setPermissions(Manifest.permission.SYSTEM_ALERT_WINDOW)
-                .setPermissions(Manifest.permission.READ_PHONE_STATE)
-                .check();
+            startService(new Intent((MainActivity.this), PedometerCheckService.class));
+        }
 
         // 홈 화면 실행
         getSupportFragmentManager().beginTransaction().replace(R.id.frame_layout, mMainFragment).commit();

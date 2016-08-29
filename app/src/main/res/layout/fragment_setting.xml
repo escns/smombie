@@ -58,11 +58,14 @@
 
         </LinearLayout>
 
-        <ToggleButton
-            android:text="ToggleButton"
+
+        <ImageView
             android:layout_width="50dp"
             android:layout_height="50dp"
-            android:id="@+id/toggleButton"
+            android:id="@+id/checkBox"
+            android:src="@drawable/swc_off"
+            android:paddingLeft="25dp"
+            android:layout_marginRight="10dp"
             android:layout_centerVertical="true"
             android:layout_alignParentRight="true"
             android:layout_alignParentEnd="true" />
