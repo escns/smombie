@@ -46,6 +46,8 @@ dependencies {
     compile 'org.lucasr.twowayview:twowayview:0.1.4'
     compile 'com.jaekwon.loopviewpagerlayout.lib:lib:0.1'
     compile 'com.github.carlonzo.stikkyheader:core:0.0.3-SNAPSHOT'
+    compile 'com.github.ParkSangGwon:TedPermission:v1.0.11'
+
 
     testCompile 'junit:junit:4.12'
 }
