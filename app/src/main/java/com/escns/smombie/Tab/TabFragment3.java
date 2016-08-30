@@ -59,6 +59,7 @@ public class TabFragment3 extends Fragment {
 
         chart1 = (PieChart) rootView.findViewById(R.id.tab3_chart1);
         chart1.setTouchEnabled(false);
+        chart1.animateY(1200);
 
         // 데이터가 없으면 그래프를 출력하지 않는다
         if(pref.getInt("POINT",999) != 0 || pref.getInt("GOAL",999) != 0) {
