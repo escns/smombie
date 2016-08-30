@@ -83,8 +83,9 @@ public class PedometerCheckService extends Service {
     private int mDate; // 현재 일
     private int mHour; // 현재 시간
     private int mDist; // 걸은 거리
+    private int mBeforeDist; // 전 걸은거리
 
-    private int mBeforeDist; //
+    private int noSaveConut;
 
     private DBManager mDbManger;
     private Record record;
@@ -214,8 +215,9 @@ public class PedometerCheckService extends Service {
                 totalDist /= list.size();
                 pref.edit().putInt("AVGDIST", totalDist).commit();
 
-                // 밀어서 잠금해제 --> 서버에 업데이트
-                if(global.getIsWalking() == 0) {
+
+                // 밀어서 잠금해제 했을 때 / 인터넷이 연결되 있을 때 / 누적된 데이터가 없을 때 --> 서버에 업데이트
+                if(global.getIsWalking() == 0 && global.getIsNetworking() && noSaveConut == 0) {
                     Log.d("tag", "서버 DB 업데이트!!!");
                     insertRecordData();
 
@@ -236,7 +238,6 @@ public class PedometerCheckService extends Service {
                     updateUserData(user);
 
                     // 새로운 행에 기록하기 위한 초기화 부분
-                    mIdInt = pref.getInt("USER_ID_INT", 0);
                     mYear = c.get(Calendar.YEAR);
                     mMonth = c.get(Calendar.MONTH)+1;
                     mDate = c.get(Calendar.DATE);
@@ -246,6 +247,73 @@ public class PedometerCheckService extends Service {
                     record = new Record(mIdInt,mYear,mMonth,mDate,mHour,mDist);
                     mDbManger.insertRecord(record);
 
+                    global.setIsWalking(1);
+                }
+                // 밀어서 잠금해제 했을 때 / 인터넷이 연결되 있을 때 / 누적된 데이터가 없을 때 --> 서버에 업데이트
+                else if (global.getIsWalking() == 0 && global.getIsNetworking() && noSaveConut > 0) {
+                    Log.d("tag", "서버 DB 누적 업데이트!!!");
+                    list = mDbManger.getRecord();
+
+                    for(int i = list.size()-noSaveConut-1; i<list.size(); i++) {
+                        mYear = list.get(i).getmYear();
+                        mMonth = list.get(i).getmMonth();
+                        mDate = list.get(i).getmDay();
+                        mHour = list.get(i).getmHour();
+                        mDist = list.get(i).getmDist();
+                        Log.d("tag", "데이터 거리 : " + mDist);
+                        try {
+                            Thread.sleep(1000);
+                        }
+                        catch (Exception e) {
+
+                        }
+                        insertRecordData();
+                    }
+
+                    User user = new User(
+                            pref.getInt("USER_ID_INT", 0),
+                            pref.getString("USER_ID_TEXT", ""),
+                            pref.getString("NAME", ""),
+                            pref.getString("EMAIL", ""),
+                            pref.getString("GENDER", ""),
+                            pref.getInt("AGE", 0),
+                            pref.getInt("POINT", 0),
+                            pref.getInt("GOAL", 0),
+                            pref.getInt("REWORD", 0),
+                            pref.getInt("SUCCESSCNT", 0),
+                            pref.getInt("FAILCNT", 0),
+                            pref.getInt("AVGDIST", 0)
+                    );
+                    updateUserData(user);
+
+                    // 새로운 행에 기록하기 위한 초기화 부분
+                    mYear = c.get(Calendar.YEAR);
+                    mMonth = c.get(Calendar.MONTH)+1;
+                    mDate = c.get(Calendar.DATE);
+                    mHour = c.get(Calendar.HOUR_OF_DAY);
+                    mDist = 0;
+                    mBeforeDist = 0;
+                    record = new Record(mIdInt,mYear,mMonth,mDate,mHour,mDist);
+                    mDbManger.insertRecord(record);
+
+                    noSaveConut = 0;
+                    global.setIsWalking(1);
+
+                }
+                // 밀어서 잠금해제 했을 때 / 인터넷이 연결 안되 있을 때 --> 서버에 업데이트 못함, 데이터 누적
+                else if(global.getIsWalking() == 0 && !global.getIsNetworking()) {
+                    Log.d("tag", "서버 DB 업데이터 못함!!!");
+                    noSaveConut ++;
+
+                    // 새로운 행에 기록하기 위한 초기화 부분
+                    mYear = c.get(Calendar.YEAR);
+                    mMonth = c.get(Calendar.MONTH)+1;
+                    mDate = c.get(Calendar.DATE);
+                    mHour = c.get(Calendar.HOUR_OF_DAY);
+                    mDist = 0;
+                    mBeforeDist = 0;
+                    record = new Record(mIdInt,mYear,mMonth,mDate,mHour,mDist);
+                    mDbManger.insertRecord(record);
 
                     global.setIsWalking(1);
                 }
@@ -365,6 +433,7 @@ public class PedometerCheckService extends Service {
         mHour = c.get(Calendar.HOUR_OF_DAY);
         mDist = 0;
         mBeforeDist = 0;
+        noSaveConut = 0;
         record = new Record(mIdInt,mYear,mMonth,mDate,mHour,mDist);
         mDbManger.insertRecord(record);
 

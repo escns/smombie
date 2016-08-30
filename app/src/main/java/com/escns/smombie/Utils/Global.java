@@ -11,6 +11,7 @@ public class Global {
 
     private static Global mGlobal;
     private int isWalking = MOVE;
+    private boolean isNetworking = true;
 
     private  Global() {
     }
@@ -28,5 +29,13 @@ public class Global {
 
     public void setIsWalking(int isWalking) {
         this.isWalking = isWalking;
+    }
+
+    public boolean getIsNetworking() {
+        return isNetworking;
+    }
+
+    public void setIsNetworking(boolean isNetworking) {
+        this.isNetworking = isNetworking;
     }
 }

@@ -4,6 +4,8 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
@@ -12,6 +14,7 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 
 import com.escns.smombie.Interface.ApiService;
 import com.escns.smombie.Manager.DBManager;
@@ -55,6 +58,8 @@ public class LockScreenReceiver extends BroadcastReceiver {
     private static boolean isRinging;
 
     private boolean isInit;
+
+    Global global = Global.getInstance();
 
     /**
      * BroadcastReceiver에 메시지가 왔을 때 분류
@@ -110,6 +115,22 @@ public class LockScreenReceiver extends BroadcastReceiver {
             Intent i = new Intent(context, PedometerCheckService.class);
             context.startService(i);
         }
+
+        if(action.equals(ConnectivityManager.CONNECTIVITY_ACTION)) {
+
+            NetworkInfo info = intent.getParcelableExtra(ConnectivityManager.EXTRA_NETWORK_INFO);
+            NetworkInfo.DetailedState state = info.getDetailedState();
+
+            if (state == NetworkInfo.DetailedState.CONNECTED) {
+                global.setIsNetworking(true);
+                Toast.makeText(context, "인터넷이 연결되었습니다.", Toast.LENGTH_LONG).show();
+
+            } else if (state == NetworkInfo.DetailedState.DISCONNECTED) {
+                global.setIsNetworking(false);
+                Toast.makeText(context, "인터넷 연결이 끊어졌습니다.", Toast.LENGTH_LONG).show();
+            }
+        }
+
     }
 
     /**
@@ -230,8 +251,6 @@ public class LockScreenReceiver extends BroadcastReceiver {
 
     public void queryFail() {
 
-        Global global = Global.getInstance();
         global.setIsWalking(0);
-
     }
 }
