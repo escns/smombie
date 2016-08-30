@@ -52,7 +52,6 @@ public class LockScreenReceiver extends BroadcastReceiver {
     int windowHeight;                               // 전체 윈도우 높이
 
     private static boolean isLock;                  // lock의 상태
-    private static boolean isWalking;
     private static boolean isRinging;
 
     private boolean isInit;
@@ -66,11 +65,6 @@ public class LockScreenReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         Log.d("Tag", "LockReceiver - onReceive "+intent.getAction());
 
-        if(isLock) Log.i("tag", "isLock = true");
-        else Log.i("tag", "isLock = false");
-        if(isWalking) Log.i("tag", "isWalking = true");
-        else Log.i("tag", "isWalking = false");
-
         mContext = context;
 
         if(!isInit) initUtils();
@@ -79,11 +73,9 @@ public class LockScreenReceiver extends BroadcastReceiver {
 
         // 어떤 메시지인지 확인
         if(action.equals(intent.ACTION_SCREEN_OFF)) {
-            if(isWalking && !isRinging) {
 
-                drawLockScreen(context);
+            drawLockScreen(context);
 
-            }
         } else if(action.equals("com.escns.smombie.CALL_STATE_RINGING")) {
             isRinging = true;
             if(mWindowManager!=null && isLock) {
@@ -107,23 +99,6 @@ public class LockScreenReceiver extends BroadcastReceiver {
         } else if(action.equals("com.escns.smombie.CALL_STATE_IDLE")) {
             isRinging = false;
 
-        } else if(action.equals("com.escns.smombie.LOCK_SCREEN_ON")) {
-
-            if(!isLock && !isRinging) {
-                isWalking=true;
-                drawLockScreen(context);
-            }
-        } else if(action.equals("com.escns.smombie.LOCK_SCREEN_OFF")) {
-            isWalking=false;
-            if(mWindowManager!=null) {
-                if(mLockScreenView != null) {
-                    mWindowManager.removeView(mLockScreenView);
-                }
-                mWindowManager = null;
-                isLock=false;
-            } else {
-                Log.i("tag", "mWindowManager is null");
-            }
         } else if(action.equals("com.escns.smombie.RESTART_SERVICE")) {
             Log.i("tag", "ACTION.RESTART.PedometerCheckService");
 
@@ -257,21 +232,6 @@ public class LockScreenReceiver extends BroadcastReceiver {
 
         Global global = Global.getInstance();
         global.setIsWalking(0);
-
-        /*
-        Call<String> updateUser = mApiService.updateUser(pref.getInt("USER_ID_INT", 0), pref.getString("NAME", "사용자 이름"), pref.getString("EMAIL", "사용자 이메일"), pref.getString("GENDER", "성별"), pref.getInt("AGE", 0), pref.getInt("POINT", 0), pref.getInt("GOAL", MainActivity.DEFAULT_GOAL), pref.getInt("REWORD", 0), pref.getInt("SUCCESSCNT", 0), pref.getInt("FAILCNT", 0)+1, pref.getInt("AVGDIST", 0));
-        updateUser.enqueue(new retrofit2.Callback<String>() {
-            @Override
-            public void onResponse(Call<String> call, Response<String> response) {
-                Log.i("tag", "fail query success");
-            }
-
-            @Override
-            public void onFailure(Call<String> call, Throwable t) {
-                Log.i("tag", "fail query fail");
-            }
-        });
-        */
 
     }
 }

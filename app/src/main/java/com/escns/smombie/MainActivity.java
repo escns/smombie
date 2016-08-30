@@ -24,10 +24,11 @@ import com.escns.smombie.ScreenFragment.InfoFragment;
 import com.escns.smombie.ScreenFragment.MainFragment;
 import com.escns.smombie.ScreenFragment.SettingFragment;
 import com.escns.smombie.Service.PedometerCheckService;
-import com.escns.smombie.View.CustomImageView;
 
 import java.net.HttpURLConnection;
 import java.net.URL;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -59,7 +60,7 @@ public class MainActivity extends AppCompatActivity {
         public void handleMessage(Message msg) {
             if(msg.what==UPDATE_PROFILE_IMAGE) {
                 // 사이드 메뉴 header
-                ((CustomImageView)HeaderLayout.findViewById(R.id.header_profile)).setImageBitmap(mFbProfileImage);
+                ((CircleImageView)HeaderLayout.findViewById(R.id.header_profile)).setImageBitmap(mFbProfileImage);
                 ((TextView)HeaderLayout.findViewById(R.id.header_name)).setText(pref.getString("NAME", "사용자 이름"));
                 ((TextView)HeaderLayout.findViewById(R.id.header_email)).setText(pref.getString("EMAIL", "사용자 이메일"));
                 Log.i("tag", "EMAIL " + pref.getString("EMAIL", "사용자 이메일"));
@@ -247,8 +248,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         thread.start();
-
-
 
         if (pref.getBoolean("switch", true)) {
             Log.d("tag", "강제실행!!!");

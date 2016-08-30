@@ -13,21 +13,18 @@
         android:orientation="vertical"
         android:background="@drawable/header_background">
 
-        <com.escns.smombie.View.CustomImageView
+        <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/header_profile"
             android:text="TextView"
             android:src="@drawable/img_profile"
-            android:scaleType="fitXY"
             android:layout_width="60dp"
             android:layout_height="60dp"
             android:layout_marginTop="25dp"
             android:layout_marginLeft="15dp"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
-            app:customImageViewType="circle"
-            app:customImageViewBorder="true"
-            app:customImageViewBorderWidth="4"
-            app:customImageViewBorderColor="@color/third_color"/>
+            app:civ_border_color="@color/third_color"
+            app:civ_border_width="4sp"/>
 
         <TextView
             android:id="@+id/header_name"

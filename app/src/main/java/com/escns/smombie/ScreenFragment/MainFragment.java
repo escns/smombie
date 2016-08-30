@@ -25,7 +25,6 @@ import com.escns.smombie.Adapter.ItemMainAdapter;
 import com.escns.smombie.Item.ItemMain;
 import com.escns.smombie.R;
 import com.escns.smombie.Utils.RandomAd;
-import com.escns.smombie.View.CustomImageView;
 
 import org.lucasr.twowayview.TwoWayView;
 
@@ -34,6 +33,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.hdodenhof.circleimageview.CircleImageView;
 import it.carlom.stikkyheader.core.StikkyHeaderBuilder;
 
 import static android.content.Context.MODE_PRIVATE;
@@ -72,7 +72,7 @@ public class MainFragment extends Fragment {
         public void handleMessage(Message msg) {
             if(msg.what==UPDATE_PROFILE_DATA) {
                 // 사이드 메뉴 header
-                ((CustomImageView)rootView.findViewById(R.id.profile_view)).setImageBitmap(mFbProfileImage);
+                ((CircleImageView)rootView.findViewById(R.id.profile_view)).setImageBitmap(mFbProfileImage);
                 ((TextView)rootView.findViewById(R.id.user_email)).setText(pref.getString("EMAIL", "사용자 이메일"));
                 isProfileDataLoaded=true;
             }

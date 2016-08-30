@@ -141,19 +141,16 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
-                <com.escns.smombie.View.CustomImageView
+                <de.hdodenhof.circleimageview.CircleImageView
                     android:id="@+id/profile_view"
                     android:layout_width="100dp"
                     android:layout_height="100dp"
                     android:layout_margin="6dp"
                     android:src="@drawable/img_profile"
-                    android:scaleType="fitXY"
-                    app:customImageViewType="circle"
-                    app:customImageViewBorder="true"
-                    app:customImageViewBorderWidth="4"
-                    app:customImageViewBorderColor="@color/third_color"
                     android:layout_centerVertical="true"
-                    android:layout_centerHorizontal="true" />
+                    android:layout_centerHorizontal="true"
+                    app:civ_border_color="@color/third_color"
+                    app:civ_border_width="4sp"/>
 
             </RelativeLayout>
 
