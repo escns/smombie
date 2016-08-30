@@ -136,7 +136,7 @@ public class LockScreenReceiver extends BroadcastReceiver {
     }
 
     /**
-     * LockScreen 을 그린다.
+     * mWindowManager를 이용하여 TYPE_TOAST 타입의 LockScreen 을 그린다.
      * @param context
      */
     private void drawLockScreen(Context context) {
@@ -174,7 +174,7 @@ public class LockScreenReceiver extends BroadcastReceiver {
     }
 
     /**
-     * LockScreen 내부의 View들의 초기설정을 해준다.
+     * LockScreen 내부의 View들의, 특히 버튼 초기설정을 해준다.
      */
     public void init() {
 
@@ -238,6 +238,9 @@ public class LockScreenReceiver extends BroadcastReceiver {
         });
     }
 
+    /**
+     * Receiver에서 사용할 객체들의 초기화를 해준다.
+     */
     public void initUtils() {
         isInit = true;
 
@@ -251,6 +254,9 @@ public class LockScreenReceiver extends BroadcastReceiver {
         pref = mContext.getSharedPreferences(mContext.getResources().getString(R.string.app_name), MODE_PRIVATE);
     }
 
+    /**
+     * LockScreen 잠금해제 시 포인트적립에 실패했다는 메시지를 Service로 보낸다.
+     */
     public void queryFail() {
 
         global.setIsScreen(true);

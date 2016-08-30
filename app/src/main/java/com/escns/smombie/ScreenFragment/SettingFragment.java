@@ -1,5 +1,6 @@
 package com.escns.smombie.ScreenFragment;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -13,6 +14,10 @@ import android.widget.ImageView;
 
 import com.escns.smombie.R;
 import com.escns.smombie.Service.PedometerCheckService;
+import com.gun0912.tedpermission.PermissionListener;
+import com.gun0912.tedpermission.TedPermission;
+
+import java.util.ArrayList;
 
 /**
  * Created by hyo99 on 2016-08-23.
@@ -63,10 +68,30 @@ public class SettingFragment extends Fragment {
             public void onClick(View v) {
 
                 if ( !pref.getBoolean("switch", false )) {
-                    swc.setImageResource(R.drawable.swc_on);
-                    Log.d("tag", "잠금화면 활성화");
-                    pref.edit().putBoolean("switch", true).commit();
-                    mContext.startService(new Intent(mContext, PedometerCheckService.class));
+
+                    PermissionListener permissionlistener = new PermissionListener() {
+                        @Override
+                        public void onPermissionGranted() {
+                            //Toast.makeText(MainActivity.this, "Permission Granted", Toast.LENGTH_SHORT).show();
+                            swc.setImageResource(R.drawable.swc_on);
+                            Log.d("tag", "잠금화면 활성화");
+                            pref.edit().putBoolean("switch", true).commit();
+                            mContext.startService(new Intent(mContext, PedometerCheckService.class));
+                        }
+
+                        @Override
+                        public void onPermissionDenied(ArrayList<String> deniedPermissions) {
+                            //Toast.makeText(MainActivity.this, "Permission Denied\n" + deniedPermissions.toString(), Toast.LENGTH_SHORT).show();
+                        }
+                    };
+
+                    new TedPermission(getActivity())
+                            .setPermissionListener(permissionlistener)
+                            .setDeniedMessage("해당 서비스에서 제공하는 권한 설정을 거부하셨다면\n\n[Setting] > [Permission] 에서 권한 설정을 해주시기 바랍니다.")
+                            .setPermissions(Manifest.permission.READ_PHONE_STATE)
+                            .check();
+
+
                 }
                 else {
                     swc.setImageResource(R.drawable.swc_off);
@@ -78,31 +103,7 @@ public class SettingFragment extends Fragment {
             }
         });
 
-        /*
-        // 잠금화면 활성화/비활성화 스위치
-        swc.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked) {
-                    Log.d("tag", "잠금화면 활성화");
-                    pref.edit().putBoolean("switch", true).commit();
-                    mContext.startService(new Intent(mContext, PedometerCheckService.class));
 
-                    //Intent intent = new Intent("com.escns.smombie.service").setPackage("com.escns.smombie");
-                    //mContext.bindService(intent, mConnection, Context.BIND_AUTO_CREATE); // 만보기 동작
-
-                    //mContext.startService(new Intent(mContext, LockScreenService.class));
-                } else {
-                    Log.d("tag", "잠금화면 비활성화");
-                    pref.edit().putBoolean("switch", false).commit();
-                    mContext.stopService(new Intent(mContext, PedometerCheckService.class));
-
-                    //mContext.unbindService(mConnection);
-                    //mContext.stopService(new Intent(mContext, LockScreenService.class));
-                }
-            }
-        });
-       */
 
     }
 }
