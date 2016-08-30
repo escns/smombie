@@ -92,7 +92,7 @@ public class DBManager extends SQLiteOpenHelper {
                     data.getmMonth() + "," +
                     data.getmDay() + "," +
                     data.getmHour() + "," +
-                    data.getmDist() + ")" );
+                    data.getmDist() + ")");
 
             //StringBuffer sb = new StringBuffer();
             //sb.append(" INSERT INTO " + RECORD_TABLE + " ( ");
@@ -134,7 +134,7 @@ public class DBManager extends SQLiteOpenHelper {
 
             StringBuffer sb = new StringBuffer();
             sb.append(" SELECT * FROM " + RECORD_TABLE);
-            Cursor cursor = db.rawQuery(sb.toString(),null);
+            Cursor cursor = db.rawQuery(sb.toString(), null);
 
             while (cursor.moveToNext()) {
                 record = new Record(cursor.getInt(1),
@@ -163,6 +163,25 @@ public class DBManager extends SQLiteOpenHelper {
     public void dropRecordTable() {
         SQLiteDatabase db = getWritableDatabase(); // 데이터베이스 불러오기 - 쓰기전용
         db.execSQL("DROP TABLE IF EXISTS " + RECORD_TABLE); // 쿼리문 입력
+        db.close();
+    }
+
+    public void updateLastRecord(Record r) {
+
+        int id = 0;
+
+        SQLiteDatabase db = getWritableDatabase(); // 데이터베이스 불러오기 - 쓰기전용
+
+        Cursor cursor; // 테이블 한줄한줄 읽어오기 위한 Cursor 클래스
+        cursor = db.rawQuery("SELECT * from "+ RECORD_TABLE, null); // RECORD_LIST 테이블 전부 콜
+        while(cursor.moveToNext()) { // 테이블이 끝 날때까지 동작하는 반복문
+            id = cursor.getInt(0); // 정수형 데이터 콜
+        }
+        cursor.close();
+
+        db.execSQL("UPDATE " + RECORD_TABLE + " SET DIST = " + r.getmDist() +
+                " WHERE _id = " + id
+        ); // 쿼리문 입력
         db.close();
     }
 }

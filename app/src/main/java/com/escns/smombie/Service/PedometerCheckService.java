@@ -88,12 +88,9 @@ public class PedometerCheckService extends Service {
     private Record record;
     List<Record> list;
 
-    boolean isWalkingNow = false; // 만보기: 제자리이면 false / 걷는상태이면 true
-
     private TimerTask myTimer; // 주기적으로 데이터를 DB에 저장해주기 위한 시간변수
     private Handler handler; // 데이터 값을 DB에 저장하기 위한 핸들러
 
-    private boolean isWalkingPast = false;  // 쓸데없는 데이터를 저장하지 않기 위함
     private boolean isSave = false; // 데이터가 저장되었는지 아닌지 판단
 
     private CountDownTimer mCountDownTimer;
@@ -146,13 +143,17 @@ public class PedometerCheckService extends Service {
     private void startReceiver() {
         try {
             // BroadCastReceiver의 필터 설정
-            IntentFilter filter = new IntentFilter(Intent.ACTION_SCREEN_ON);
+            IntentFilter filter = new IntentFilter(Intent.ACTION_SCREEN_OFF);
             mReceiver = new LockScreenReceiver();
             registerReceiver(mReceiver, filter);
 
             PhoneStateListener phoneStateListener = new PhoneStateListener();
             TelephonyManager telephonyManager = (TelephonyManager) getSystemService(TELEPHONY_SERVICE);
             telephonyManager.listen(phoneStateListener, android.telephony.PhoneStateListener.LISTEN_CALL_STATE);
+
+            Log.d("tag", "stopSensor - send LOCK_SCREEN_OFF to Broadcast");
+            Intent intent = new Intent("com.escns.smombie.LOCK_SCREEN_ON");
+            sendBroadcast(intent);
 
         }catch (Exception e) {
             // TODO: handle exception
@@ -179,10 +180,60 @@ public class PedometerCheckService extends Service {
         // 데이터를 DB에 저장하기 위함
         handler = new Handler() {
             public void handleMessage(Message msg) {
+                /**
+                Global global = Global.getInstance();
+
+                // Local DB 업데이트
+                record.setmDist(mDist);
+                mDbManger.updateLastRecord(record);
+                Log.d("tag", "startSensor - 값 한번 보자 mDist = " + record.getmDist());
+
+                // SharedPreferences 유저데이터 업데이트
+                //pref.edit().putInt("POINT",     ).commit();
+
+                int cnt = pref.getInt("POINT", 0)+mDist;
+                if(cnt >= pref.getInt("GOAL", MainActivity.DEFAULT_GOAL))  {
+                    cnt -= pref.getInt("GOAL", MainActivity.DEFAULT_GOAL);
+                    pref.edit().putInt("POINT", cnt).commit();
+                    cnt = pref.getInt("REWORD", MainActivity.DEFAULT_GOAL);
+                    pref.edit().putInt("REWORD", cnt+1).commit();
+                }
+                else {
+                    pref.edit().putInt("POINT", cnt+mDist).commit();
+                }
+
+                int totalDist = 0;
+                for(int i=0; i<list.size(); i++) {
+                    totalDist += list.get(i).getmDist();
+                }
+                totalDist /= list.size();
+                pref.edit().putInt("AVGDIST", totalDist).commit();
+
+                User user = new User(
+                        pref.getInt("USER_ID_INT", 0),
+                        pref.getString("USER_ID_TEXT", ""),
+                        pref.getString("NAME", ""),
+                        pref.getString("EMAIL", ""),
+                        pref.getString("GENDER", ""),
+                        pref.getInt("AGE", 0),
+                        pref.getInt("POINT", 0),
+                        pref.getInt("GOAL", 0),
+                        pref.getInt("REWORD", 0),
+                        pref.getInt("SUCCESSCNT", 0),
+                        pref.getInt("FAILCNT", 0),
+                        pref.getInt("AVGDIST", 0)
+                );
+
+                // 밀어서 잠금해제 --> 서버에 업데이트
+                if(global.getIsWalking() == 0) {
+
+                }
+                 */
+
+                /*
                 if(isWalkingNow) {
 
                     Global global = Global.getInstance();
-                    global.setIsWalking(1);
 
                     mIdInt = pref.getInt("USER_ID_INT", 0);
                     mYear = c.get(Calendar.YEAR);
@@ -192,13 +243,10 @@ public class PedometerCheckService extends Service {
                     mDist = 0;
                     isSave = true;
 
-                    Intent intent = new Intent("com.escns.smombie.LOCK_SCREEN_ON");
-                    sendBroadcast(intent);
-                    isWalkingPast = true;
+                    //Intent intent = new Intent("com.escns.smombie.LOCK_SCREEN_ON");
+                    //sendBroadcast(intent);
                 }
                 else {
-                    if(!isWalkingPast) {
-
                         if(isSave) {
                             record.setmIdInt(mIdInt);
                             record.setmYear(mYear);
@@ -270,14 +318,12 @@ public class PedometerCheckService extends Service {
                             isSave = false;
                         }
 
-                        Log.d("tag", "startSensor - send LOCK_SCREEN_OFF to Broadcast");
-                        Intent intent = new Intent("com.escns.smombie.LOCK_SCREEN_OFF");
-                        sendBroadcast(intent);
+                        //Log.d("tag", "startSensor - send LOCK_SCREEN_OFF to Broadcast");
+                        //Intent intent = new Intent("com.escns.smombie.LOCK_SCREEN_OFF");
+                        //sendBroadcast(intent);
                     }
-                    isWalkingPast = false;
-                }
+                    */
             }
-
         };
     }
 
@@ -285,12 +331,20 @@ public class PedometerCheckService extends Service {
         // 객체 할당
         mContext = getApplicationContext();
         pref = mContext.getSharedPreferences(getResources().getString(R.string.app_name), mContext.MODE_PRIVATE);
-        c = Calendar.getInstance();
         mDbManger = new DBManager(mContext);
-        record = new Record(0,0,0,0,0,0);
         list = null;
         list = new ArrayList<>();
         list = mDbManger.getRecord();
+
+        c = Calendar.getInstance();
+        mIdInt = pref.getInt("USER_ID_INT", 0);
+        mYear = c.get(Calendar.YEAR);
+        mMonth = c.get(Calendar.MONTH)+1;
+        mDate = c.get(Calendar.DATE);
+        mHour = c.get(Calendar.HOUR_OF_DAY);
+        mDist = 0;
+        record = new Record(mIdInt,mYear,mMonth,mDate,mHour,mDist);
+        mDbManger.insertRecord(record);
 
         // 서버와의 통신
         Gson gson = new GsonBuilder()
@@ -335,7 +389,7 @@ public class PedometerCheckService extends Service {
 
         myTimer.cancel();
 
-        isWalkingNow = false;
+        Log.d("tag", "stopSensor - send LOCK_SCREEN_OFF to Broadcast");
         Intent intent = new Intent("com.escns.smombie.LOCK_SCREEN_OFF");
         sendBroadcast(intent);
 
@@ -373,11 +427,9 @@ public class PedometerCheckService extends Service {
                         Log.d("tag", "onSensorChanged SHAKE !!");
 
                         mDist++;
-
-                        isWalkingNow = true;
                     }
                     else {
-                        isWalkingNow = false;
+
                     }
 
                     lastX = event.values[DATA_X];
@@ -392,14 +444,6 @@ public class PedometerCheckService extends Service {
 
         }
     };
-
-    /**
-     * 가속도센서가 동작하는지 아닌지 판단
-     * @return
-     */
-    public boolean isWalking() {
-        return isWalkingNow;
-    }
 
     /**
      * 서버 DB에 record를 저장하기 위함
