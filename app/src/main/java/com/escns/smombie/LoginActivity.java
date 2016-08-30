@@ -227,6 +227,11 @@ public class LoginActivity extends Activity {
         return accessToken != null;
     }
 
+    /**
+     * 동일한 User_id_text 를 가진 user가 있는지 확인한다.
+     * 있으면 바로 MainActivity로 이동하고, 없으면 insert를 진행한 뒤 이동한다.
+     * @param id_text
+     */
     public void checkUserIdText(final String id_text) {
         Call<User> selectUserIdText = mApiService.selectUserIdText(id_text);
         selectUserIdText.enqueue(new retrofit2.Callback<User>() {
@@ -244,6 +249,10 @@ public class LoginActivity extends Activity {
         });
     }
 
+    /**
+     * 신규 User에 한해 유저정보를 Insert 한 뒤
+     * @param id_text
+     */
     public void insertUserIdText(final String id_text) {
         Call<String> insertUser = mApiService.insertUser(id_text, mFbName, mFbEmail, mFbGender, mFbAge, 0, MainActivity.DEFAULT_GOAL, 0, 0, 0, 0);
         insertUser.enqueue(new retrofit2.Callback<String>() {

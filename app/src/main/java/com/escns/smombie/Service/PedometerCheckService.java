@@ -126,7 +126,7 @@ public class PedometerCheckService extends Service {
                 new NotificationCompat.Builder(this)
                         .setSmallIcon(R.drawable.icon_logo)
                         .setContentTitle("Smombie")
-                        .setContentText("도보 시 잠금화면이 실행됩니다.");
+                        .setContentText("걸을 때 스마트폰을 사용하지 않으면 포인트를 얻으실 수 있습니다.");
 
         Intent resultIntent = new Intent(getApplicationContext(), MainActivity.class);
 

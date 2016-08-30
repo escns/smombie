@@ -253,12 +253,7 @@ public class MainActivity extends AppCompatActivity {
         });
         thread.start();
 
-        if (pref.getBoolean("switch", true)) {
-            Log.d("tag", "강제실행!!!");
-            pref.edit().putBoolean("switch", true).commit();
 
-            startService(new Intent((MainActivity.this), PedometerCheckService.class));
-        }
 
         // 홈 화면 실행
         getSupportFragmentManager().beginTransaction().replace(R.id.frame_layout, mMainFragment).commit();
@@ -267,18 +262,24 @@ public class MainActivity extends AppCompatActivity {
         PermissionListener permissionlistener = new PermissionListener() {
             @Override
             public void onPermissionGranted() {
-                Toast.makeText(MainActivity.this, "Permission Granted", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(MainActivity.this, "Permission Granted", Toast.LENGTH_SHORT).show();
+                if (pref.getBoolean("switch", true)) {
+                    Log.d("tag", "강제실행!!!");
+                    pref.edit().putBoolean("switch", true).commit();
+
+                    startService(new Intent((MainActivity.this), PedometerCheckService.class));
+                }
             }
 
             @Override
             public void onPermissionDenied(ArrayList<String> deniedPermissions) {
-                Toast.makeText(MainActivity.this, "Permission Denied\n" + deniedPermissions.toString(), Toast.LENGTH_SHORT).show();
+                //Toast.makeText(MainActivity.this, "Permission Denied\n" + deniedPermissions.toString(), Toast.LENGTH_SHORT).show();
             }
         };
 
         new TedPermission(this)
                 .setPermissionListener(permissionlistener)
-                .setDeniedMessage("If you reject permission,you can not use this service\n\nPlease turn on permissions at [Setting] > [Permission]")
+                .setDeniedMessage("해당 서비스에서 제공하는 권한 설정을 거부하셨다면\n\n[Setting] > [Permission] 에서 권한 설정을 해주시기 바랍니다.")
                 .setPermissions(Manifest.permission.READ_PHONE_STATE)
                 .check();
     }
