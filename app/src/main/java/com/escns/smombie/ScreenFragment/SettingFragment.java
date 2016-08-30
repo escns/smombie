@@ -5,21 +5,14 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.SwitchCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
-import android.widget.ToggleButton;
 
 import com.escns.smombie.R;
-import com.escns.smombie.Service.LockScreenService;
 import com.escns.smombie.Service.PedometerCheckService;
-import com.escns.smombie.Utils.Global;
 
 /**
  * Created by hyo99 on 2016-08-23.

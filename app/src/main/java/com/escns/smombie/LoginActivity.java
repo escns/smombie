@@ -234,31 +234,29 @@ public class LoginActivity extends Activity {
     }
 
     public void checkUserIdText(final String id_text) {
-        Call<User> currentPoint = mApiService.selectUserIdText(id_text);
-        currentPoint.enqueue(new retrofit2.Callback<User>() {
+        Call<User> selectUserIdText = mApiService.selectUserIdText(id_text);
+        selectUserIdText.enqueue(new retrofit2.Callback<User>() {
             @Override
             public void onResponse(Call<User> call, Response<User> response) {
-                Log.i("tag", "checkUserIdText onResponse");
+                Log.i("tag", "checkUserIdText onResponse id_text : " + id_text);
                 moveToMain(response.body());
             }
 
             @Override
             public void onFailure(Call<User> call, Throwable t) {
-                Log.i("tag", "checkUserIdText onFailure");
+                Log.i("tag", "checkUserIdText onFailure id_text : " + id_text);
                 insertUserIdText(id_text);
             }
         });
     }
 
     public void insertUserIdText(final String id_text) {
-        Call<String> currentPoint = mApiService.insertUser(id_text, mFbName, mFbEmail, mFbGender, mFbAge, 0, MainActivity.DEFAULT_GOAL, 0, 0, 0, 0);
-        currentPoint.enqueue(new retrofit2.Callback<String>() {
+        Call<String> insertUser = mApiService.insertUser(id_text, mFbName, mFbEmail, mFbGender, mFbAge, 0, MainActivity.DEFAULT_GOAL, 0, 0, 0, 0);
+        insertUser.enqueue(new retrofit2.Callback<String>() {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
                 Log.i("tag", "insertUserIdText onResponse");
-                if(response.body().compareTo("success")==0) {
-                    checkUserIdText(mFbId);
-                }
+                checkUserIdText(mFbId);
             }
 
             @Override

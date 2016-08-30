@@ -47,6 +47,7 @@ dependencies {
     compile 'com.jaekwon.loopviewpagerlayout.lib:lib:0.1'
     compile 'com.github.carlonzo.stikkyheader:core:0.0.3-SNAPSHOT'
     compile 'com.github.ParkSangGwon:TedPermission:v1.0.11'
+    compile 'de.hdodenhof:circleimageview:2.1.0'
 
 
     testCompile 'junit:junit:4.12'
