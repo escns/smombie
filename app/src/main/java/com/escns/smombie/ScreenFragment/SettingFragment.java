@@ -26,7 +26,7 @@ public class SettingFragment extends Fragment {
     private Context mContext;
     private SharedPreferences pref; // 화면 꺼짐 및 이동 시 switch가 초기화되기 때문에 파일에 따로 저장하기 위한 객체
 
-    ImageView swc;
+    ImageView swc; // 잠금화면 On/Off 스위치
 
     View rootView;
 
@@ -37,21 +37,6 @@ public class SettingFragment extends Fragment {
         init();
 
         return rootView;
-    }
-
-    @Override
-    public void onResume() {
-
-        //if ( pref.getBoolean("switch", false )) {
-        //    Log.d("tag", "버튼상태 true2");
-        //    swc.setChecked(true);
-        //}
-        //else {
-        //    Log.d("tag", "버튼상태 false2");
-        //    swc.setChecked(false);
-        //}
-
-        super.onResume();
     }
 
     /**
@@ -93,8 +78,6 @@ public class SettingFragment extends Fragment {
             }
         });
 
-
-
         /*
         // 잠금화면 활성화/비활성화 스위치
         swc.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -119,7 +102,7 @@ public class SettingFragment extends Fragment {
                 }
             }
         });
-                */
+       */
 
     }
 }

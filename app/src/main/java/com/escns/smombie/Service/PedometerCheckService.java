@@ -94,8 +94,6 @@ public class PedometerCheckService extends Service {
     private TimerTask myTimer; // 주기적으로 데이터를 DB에 저장해주기 위한 시간변수
     private Handler handler; // 데이터 값을 DB에 저장하기 위한 핸들러
 
-    private boolean isSave = false; // 데이터가 저장되었는지 아닌지 판단
-
     private CountDownTimer mCountDownTimer;
 
     // Binder 리턴
@@ -103,6 +101,9 @@ public class PedometerCheckService extends Service {
     @Override
     public IBinder onBind(Intent intent) { return null; }
 
+    /**
+     * onCreate
+     */
     @Override
     public void onCreate() {
         unregisterRestartAlarm();
@@ -143,6 +144,9 @@ public class PedometerCheckService extends Service {
         return super.onStartCommand(intent, flags, startId);
     }
 
+    /**
+     * Receiver가 동작
+     */
     private void startReceiver() {
         try {
             // BroadCastReceiver의 필터 설정
@@ -164,6 +168,9 @@ public class PedometerCheckService extends Service {
         }
     }
 
+    /**
+     * 가속도센서가 동작을 시작할 때 발생할 이벤트들
+     */
     private void startSensor() {
         // 만보기: 가속도센서 감지 시작 - 만보기
         if (accelerormeterSensor != null)
@@ -180,7 +187,7 @@ public class PedometerCheckService extends Service {
         Timer timer = new Timer();
         timer.schedule(myTimer,3000,3000); // App 시작 1초 이후에 1초마다 실행
 
-        // 데이터를 DB에 저장하기 위함
+        // 데이터를 DB에 저장하기 위한 핸들러
         handler = new Handler() {
             public void handleMessage(Message msg) {
 
@@ -206,13 +213,23 @@ public class PedometerCheckService extends Service {
                     pref.edit().putInt("POINT", cnt ).commit();
                 }
                 mBeforeDist = mDist;
-                // AvgDist
+                // AvgDist 하루평균이동거리 구하기
                 list = mDbManger.getRecord();
                 int totalDist = 0;
+                int dateCnt = 0;
+                int tempYear = 0;
+                int tempMonth = 0;
+                int tempDate = 0;
                 for(int i=0; i<list.size(); i++) {
                     totalDist += list.get(i).getmDist();
+                    if(tempYear != list.get(i).getmYear() || tempMonth != list.get(i).getmMonth() || tempDate != list.get(i).getmDay()) {
+                        tempYear = list.get(i). getmYear();
+                        tempMonth = list.get(i).getmMonth();
+                        tempDate = list.get(i).getmDay();
+                        dateCnt++;
+                    }
                 }
-                totalDist /= list.size();
+                totalDist /= dateCnt;
                 pref.edit().putInt("AVGDIST", totalDist).commit();
 
 
@@ -319,103 +336,14 @@ public class PedometerCheckService extends Service {
                 }
 
 
-                /*
-                if(isWalkingNow) {
 
-                    Global global = Global.getInstance();
-
-                    mIdInt = pref.getInt("USER_ID_INT", 0);
-                    mYear = c.get(Calendar.YEAR);
-                    mMonth = c.get(Calendar.MONTH)+1;
-                    mDate = c.get(Calendar.DATE);
-                    mHour = c.get(Calendar.HOUR_OF_DAY);
-                    mDist = 0;
-                    isSave = true;
-
-                    //Intent intent = new Intent("com.escns.smombie.LOCK_SCREEN_ON");
-                    //sendBroadcast(intent);
-                }
-                else {
-                        if(isSave) {
-                            record.setmIdInt(mIdInt);
-                            record.setmYear(mYear);
-                            record.setmMonth(mMonth);
-                            record.setmDay(mDate);
-                            record.setmHour(mHour);
-                            record.setmDist(mDist);
-                            mDbManger.insertRecord(record);
-                            insertRecordData();
-
-                            Log.d("tag", "startSensor - 값 한번 보자 mIdInt = " + record.getmIdInt());
-                            Log.d("tag", "startSensor - 값 한번 보자 mYear = " + record.getmYear());
-                            Log.d("tag", "startSensor - 값 한번 보자 mMonth = " + record.getmMonth());
-                            Log.d("tag", "startSensor - 값 한번 보자 mDate = " + record.getmDay());
-                            Log.d("tag", "startSensor - 값 한번 보자 mHour = " + record.getmHour());
-                            Log.d("tag", "startSensor - 값 한번 보자 mDist = " + record.getmDist());
-
-                            int cnt = pref.getInt("POINT", 0)+mDist;
-
-                            if(cnt >= pref.getInt("GOAL", MainActivity.DEFAULT_GOAL))  {
-                                cnt -= pref.getInt("GOAL", MainActivity.DEFAULT_GOAL);
-                                pref.edit().putInt("POINT", cnt).commit();
-
-                                cnt = pref.getInt("REWORD", MainActivity.DEFAULT_GOAL);
-                                pref.edit().putInt("REWORD", cnt+1).commit();
-                            }
-                            else {
-                                pref.edit().putInt("POINT", cnt+mDist).commit();
-                            }
-
-                            Global global = Global.getInstance();
-                            if(global.getIsWalking() == 0) {
-                                cnt = pref.getInt("FAILCNT", 0);
-                                pref.edit().putInt("FAILCNT", cnt+1).commit();
-                                global.setIsWalking(1);
-                            }
-                            else {
-                                cnt = pref.getInt("SUCCESSCNT", 0);
-                                pref.edit().putInt("SUCCESSCNT", cnt+1).commit();
-                            }
-
-                            int totalDist = 0;
-                            for(int i=0; i<list.size(); i++) {
-                                totalDist += list.get(i).getmDist();
-                            }
-                            totalDist /= list.size();
-                            pref.edit().putInt("AVGDIST", totalDist).commit();
-
-                            User user = new User(
-                                    pref.getInt("USER_ID_INT", 0),
-                                    pref.getString("USER_ID_TEXT", ""),
-                                    pref.getString("NAME", ""),
-                                    pref.getString("EMAIL", ""),
-                                    pref.getString("GENDER", ""),
-                                    pref.getInt("AGE", 0),
-                                    pref.getInt("POINT", 0),
-                                    pref.getInt("GOAL", 0),
-                                    pref.getInt("REWORD", 0),
-                                    pref.getInt("SUCCESSCNT", 0),
-                                    pref.getInt("FAILCNT", 0),
-                                    pref.getInt("AVGDIST", 0)
-                            );
-                            updateUserData(user);
-
-
-                            isSave = false;
-                        }
-                        else {
-                            isSave = false;
-                        }
-
-                        //Log.d("tag", "startSensor - send LOCK_SCREEN_OFF to Broadcast");
-                        //Intent intent = new Intent("com.escns.smombie.LOCK_SCREEN_OFF");
-                        //sendBroadcast(intent);
-                    }
-                    */
             }
         };
     }
 
+    /**
+     * 초기화
+     */
     private void init() {
         // 객체 할당
         mContext = getApplicationContext();
@@ -490,6 +418,8 @@ public class PedometerCheckService extends Service {
         } else {
             unregisterReceiver(mReceiver);
         }
+
+        mDbManger.deleteLastRecord();
 
         super.onDestroy();
     }

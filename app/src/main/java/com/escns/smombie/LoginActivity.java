@@ -67,8 +67,6 @@ public class LoginActivity extends Activity {
 
     CallbackManager callbackManager;        // 콜백
 
-    User user;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -191,10 +189,6 @@ public class LoginActivity extends Activity {
             com.facebook.login.LoginManager.getInstance().logOut();
             isAutoLogin = true;
             mLoginButtonInvisible.callOnClick();
-            //mLoginButtonInvisible.performClick();
-            //Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-            //startActivity(intent);
-            //finish();
         }
 
         mLoginButtonVisible.setOnClickListener(new View.OnClickListener() {

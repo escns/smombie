@@ -6,21 +6,33 @@ import com.google.gson.annotations.SerializedName;
  * Created by Administrator on 2016-08-17.
  */
 
+/**
+ * Record의 정보들을 관리하는 class
+ */
 public class Record {
 
     @SerializedName("USER_ID_INT")
-    private int mIdInt;
+    private int mIdInt; // 유저 고유 번호
     @SerializedName("YEAR")
-    private int mYear;
+    private int mYear;  //  연도
     @SerializedName("MONTH")
-    private int mMonth;
+    private int mMonth; // 달
     @SerializedName("DAY")
-    private int mDay;
+    private int mDay;   // 일
     @SerializedName("HOUR")
-    private int mHour;
+    private int mHour;  // 시간
     @SerializedName("DIST")
-    private int mDist;
+    private int mDist;  // 걸음 수
 
+    /**
+     * 생성자
+     * @param mIdInt 유저 고유 번호
+     * @param mYear 연도
+     * @param mMonth 달
+     * @param mDay 일
+     * @param mHour 시간
+     * @param mDist 걸음 수
+     */
     public Record(int mIdInt, int mYear, int mMonth, int mDay, int mHour, int mDist) {
         this.mIdInt = mIdInt;
         this.mYear = mYear;
@@ -29,7 +41,6 @@ public class Record {
         this.mHour = mHour;
         this.mDist = mDist;
     }
-
     public int getmIdInt() {
         return mIdInt;
     }

@@ -45,6 +45,16 @@
             android:layout_centerHorizontal="true"
             android:layout_centerVertical="true" />
 
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="하루 평균 이동 거리"
+            android:textSize="15dp"
+            android:layout_marginTop="42dp"
+            android:id="@+id/textView5"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true" />
+
     </RelativeLayout>
 
     <RelativeLayout
@@ -65,6 +75,15 @@
             android:layout_centerHorizontal="true"
             android:layout_centerVertical="true" />
 
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="하루 평균 이동 거리"
+            android:textSize="15dp"
+            android:layout_marginTop="42dp"
+            android:id="@+id/textView4"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true" />
     </RelativeLayout>
 
     <TextView
@@ -73,13 +92,14 @@
         android:layout_marginTop="175dp"
         android:layout_marginLeft="60dp"
         android:text="나"
-        android:textSize="16dp"/>
+        android:textSize="16dp"
+        android:id="@+id/textView2" />
 
     <TextView
         android:id="@+id/tab2_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="290dp"
+        android:layout_marginTop="295dp"
         android:layout_marginLeft="45dp"
         android:text=""
         android:textSize="16dp" />

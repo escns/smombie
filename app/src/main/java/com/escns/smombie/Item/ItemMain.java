@@ -4,6 +4,9 @@ package com.escns.smombie.Item;
  * Created by Administrator on 2016-08-16.
  */
 
+/**
+ * 홈 화면에서 쓸 데이터들을 관리하는 class
+ */
 public class ItemMain {
 
     private String mTitle;

@@ -22,7 +22,7 @@ public class InfoFragment extends Fragment {
 
     Context mContext;
 
-    private SharedPreferences pref;
+    private SharedPreferences pref; // 내정보 화면에서 유저정보를 파일에서 가져오기 위한 객체
 
     View rootView;
 

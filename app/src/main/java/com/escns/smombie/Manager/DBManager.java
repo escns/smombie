@@ -22,12 +22,11 @@ import java.util.List;
  */
 public class DBManager extends SQLiteOpenHelper {
 
-    private String DB_NAME; // 테이블 이름
-    private String RECORD_TABLE;
+    private String DB_NAME; // DB 파일 이름
+    private String RECORD_TABLE; // 테이블 이름
 
     /**
      * 생성자
-     *
      * @param context MainActivity의 Context
      */
     public DBManager(Context context) {
@@ -38,14 +37,15 @@ public class DBManager extends SQLiteOpenHelper {
 
     /**
      * onCreate
-     *
      * @param db SQLite에서 데이터베이스를 쓰기위한 파라미터
      */
     @Override
     public void onCreate(SQLiteDatabase db) {
-
     }
 
+    /**
+     * Record 테이블을 생성한다
+     */
     public void CreateRecordTable() {
         SQLiteDatabase db = getWritableDatabase();
 
@@ -66,7 +66,6 @@ public class DBManager extends SQLiteOpenHelper {
 
     /**
      * onUpgrade
-     *
      * @param db         SQLite에서 데이터베이스를 쓰기위한 파라미터
      * @param oldVersion
      * @param newVersion
@@ -78,8 +77,7 @@ public class DBManager extends SQLiteOpenHelper {
     }
 
     /**
-     * 파라미터로 받은 data를 Record테이블에 저장
-     *
+     * 파라미터로 받은 data를 Record테이블에 저장한다
      * @param data
      */
     public void insertRecord(Record data) {
@@ -118,9 +116,8 @@ public class DBManager extends SQLiteOpenHelper {
     }
 
     /**
-     * id 값에 해당하는 Data를 Record테이블에서 찾아서 List 형식으로 반환
-     *
-     * @return
+     * Record테이블에서 모든 데이터를 List로 반환한다
+     * @return Record테이블의 데이터
      */
     public List<Record> getRecord() {
 
@@ -158,7 +155,7 @@ public class DBManager extends SQLiteOpenHelper {
     }
 
     /**
-     * record 테이블 삭제
+     * Record 테이블 삭제
      */
     public void dropRecordTable() {
         SQLiteDatabase db = getWritableDatabase(); // 데이터베이스 불러오기 - 쓰기전용
@@ -166,6 +163,10 @@ public class DBManager extends SQLiteOpenHelper {
         db.close();
     }
 
+    /**
+     * Record 테이블의 마지막 행의 mDist를 업데이트한다
+     * @param r 업데이트 할 새 mDist 정보
+     */
     public void updateLastRecord(Record r) {
 
         int id = 0;
@@ -185,6 +186,31 @@ public class DBManager extends SQLiteOpenHelper {
         db.close();
     }
 
+    /**
+     * Record 테이블의 마지막 행을 지운다
+     */
+    public void deleteLastRecord() {
+
+        int id = 0;
+
+        SQLiteDatabase db = getWritableDatabase(); // 데이터베이스 불러오기 - 쓰기전용
+
+        Cursor cursor; // 테이블 한줄한줄 읽어오기 위한 Cursor 클래스
+        cursor = db.rawQuery("SELECT * from "+ RECORD_TABLE, null); // RECORD_LIST 테이블 전부 콜
+        while(cursor.moveToNext()) { // 테이블이 끝 날때까지 동작하는 반복문
+            id = cursor.getInt(0); // 정수형 데이터 콜
+        }
+        cursor.close();
+
+        db.execSQL("DELETE FROM " + RECORD_TABLE + " WHERE _id = " + id
+        ); // 쿼리문 입력
+        db.close();
+    }
+
+    /**
+     * Record 테이블의 현재 행의 갯수를 반환한다
+     * @return 행의 갯수
+     */
     public int getRowCount() {
         int cnt = 0;
 

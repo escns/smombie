@@ -30,6 +30,13 @@ public class HistoryFragment extends Fragment {
 
     View rootView;
 
+    /**
+     * onCreate
+     * @param inflater
+     * @param container
+     * @param savedInstanceState
+     * @return
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.fragment_history, container, false);
@@ -39,6 +46,9 @@ public class HistoryFragment extends Fragment {
         return rootView;
     }
 
+    /**
+     * onResume 화면이 그려지면 호출
+     */
     @Override
     public void onResume() {
         super.onResume();
@@ -83,7 +93,7 @@ public class HistoryFragment extends Fragment {
 
 
     /**
-     * 탭 메뉴 구현
+     * 탭 메뉴 구현 - 클릭, 스와이프 기능
      */
     public void initTab() {
         
