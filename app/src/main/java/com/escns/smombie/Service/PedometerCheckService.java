@@ -490,7 +490,7 @@ public class PedometerCheckService extends Service {
      * 파일에 유저정보를 갱신하기 위함
      */
     public void updateUserData(User user) {
-        Call<String> currentPoint = mApiService.updateUser(user.getmIdInt(), user.getmName(), user.getmEmail(), user.getmGender(), user.getmAge(), user.getmGoal(), user.getmPoint(), user.getmReword(), user.getmSuccessCnt(), user.getmFailCnt(), user.getmAvgDist());
+        Call<String> currentPoint = mApiService.updateUser(user.getmIdInt(), user.getmName(), user.getmEmail(), user.getmGender(), user.getmAge(), user.getmPoint(), user.getmGoal(), user.getmReword(), user.getmSuccessCnt(), user.getmFailCnt(), user.getmAvgDist());
         currentPoint.enqueue(new retrofit2.Callback<String>() {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
