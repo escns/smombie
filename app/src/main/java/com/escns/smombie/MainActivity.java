@@ -1,5 +1,6 @@
 package com.escns.smombie;
 
+import android.Manifest;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
@@ -24,9 +25,12 @@ import com.escns.smombie.ScreenFragment.InfoFragment;
 import com.escns.smombie.ScreenFragment.MainFragment;
 import com.escns.smombie.ScreenFragment.SettingFragment;
 import com.escns.smombie.Service.PedometerCheckService;
+import com.gun0912.tedpermission.PermissionListener;
+import com.gun0912.tedpermission.TedPermission;
 
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -258,5 +262,24 @@ public class MainActivity extends AppCompatActivity {
 
         // 홈 화면 실행
         getSupportFragmentManager().beginTransaction().replace(R.id.frame_layout, mMainFragment).commit();
+
+
+        PermissionListener permissionlistener = new PermissionListener() {
+            @Override
+            public void onPermissionGranted() {
+                Toast.makeText(MainActivity.this, "Permission Granted", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onPermissionDenied(ArrayList<String> deniedPermissions) {
+                Toast.makeText(MainActivity.this, "Permission Denied\n" + deniedPermissions.toString(), Toast.LENGTH_SHORT).show();
+            }
+        };
+
+        new TedPermission(this)
+                .setPermissionListener(permissionlistener)
+                .setDeniedMessage("If you reject permission,you can not use this service\n\nPlease turn on permissions at [Setting] > [Permission]")
+                .setPermissions(Manifest.permission.READ_PHONE_STATE)
+                .check();
     }
 }
