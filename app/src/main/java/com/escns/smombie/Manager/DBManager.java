@@ -184,4 +184,20 @@ public class DBManager extends SQLiteOpenHelper {
         ); // 쿼리문 입력
         db.close();
     }
+
+    public int getRowCount() {
+        int cnt = 0;
+
+        SQLiteDatabase db = getWritableDatabase(); // 데이터베이스 불러오기 - 쓰기전용
+
+        Cursor cursor; // 테이블 한줄한줄 읽어오기 위한 Cursor 클래스
+        cursor = db.rawQuery("SELECT * from "+ RECORD_TABLE, null); // RECORD_LIST 테이블 전부 콜
+        while(cursor.moveToNext()) { // 테이블이 끝 날때까지 동작하는 반복문
+            cnt++;
+        }
+        cursor.close();
+        db.close();
+
+        return cnt;
+    }
 }

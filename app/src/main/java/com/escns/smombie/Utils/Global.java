@@ -10,7 +10,7 @@ public class Global {
     private static final int MOVE = 1;
 
     private static Global mGlobal;
-    private int isWalking = STOP;
+    private int isWalking = MOVE;
 
     private  Global() {
     }
