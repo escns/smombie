@@ -40,7 +40,7 @@
 
         <com.github.mikephil.charting.charts.HorizontalBarChart
             android:id="@+id/tab2_chart1"
-            android:layout_width="250dp"
+            android:layout_width="300dp"
             android:layout_height="200dp"
             android:layout_centerHorizontal="true"
             android:layout_centerVertical="true" />
@@ -70,7 +70,7 @@
 
         <com.github.mikephil.charting.charts.HorizontalBarChart
             android:id="@+id/tab2_chart2"
-            android:layout_width="250dp"
+            android:layout_width="300dp"
             android:layout_height="200dp"
             android:layout_centerHorizontal="true"
             android:layout_centerVertical="true" />
@@ -90,7 +90,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="175dp"
-        android:layout_marginLeft="60dp"
+        android:layout_marginLeft="40dp"
         android:text="나"
         android:textSize="16dp"
         android:id="@+id/textView2" />
@@ -100,15 +100,14 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="295dp"
-        android:layout_marginLeft="45dp"
+        android:layout_marginLeft="25dp"
         android:text=""
         android:textSize="16dp" />
 
     <ImageView
-        android:layout_width="50dp"
+        android:layout_width="match_parent"
         android:layout_height="30dp"
         android:layout_marginTop="230dp"
-        android:layout_marginLeft="70dp"
         android:background="@color/white"/>
 
 </RelativeLayout>

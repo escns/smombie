@@ -79,6 +79,8 @@ public class LockScreenReceiver extends BroadcastReceiver {
         // 어떤 메시지인지 확인
         if(action.equals(intent.ACTION_SCREEN_OFF)) {
 
+            global.setIsScreen(false);
+
             drawLockScreen(context);
 
         } else if(action.equals("com.escns.smombie.CALL_STATE_RINGING")) {
@@ -251,6 +253,7 @@ public class LockScreenReceiver extends BroadcastReceiver {
 
     public void queryFail() {
 
+        global.setIsScreen(true);
         global.setIsWalking(0);
     }
 }

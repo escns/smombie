@@ -91,6 +91,8 @@ public class PedometerCheckService extends Service {
     private Record record;
     List<Record> list;
 
+    Global global = Global.getInstance();
+
     private TimerTask myTimer; // 주기적으로 데이터를 DB에 저장해주기 위한 시간변수
     private Handler handler; // 데이터 값을 DB에 저장하기 위한 핸들러
 
@@ -191,46 +193,11 @@ public class PedometerCheckService extends Service {
         handler = new Handler() {
             public void handleMessage(Message msg) {
 
-                Global global = Global.getInstance();
-
                 // Local DB 업데이트
                 record.setmDist(mDist);
                 mDbManger.updateLastRecord(record);
                 Log.d("tag", "로컬 DB 업데이트!!! mDist = " + record.getmDist());
                 Log.d("tag", "현재 데이터 수!!! cnt = " + mDbManger.getRowCount());
-
-                // SharedPreferences 유저데이터 업데이트
-                // Point, GOAL, REWORD
-                int interval = mDist - mBeforeDist;
-                int cnt = pref.getInt("POINT", 0)+interval;
-                if(cnt >= pref.getInt("GOAL", MainActivity.DEFAULT_GOAL))  {
-                    cnt -= pref.getInt("GOAL", MainActivity.DEFAULT_GOAL);
-                    pref.edit().putInt("POINT", cnt).commit();
-                    cnt = pref.getInt("REWORD", MainActivity.DEFAULT_GOAL);
-                    pref.edit().putInt("REWORD", cnt+1).commit();
-                }
-                else {
-                    pref.edit().putInt("POINT", cnt ).commit();
-                }
-                mBeforeDist = mDist;
-                // AvgDist 하루평균이동거리 구하기
-                list = mDbManger.getRecord();
-                int totalDist = 0;
-                int dateCnt = 0;
-                int tempYear = 0;
-                int tempMonth = 0;
-                int tempDate = 0;
-                for(int i=0; i<list.size(); i++) {
-                    totalDist += list.get(i).getmDist();
-                    if(tempYear != list.get(i).getmYear() || tempMonth != list.get(i).getmMonth() || tempDate != list.get(i).getmDay()) {
-                        tempYear = list.get(i). getmYear();
-                        tempMonth = list.get(i).getmMonth();
-                        tempDate = list.get(i).getmDay();
-                        dateCnt++;
-                    }
-                }
-                totalDist /= dateCnt;
-                pref.edit().putInt("AVGDIST", totalDist).commit();
 
 
                 // 밀어서 잠금해제 했을 때 / 인터넷이 연결되 있을 때 / 누적된 데이터가 없을 때 --> 서버에 업데이트
@@ -238,21 +205,7 @@ public class PedometerCheckService extends Service {
                     Log.d("tag", "서버 DB 업데이트!!!");
                     insertRecordData();
 
-                    User user = new User(
-                            pref.getInt("USER_ID_INT", 0),
-                            pref.getString("USER_ID_TEXT", ""),
-                            pref.getString("NAME", ""),
-                            pref.getString("EMAIL", ""),
-                            pref.getString("GENDER", ""),
-                            pref.getInt("AGE", 0),
-                            pref.getInt("POINT", 0),
-                            pref.getInt("GOAL", 0),
-                            pref.getInt("REWORD", 0),
-                            pref.getInt("SUCCESSCNT", 0),
-                            pref.getInt("FAILCNT", 0),
-                            pref.getInt("AVGDIST", 0)
-                    );
-                    updateUserData(user);
+                    updateUserFunc();
 
                     // 새로운 행에 기록하기 위한 초기화 부분
                     mYear = c.get(Calendar.YEAR);
@@ -287,21 +240,7 @@ public class PedometerCheckService extends Service {
                         insertRecordData();
                     }
 
-                    User user = new User(
-                            pref.getInt("USER_ID_INT", 0),
-                            pref.getString("USER_ID_TEXT", ""),
-                            pref.getString("NAME", ""),
-                            pref.getString("EMAIL", ""),
-                            pref.getString("GENDER", ""),
-                            pref.getInt("AGE", 0),
-                            pref.getInt("POINT", 0),
-                            pref.getInt("GOAL", 0),
-                            pref.getInt("REWORD", 0),
-                            pref.getInt("SUCCESSCNT", 0),
-                            pref.getInt("FAILCNT", 0),
-                            pref.getInt("AVGDIST", 0)
-                    );
-                    updateUserData(user);
+                    updateUserFunc();
 
                     // 새로운 행에 기록하기 위한 초기화 부분
                     mYear = c.get(Calendar.YEAR);
@@ -321,6 +260,8 @@ public class PedometerCheckService extends Service {
                 else if(global.getIsWalking() == 0 && !global.getIsNetworking()) {
                     Log.d("tag", "서버 DB 업데이터 못함!!!");
                     noSaveConut ++;
+
+                    updateUserFunc();
 
                     // 새로운 행에 기록하기 위한 초기화 부분
                     mYear = c.get(Calendar.YEAR);
@@ -395,6 +336,51 @@ public class PedometerCheckService extends Service {
         };
     }
 
+    public void updateUserFunc() {
+
+        // SharedPreferences 유저데이터 업데이트
+        // Point, GOAL, REWORD
+        int cnt = pref.getInt("POINT", 0) + mDist;
+        pref.edit().putInt("POINT", (cnt%pref.getInt("GOAL", 0))).commit();
+        int reward = pref.getInt("REWORD", 0) + (cnt/pref.getInt("GOAL", 0));
+        pref.edit().putInt("REWORD", reward ).commit();
+
+        // AvgDist 하루평균이동거리 구하기
+        list = mDbManger.getRecord();
+        int totalDist = 0;
+        int dateCnt = 0;
+        int tempYear = 0;
+        int tempMonth = 0;
+        int tempDate = 0;
+        for(int i=0; i<list.size(); i++) {
+            totalDist += list.get(i).getmDist();
+            if(tempYear != list.get(i).getmYear() || tempMonth != list.get(i).getmMonth() || tempDate != list.get(i).getmDay()) {
+                tempYear = list.get(i). getmYear();
+                tempMonth = list.get(i).getmMonth();
+                tempDate = list.get(i).getmDay();
+                dateCnt++;
+            }
+        }
+        totalDist /= dateCnt;
+        pref.edit().putInt("AVGDIST", totalDist).commit();
+
+        User user = new User(
+                pref.getInt("USER_ID_INT", 0),
+                pref.getString("USER_ID_TEXT", ""),
+                pref.getString("NAME", ""),
+                pref.getString("EMAIL", ""),
+                pref.getString("GENDER", ""),
+                pref.getInt("AGE", 0),
+                pref.getInt("POINT", 0),
+                pref.getInt("GOAL", 0),
+                pref.getInt("REWORD", 0),
+                pref.getInt("SUCCESSCNT", 0),
+                pref.getInt("FAILCNT", 0),
+                pref.getInt("AVGDIST", 0)
+        );
+        updateUserData(user);
+    }
+
     /**
      * 스위치가 OFF가 되면 가속도센서, 주기시간, 잠금화면이 비활성화
      */
@@ -447,7 +433,9 @@ public class PedometerCheckService extends Service {
                         // 가속도센서를 이용해 걸음수를 측정
                         Log.d("tag", "onSensorChanged SHAKE !!");
 
-                        mDist++;
+                        if(!global.getIsScreen()) {
+                            mDist++;
+                        }
                     }
                     else {
 

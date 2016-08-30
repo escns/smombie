@@ -61,7 +61,7 @@ public class TabFragment3 extends Fragment {
         chart1.setTouchEnabled(false);
 
         // 데이터가 없으면 그래프를 출력하지 않는다
-        if(pref.getInt("FAILCNT",999) != 0 || pref.getInt("SUCCESSCNT",999) != 0) {
+        if(pref.getInt("POINT",999) != 0 || pref.getInt("GOAL",999) != 0) {
             chart();
         }
     }
@@ -71,16 +71,16 @@ public class TabFragment3 extends Fragment {
      */
     public void chart() {
         List<PieEntry> entries = new ArrayList<>();
-        entries.add(new PieEntry(pref.getInt("FAILCNT",999), "실패"));
-        entries.add(new PieEntry(pref.getInt("SUCCESSCNT",999), "성공"));
+        entries.add(new PieEntry(pref.getInt("POINT",0), "걸은거리"));
+        entries.add(new PieEntry(pref.getInt("GOAL",0)-pref.getInt("POINT",0), "남은거리"));
 
-        int failCnt = pref.getInt("FAILCNT", 999);
-        int successCnt = pref.getInt("SUCCESSCNT", 999);
+        int failCnt = pref.getInt("POINT", 999);
+        int successCnt = pref.getInt("GOAL",0);
         float percent;
         if (successCnt == 0)
             percent = 0;
         else
-            percent = (float) successCnt / ((float)failCnt + (float)successCnt) * 100;
+            percent = (float) failCnt / (float)successCnt * 100;
 
         PieDataSet set = new PieDataSet(entries, "Election Results");
         set.setColors(new int[]{getResources().getColor(R.color.tab_PieChart_Success), getResources().getColor(R.color.tab_PieChart_Fail)});
@@ -91,7 +91,7 @@ public class TabFragment3 extends Fragment {
 
         chart1.setData(data);
         chart1.setDescription("");
-        chart1.setCenterText("성공률\n" + percent + "%");
+        chart1.setCenterText("달성률\n" + (int)percent + "%");
         chart1.setCenterTextSize(15);
         chart1.setTouchEnabled(false);
         chart1.invalidate(); // refresh

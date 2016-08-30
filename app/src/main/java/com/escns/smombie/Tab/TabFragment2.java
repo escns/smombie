@@ -61,6 +61,7 @@ public class TabFragment2 extends Fragment {
                 layout2.setVisibility(View.GONE);
                 buttonOne.setImageResource(R.drawable.bg_round_blue_gender);
                 buttonTwo.setImageResource(R.drawable.bg_round_gray_age);
+                chart1.animateY(1200);
                 if(userGender == 1)
                     textProperty.setText("남자");
                 else
@@ -76,6 +77,7 @@ public class TabFragment2 extends Fragment {
                 layout2.setVisibility(View.VISIBLE);
                 buttonOne.setImageResource(R.drawable.bg_round_gray_gender);
                 buttonTwo.setImageResource(R.drawable.bg_round_blue_age);
+                chart2.animateY(1200);
                 if(userAge == 1)
                     textProperty.setText("10대");
                 else if(userAge == 2)

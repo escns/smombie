@@ -65,8 +65,7 @@ public class TabFragment1 extends Fragment {
                 buttonOne.setImageResource(R.drawable.bg_round_blue_day);
                 buttonTwo.setImageResource(R.drawable.bg_round_gray_week);
                 buttonThree.setImageResource(R.drawable.bg_round_gray_month);
-
-
+                chart1.animateY(1200);
             }
         });
 
@@ -80,6 +79,7 @@ public class TabFragment1 extends Fragment {
                 buttonOne.setImageResource(R.drawable.bg_round_gray_day);
                 buttonTwo.setImageResource(R.drawable.bg_round_blue_week);
                 buttonThree.setImageResource(R.drawable.bg_round_gray_month);
+                chart2.animateY(1200);
             }
         });
 
@@ -93,6 +93,7 @@ public class TabFragment1 extends Fragment {
                 buttonOne.setImageResource(R.drawable.bg_round_gray_day);
                 buttonTwo.setImageResource(R.drawable.bg_round_gray_week);
                 buttonThree.setImageResource(R.drawable.bg_round_blue_month);
+                chart3.animateY(1200);
             }
         });
 
