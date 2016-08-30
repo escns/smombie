@@ -84,6 +84,8 @@ public class PedometerCheckService extends Service {
     private int mHour; // 현재 시간
     private int mDist; // 걸은 거리
 
+    private int mBeforeDist; //
+
     private DBManager mDbManger;
     private Record record;
     List<Record> list;
@@ -175,23 +177,24 @@ public class PedometerCheckService extends Service {
             }
         };
         Timer timer = new Timer();
-        timer.schedule(myTimer,1000,1000); // App 시작 1초 이후에 1초마다 실행
+        timer.schedule(myTimer,3000,3000); // App 시작 1초 이후에 1초마다 실행
 
         // 데이터를 DB에 저장하기 위함
         handler = new Handler() {
             public void handleMessage(Message msg) {
-                /**
+
                 Global global = Global.getInstance();
 
                 // Local DB 업데이트
                 record.setmDist(mDist);
                 mDbManger.updateLastRecord(record);
-                Log.d("tag", "startSensor - 값 한번 보자 mDist = " + record.getmDist());
+                Log.d("tag", "로컬 DB 업데이트!!! mDist = " + record.getmDist());
+                Log.d("tag", "현재 데이터 수!!! cnt = " + mDbManger.getRowCount());
 
                 // SharedPreferences 유저데이터 업데이트
-                //pref.edit().putInt("POINT",     ).commit();
-
-                int cnt = pref.getInt("POINT", 0)+mDist;
+                // Point, GOAL, REWORD
+                int interval = mDist - mBeforeDist;
+                int cnt = pref.getInt("POINT", 0)+interval;
                 if(cnt >= pref.getInt("GOAL", MainActivity.DEFAULT_GOAL))  {
                     cnt -= pref.getInt("GOAL", MainActivity.DEFAULT_GOAL);
                     pref.edit().putInt("POINT", cnt).commit();
@@ -199,9 +202,11 @@ public class PedometerCheckService extends Service {
                     pref.edit().putInt("REWORD", cnt+1).commit();
                 }
                 else {
-                    pref.edit().putInt("POINT", cnt+mDist).commit();
+                    pref.edit().putInt("POINT", cnt ).commit();
                 }
-
+                mBeforeDist = mDist;
+                // AvgDist
+                list = mDbManger.getRecord();
                 int totalDist = 0;
                 for(int i=0; i<list.size(); i++) {
                     totalDist += list.get(i).getmDist();
@@ -209,26 +214,42 @@ public class PedometerCheckService extends Service {
                 totalDist /= list.size();
                 pref.edit().putInt("AVGDIST", totalDist).commit();
 
-                User user = new User(
-                        pref.getInt("USER_ID_INT", 0),
-                        pref.getString("USER_ID_TEXT", ""),
-                        pref.getString("NAME", ""),
-                        pref.getString("EMAIL", ""),
-                        pref.getString("GENDER", ""),
-                        pref.getInt("AGE", 0),
-                        pref.getInt("POINT", 0),
-                        pref.getInt("GOAL", 0),
-                        pref.getInt("REWORD", 0),
-                        pref.getInt("SUCCESSCNT", 0),
-                        pref.getInt("FAILCNT", 0),
-                        pref.getInt("AVGDIST", 0)
-                );
-
                 // 밀어서 잠금해제 --> 서버에 업데이트
                 if(global.getIsWalking() == 0) {
+                    Log.d("tag", "서버 DB 업데이트!!!");
+                    insertRecordData();
 
+                    User user = new User(
+                            pref.getInt("USER_ID_INT", 0),
+                            pref.getString("USER_ID_TEXT", ""),
+                            pref.getString("NAME", ""),
+                            pref.getString("EMAIL", ""),
+                            pref.getString("GENDER", ""),
+                            pref.getInt("AGE", 0),
+                            pref.getInt("POINT", 0),
+                            pref.getInt("GOAL", 0),
+                            pref.getInt("REWORD", 0),
+                            pref.getInt("SUCCESSCNT", 0),
+                            pref.getInt("FAILCNT", 0),
+                            pref.getInt("AVGDIST", 0)
+                    );
+                    updateUserData(user);
+
+                    // 새로운 행에 기록하기 위한 초기화 부분
+                    mIdInt = pref.getInt("USER_ID_INT", 0);
+                    mYear = c.get(Calendar.YEAR);
+                    mMonth = c.get(Calendar.MONTH)+1;
+                    mDate = c.get(Calendar.DATE);
+                    mHour = c.get(Calendar.HOUR_OF_DAY);
+                    mDist = 0;
+                    mBeforeDist = 0;
+                    record = new Record(mIdInt,mYear,mMonth,mDate,mHour,mDist);
+                    mDbManger.insertRecord(record);
+
+
+                    global.setIsWalking(1);
                 }
-                 */
+
 
                 /*
                 if(isWalkingNow) {
@@ -343,6 +364,7 @@ public class PedometerCheckService extends Service {
         mDate = c.get(Calendar.DATE);
         mHour = c.get(Calendar.HOUR_OF_DAY);
         mDist = 0;
+        mBeforeDist = 0;
         record = new Record(mIdInt,mYear,mMonth,mDate,mHour,mDist);
         mDbManger.insertRecord(record);
 
