@@ -54,6 +54,12 @@ public class SettingFragment extends Fragment {
 
         swc = (ImageView) rootView.findViewById(R.id.checkBox);
 
+        if(pref.getBoolean("switch", false)) {
+            swc.setImageResource(R.drawable.swc_on);
+        } else {
+            swc.setImageResource(R.drawable.swc_off);
+        }
+
         swc.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -83,8 +89,6 @@ public class SettingFragment extends Fragment {
                             .setDeniedMessage("해당 서비스에서 제공하는 권한 설정을 거부하셨다면\n\n[Setting] > [Permission] 에서 권한 설정을 해주시기 바랍니다.")
                             .setPermissions(Manifest.permission.READ_PHONE_STATE)
                             .check();
-
-
                 }
                 else {
                     swc.setImageResource(R.drawable.swc_off);

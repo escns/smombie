@@ -77,8 +77,7 @@ public class LoginActivity extends Activity {
 
         setContentView(R.layout.activity_login);
 
-        final ProgressBar progressBar = (ProgressBar) findViewById(R.id.bg_loading);
-        progressBar.setVisibility(View.INVISIBLE);
+
 
         // DB 생성
         mDbManger = new DBManager(this);
@@ -94,10 +93,13 @@ public class LoginActivity extends Activity {
         mLoginBackground = (ImageView) findViewById(R.id.login_background);
 
         final ImageView loginFacebook = (ImageView) findViewById(R.id.login_button_visible);
+        final ProgressBar progressBar = (ProgressBar) findViewById(R.id.bg_loading);
+        progressBar.setVisibility(View.VISIBLE);
+
         Picasso.with(this).load(R.drawable.bg_login_compressed).fit().into(mLoginBackground, new Callback() {
             @Override
             public void onSuccess() {
-                //progressBar.setVisibility(View.GONE);
+                progressBar.setVisibility(View.GONE);
                 loginFacebook.setVisibility(View.VISIBLE);
             }
 
@@ -158,6 +160,7 @@ public class LoginActivity extends Activity {
                                     Log.d("tag", "User Gender : " + mFbGender);
                                     Log.d("tag", "User Age : " + mFbAge);
 
+                                    progressBar.setVisibility(View.VISIBLE);
                                     checkUserIdText(mFbId);
 
                                 } catch (JSONException e) {
@@ -313,6 +316,9 @@ public class LoginActivity extends Activity {
         if(!isAutoLogin) {
             pref.edit().putBoolean("switch", true).commit();
         }
+
+        ProgressBar progressBar = (ProgressBar) findViewById(R.id.bg_loading);
+        progressBar.setVisibility(View.GONE);
 
         Intent intent = new Intent(getApplicationContext(), MainActivity.class);
         //intent.putExtra("AutoLogin",isAutoLogin);

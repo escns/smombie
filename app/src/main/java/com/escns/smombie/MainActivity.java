@@ -274,6 +274,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onPermissionDenied(ArrayList<String> deniedPermissions) {
                 //Toast.makeText(MainActivity.this, "Permission Denied\n" + deniedPermissions.toString(), Toast.LENGTH_SHORT).show();
+                pref.edit().putBoolean("switch", false).commit();
             }
         };
 
