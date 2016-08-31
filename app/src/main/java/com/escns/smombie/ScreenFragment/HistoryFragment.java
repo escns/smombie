@@ -81,9 +81,9 @@ public class HistoryFragment extends Fragment {
     public void onStart() {
 
         tabLayout.removeAllTabs();
-        tabLayout.addTab(tabLayout.newTab().setText("날짜별"));//setIcon(android.R.drawable.ic_dialog_email));
-        tabLayout.addTab(tabLayout.newTab().setText("관계별"));//setIcon(android.R.drawable.ic_dialog_dialer));
-        tabLayout.addTab(tabLayout.newTab().setText("성과별"));//setIcon(android.R.drawable.ic_dialog_map));
+        tabLayout.addTab(tabLayout.newTab().setText("날짜별"));
+        tabLayout.addTab(tabLayout.newTab().setText("관계별"));
+        tabLayout.addTab(tabLayout.newTab().setText("성과별"));
         tabLayout.setTabTextColors(getResources().getColor(R.color.tab_menu), getResources().getColor(R.color.tab_menuSelect));
         tabLayout.setSelectedTabIndicatorColor(getResources().getColor(R.color.tab_lineSelect));
         tabLayout.setSelectedTabIndicatorHeight(8);
@@ -99,18 +99,19 @@ public class HistoryFragment extends Fragment {
         
         tabLayout = (TabLayout) rootView.findViewById(R.id.tab_layout);
 
-        tabLayout.addTab(tabLayout.newTab().setText("날짜별"));//setIcon(android.R.drawable.ic_dialog_email));
-        tabLayout.addTab(tabLayout.newTab().setText("관계별"));//setIcon(android.R.drawable.ic_dialog_dialer));
-        tabLayout.addTab(tabLayout.newTab().setText("성과별"));//setIcon(android.R.drawable.ic_dialog_map));
+        // Tab의 정보 입력
+        tabLayout.addTab(tabLayout.newTab().setText("날짜별"));
+        tabLayout.addTab(tabLayout.newTab().setText("관계별"));
+        tabLayout.addTab(tabLayout.newTab().setText("성과별"));
         tabLayout.setTabTextColors(getResources().getColor(R.color.tab_menu), getResources().getColor(R.color.tab_menuSelect));
-        tabLayout.setSelectedTabIndicatorColor(getResources().getColor(R.color.tab_lineSelect));//Color.parseColor("#fd6839"));
+        tabLayout.setSelectedTabIndicatorColor(getResources().getColor(R.color.tab_lineSelect));
         tabLayout.setSelectedTabIndicatorHeight(8);
-
 
         final ViewPager viewPager = (ViewPager) rootView.findViewById(R.id.tab_view);
         final PagerAdapter adapter = new TabPagerAdapter(getChildFragmentManager(), tabLayout.getTabCount());
         viewPager.setAdapter(adapter);
 
+        // ViewPager에 tablayout 추가
         viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
 
         tabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
