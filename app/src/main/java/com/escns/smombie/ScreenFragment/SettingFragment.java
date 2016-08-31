@@ -54,15 +54,6 @@ public class SettingFragment extends Fragment {
 
         swc = (ImageView) rootView.findViewById(R.id.checkBox);
 
-        if ( pref.getBoolean("switch", false )) {
-            Log.d("tag", "버튼상태 true");
-            swc.setImageResource(R.drawable.swc_on);
-        }
-        else {
-            Log.d("tag", "버튼상태 false");
-            swc.setImageResource(R.drawable.swc_off);
-        }
-
         swc.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -82,6 +73,8 @@ public class SettingFragment extends Fragment {
                         @Override
                         public void onPermissionDenied(ArrayList<String> deniedPermissions) {
                             //Toast.makeText(MainActivity.this, "Permission Denied\n" + deniedPermissions.toString(), Toast.LENGTH_SHORT).show();
+                            pref.edit().putBoolean("switch", false).commit();
+                            swc.setImageResource(R.drawable.swc_off);
                         }
                     };
 
