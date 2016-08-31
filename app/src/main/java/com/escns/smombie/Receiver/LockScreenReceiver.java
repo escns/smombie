@@ -139,6 +139,12 @@ public class LockScreenReceiver extends BroadcastReceiver {
             mWindowManager.removeView(disableStatusBarView);
         }
         mWindowManager = null;
+
+        /*
+        Intent i = new Intent();
+        i.setAction("com.escns.smombie.REMOVE_BLANK_ACTIVITY");
+        mContext.sendBroadcast(i);
+        */
     }
 
     /**
@@ -198,6 +204,16 @@ public class LockScreenReceiver extends BroadcastReceiver {
 
         handleParams.gravity = Gravity.TOP;
         mWindowManager.addView(disableStatusBarView, handleParams);
+
+        /*
+        Intent intent = new Intent(mContext, BlankActivity.class);
+        PendingIntent pi = PendingIntent.getActivity(mContext, 0, intent, PendingIntent.FLAG_ONE_SHOT);
+        try {
+            pi.send();
+        } catch (PendingIntent.CanceledException e) {
+            e.printStackTrace();
+        }
+        */
     }
 
     /**
