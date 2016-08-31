@@ -4,10 +4,12 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.PixelFormat;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.util.Log;
 import android.util.TypedValue;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -50,6 +52,7 @@ public class LockScreenReceiver extends BroadcastReceiver {
     private static WindowManager mWindowManager;           // 최상단에 뷰를 그릴 WindowManager
     private static View mLockScreenView;                   // 최상단 뷰
     private LoopViewPager2 mLoopViewPager2;           // Viewpager
+    private static View disableStatusBarView;
 
     int windowWidth;                                // 전체 윈도우 너비
     int windowHeight;                               // 전체 윈도우 높이
@@ -86,20 +89,14 @@ public class LockScreenReceiver extends BroadcastReceiver {
         } else if(action.equals("com.escns.smombie.CALL_STATE_RINGING")) {
             isRinging = true;
             if(mWindowManager!=null && isLock) {
-                if(mLockScreenView != null) {
-                    mWindowManager.removeView(mLockScreenView);
-                }
-                mWindowManager = null;
+                removeLockScreen();
                 isLock=false;
             }
 
         } else if(action.equals("com.escns.smombie.CALL_STATE_OFFHOOK")) {
             isRinging = true;
             if(mWindowManager!=null && isLock) {
-                if(mLockScreenView != null) {
-                    mWindowManager.removeView(mLockScreenView);
-                }
-                mWindowManager = null;
+                removeLockScreen();
                 isLock=false;
             }
 
@@ -132,7 +129,16 @@ public class LockScreenReceiver extends BroadcastReceiver {
                 Toast.makeText(context, "인터넷 연결이 끊어졌습니다.", Toast.LENGTH_LONG).show();
             }
         }
+    }
 
+    private void removeLockScreen() {
+        if(mLockScreenView != null) {
+            mWindowManager.removeView(mLockScreenView);
+        }
+        if(disableStatusBarView != null) {
+            mWindowManager.removeView(disableStatusBarView);
+        }
+        mWindowManager = null;
     }
 
     /**
@@ -158,10 +164,11 @@ public class LockScreenReceiver extends BroadcastReceiver {
         mLoopViewPager2 = (LoopViewPager2) mLockScreenView.findViewById(R.id.lockscreen_viewpager);
         RandomAd randomAd = new RandomAd();
         mLoopViewPager2.setSliders_url(randomAd.getRandomAdUrl(VIEWPAGER_COUNT));
+        mLoopViewPager2.setWaterMarkGone();
 
         mParams = new WindowManager.LayoutParams(                                       // View의 파라미터 결정
                 WindowManager.LayoutParams.TYPE_TOAST,                           // 최상단 뷰로 설정
-                WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN                    // 풀 스크린으로 설정
+                WindowManager.LayoutParams.FLAG_FULLSCREEN                    // 풀 스크린으로 설정
         );
         mParams.screenOrientation=12;                                                   // 반드시 세로
 
@@ -171,6 +178,26 @@ public class LockScreenReceiver extends BroadcastReceiver {
         init();
 
         mWindowManager.addView(mLockScreenView, mParams);
+
+        disableStatusBarView = new View(context);
+
+        WindowManager.LayoutParams handleParams = new WindowManager.LayoutParams(
+        WindowManager.LayoutParams.TYPE_TOAST,
+                // this is to keep button presses going to the background window
+                WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE |
+                        // this is to enable the notification to recieve touch events
+                        WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL |
+                        // Draws over status bar
+                        WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN,
+                PixelFormat.TRANSLUCENT);
+
+        handleParams.width = WindowManager.LayoutParams.MATCH_PARENT;
+        handleParams.height = getStatusBarHeight();
+
+        Log.i("tag", ""+getStatusBarHeight());
+
+        handleParams.gravity = Gravity.TOP;
+        mWindowManager.addView(disableStatusBarView, handleParams);
     }
 
     /**
@@ -204,8 +231,7 @@ public class LockScreenReceiver extends BroadcastReceiver {
 
                         if(x_cord>windowWidth - btnWidth- offsetRight) {
                             if(mWindowManager != null) {
-                                mWindowManager.removeView(mLockScreenView);
-                                mWindowManager = null;
+                                removeLockScreen();
                                 isLock=false;
 
                                 queryFail();
@@ -261,5 +287,14 @@ public class LockScreenReceiver extends BroadcastReceiver {
 
         global.setIsScreen(true);
         global.setIsWalking(0);
+    }
+
+    public int getStatusBarHeight() {
+        int result = 0;
+        int resourceId = mContext.getResources().getIdentifier("status_bar_height", "dimen", "android");
+        if (resourceId > 0) {
+            result = mContext.getResources().getDimensionPixelSize(resourceId);
+        }
+        return result;
     }
 }

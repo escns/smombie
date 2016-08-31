@@ -5,6 +5,7 @@
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
@@ -31,14 +32,6 @@
             </intent-filter>
         </service>
 
-        <!--
-        <service android:name=".Service.LockScreenService">
-            <intent-filter>
-                <action android:name="LockScreenService" />
-            </intent-filter>
-        </service>
-        -->
-
         <receiver
             android:name=".Receiver.LockScreenReceiver"
             android:enabled="true"
@@ -51,7 +44,6 @@
                 <action android:name="com.escns.smombie.LOCK_SCREEN_ON" />
                 <action android:name="com.escns.smombie.LOCK_SCREEN_OFF" />
                 <action android:name="com.escns.smombie.RESTART_SERVICE"/>
-                <action android:name="android.net.conn.CONNECTIVITY_CHANGE"/>
             </intent-filter>
         </receiver>
 
