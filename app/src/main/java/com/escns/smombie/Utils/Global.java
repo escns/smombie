@@ -18,14 +18,14 @@ public class Global {
     private boolean isNetworking = true; // 인터넷에 연결되어 있는지 아닌지 판단
 
     /**
-     * 생성자
+     * SingleTone 구현을 위해 밖에서는 생성자를 호출할 수 없게 private 설정한 생성자
      */
     private  Global() {
     }
 
     /**
-     * 값을 받아온다
-     * @return
+     * SingleTone 구현을 위한 생성자, 객체가 있다면 만들지 않고 이미 만들어진 객체를 리턴
+     * @return  이전에 쓰던 객체를 리턴
      */
     public static Global getInstance() {
         if(mGlobal==null) {

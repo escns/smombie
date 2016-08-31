@@ -4,7 +4,6 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.util.Log;
 
 import com.escns.smombie.DAO.Record;
 import com.escns.smombie.R;
@@ -26,8 +25,8 @@ public class DBManager extends SQLiteOpenHelper {
     private String RECORD_TABLE; // 테이블 이름
 
     /**
-     * 생성자
-     * @param context MainActivity의 Context
+     * DB Name과 Table Name을 설정
+     * @param context DBManager객체를 생성한 Activity의 Context
      */
     public DBManager(Context context) {
         super(context, context.getResources().getString(R.string.app_name), null, 1);
@@ -78,7 +77,7 @@ public class DBManager extends SQLiteOpenHelper {
 
     /**
      * 파라미터로 받은 data를 Record테이블에 저장한다
-     * @param data
+     * @param data  SQLite에 저장할 Record 데이터
      */
     public void insertRecord(Record data) {
         SQLiteDatabase db = null;

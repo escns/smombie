@@ -4,6 +4,7 @@ import com.google.gson.annotations.SerializedName;
 
 /**
  * Created by Administrator on 2016-08-25.
+ * 통계자료 구성을 위해 User 와 Record를 join한 객체
  */
 
 public class UserJoinRecord {

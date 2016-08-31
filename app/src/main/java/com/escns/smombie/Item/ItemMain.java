@@ -5,7 +5,7 @@ package com.escns.smombie.Item;
  */
 
 /**
- * 홈 화면에서 쓸 데이터들을 관리하는 class
+ * MainFragment 에서 horizontal list view 에서 쓸 데이터들을 관리하는 class
  */
 public class ItemMain {
 

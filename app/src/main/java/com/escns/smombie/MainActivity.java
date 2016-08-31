@@ -200,8 +200,8 @@ public class MainActivity extends AppCompatActivity {
 
     /**
      * 파라미터로 받은 fragment로 이동
-     * @param i
-     * @param fragment
+     * @param i             선택한 menu index
+     * @param fragment      이동할 fragment
      */
     private void moveFragment(int i, Fragment fragment) {
         if(mMenuState != i) {

@@ -15,6 +15,7 @@ import retrofit2.http.Query;
 
 /**
  * Created by Administrator on 2016-08-16.
+ * Retrofir2 통신을 위한 API 인터페이스
  */
 
 public interface ApiService {

@@ -18,6 +18,7 @@ import java.util.List;
 
 /**
  * Created by Administrator on 2016-08-25.
+ * MainFragment에서 사용하는 horizontal list에 들어갈 광고 list의 Adapter
  */
 
 public class ItemMainAdapter extends ArrayAdapter<ItemMain> {
@@ -26,9 +27,9 @@ public class ItemMainAdapter extends ArrayAdapter<ItemMain> {
 
     /**
      * 생성자에서 LayoutInflater 객체를 생성해 둔다. 파라미터로 List 형태의 오브젝트 변수가 필수
-     * @param context
-     * @param resource
-     * @param objects
+     * @param context   LayoutInflater를 위한 context
+     * @param resource  사용하지 않음
+     * @param objects   List를 채울 아이템들
      */
     public ItemMainAdapter(Context context, int resource, List<ItemMain> objects) {
         super(context, resource, objects);
@@ -37,10 +38,10 @@ public class ItemMainAdapter extends ArrayAdapter<ItemMain> {
 
     /**
      * 현재 위치에서 그려야 할 정보를 List에서 가져와 그린 View를 리턴
-     * @param position
-     * @param convertView
-     * @param parent
-     * @return
+     * @param position      몇번째 list인지 위치
+     * @param convertView   그려질 View 객체
+     * @param parent        상위 View 객체
+     * @return              완성된 View를 리턴
      */
     @NonNull
     @Override

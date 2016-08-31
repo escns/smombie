@@ -35,6 +35,11 @@ import static android.content.Context.MODE_PRIVATE;
 
 /**
  * Created by Administrator on 2016-08-04.
+ * LockScreen을 관리하게 위한 BroadcastReceiver
+ * LockScreen을 구현하기 위해서는 1. Activity 위에서 LockScreen을 그리는 방법 2. Windowmanager를 이용하여 바로 View를 Draw하는 방법이
+ * 있는데 여기서는 2번 방법을 선택하여 구현하였다.
+ *
+ * LockScreen은 Activity 부분을 가리는 부분과 Status bar를 가리는 투명한 부분, 2부분으로 구성되어 있다.
  */
 
 public class LockScreenReceiver extends BroadcastReceiver {
@@ -66,8 +71,8 @@ public class LockScreenReceiver extends BroadcastReceiver {
 
     /**
      * BroadcastReceiver에 메시지가 왔을 때 분류
-     * @param context
-     * @param intent
+     * @param context   Receiver의 context
+     * @param intent    메시지 파싱을 위한 intent
      */
     @Override
     public void onReceive(Context context, Intent intent) {
@@ -131,6 +136,9 @@ public class LockScreenReceiver extends BroadcastReceiver {
         }
     }
 
+    /**
+     * LockScreen을 지우는 부분
+     */
     private void removeLockScreen() {
         if(mLockScreenView != null) {
             mWindowManager.removeView(mLockScreenView);
@@ -149,16 +157,13 @@ public class LockScreenReceiver extends BroadcastReceiver {
 
     /**
      * mWindowManager를 이용하여 TYPE_TOAST 타입의 LockScreen 을 그린다.
-     * @param context
+     * @param context   Receiver의 context
      */
     private void drawLockScreen(Context context) {
 
         // lock이 활성화 된 상태라면 지우고 다시
         if(mWindowManager!=null && isLock) {
-            if(mLockScreenView != null) {
-                mWindowManager.removeView(mLockScreenView);
-            }
-            mWindowManager = null;
+            removeLockScreen();
         }
 
         isLock = true;
@@ -307,7 +312,7 @@ public class LockScreenReceiver extends BroadcastReceiver {
 
     /**
      * 상단의 상태바 클릭을 막기 위해서 보이지 않는 상태를 그릴 때 필요한 상태바의 높이를 계산
-     * @return
+     * @return  상태바의 높이
      */
     public int getStatusBarHeight() {
         int result = 0;

@@ -8,6 +8,7 @@ import java.util.Random;
 
 /**
  * Created by Administrator on 2016-08-25.
+ * 랜덤한 광고 생성을 위한 class, 현재는 웹에 올라가 있는 광고 이미지 중 랜덤하게 선택
  */
 
 public class RandomAd {
@@ -17,8 +18,8 @@ public class RandomAd {
 
     /**
      * 광고의 Url을 List 형식으로 cnt 갯수만큼 리턴한다.
-     * @param cnt
-     * @return
+     * @param cnt   필요한 광고의 갯수
+     * @return      Url을 List에 담아 리턴
      */
     public List<String> getRandomAdUrl(int cnt) {
         List<String> list = new ArrayList<>();

@@ -98,7 +98,11 @@ public class PedometerCheckService extends Service {
 
     private CountDownTimer mCountDownTimer;
 
-    // Binder 리턴
+    /**
+     * Binder 리턴. 여기서는 사용하지 않음
+     * @param intent
+     * @return Service를 감싼 Binder를 리턴
+     */
     @Nullable
     @Override
     public IBinder onBind(Intent intent) { return null; }
@@ -118,6 +122,14 @@ public class PedometerCheckService extends Service {
         startReceiver();
     }
 
+    /**
+     * Task Killer에 의해 서비스가 죽지 않도록 startForeground 를 호출합니다.
+     * startForeground 를 호출할 때 구글의 정책에 의해 반드시 노티바가 노출 됩니다.
+     * @param intent    onStartCommand 생명주기가 수행될 때 필요한 intent
+     * @param flags     onStartCommand 생명주기가 수행될 때 필요한 flag
+     * @param startId   onStartCommand 생명주기가 수행될 때 필요한 startId
+     * @return          수행 결과
+     */
     //@TargetApi(Build.VERSION_CODES.JELLY_BEAN)
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
@@ -322,6 +334,9 @@ public class PedometerCheckService extends Service {
 
     }
 
+    /**
+     * Service가 죽어도 다시 실행될 수 있도록 Timer를 생성
+     */
     public void countDownTimer(){
 
         mCountDownTimer = new CountDownTimer(1000*1000, 1000) {
@@ -336,6 +351,9 @@ public class PedometerCheckService extends Service {
         };
     }
 
+    /**
+     * User 데이터를 Update하는 부분
+     */
     public void updateUserFunc() {
 
         // SharedPreferences 유저데이터 업데이트
@@ -415,6 +433,10 @@ public class PedometerCheckService extends Service {
      */
     private SensorEventListener sensorEventListener = new SensorEventListener() {
 
+        /**
+         * 센서 값이 바뀌었을 때 호출 된다.
+         * @param event 호출한 Event 내용
+         */
         @Override
         public void onSensorChanged(SensorEvent event) {
             if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
@@ -492,7 +514,9 @@ public class PedometerCheckService extends Service {
         });
     }
 
-    // 전화 상태를 체크하는 Listener
+    /**
+     * 전화 상태를 확인하는 Listener
+     */
     class PhoneStateListener extends android.telephony.PhoneStateListener {
 
         @Override
@@ -516,6 +540,9 @@ public class PedometerCheckService extends Service {
         }
     }
 
+    /**
+     * 서비스가 죽었을 때 다시 수행될 수 있도록 재시작하는 Alarm을 등록
+     */
     private void registerRestartAlarm() {
         Log.i("tag", "registerRestartAlarm");
 
@@ -531,6 +558,9 @@ public class PedometerCheckService extends Service {
         alarmManager.setRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP, firstTime, 1*1000, sender);
     }
 
+    /**
+     * 서비스가 수행중일때는 재시작 Alarm을 해제
+     */
     private void unregisterRestartAlarm() {
         Log.i("tag", "unregisterRestartAlarm");
 

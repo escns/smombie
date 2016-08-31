@@ -67,6 +67,10 @@ public class LoginActivity extends Activity {
 
     CallbackManager callbackManager;        // 콜백
 
+    /**
+     * 객체 생성과 layout을 그리는 onCreate
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -212,8 +216,10 @@ public class LoginActivity extends Activity {
     }
 
     /**
-     * Facebook SDK 로그인 또는 공유와 통합한 모든 액티비티와 프래그먼트에서
-     * onActivityResult를 callbackManager에 전달해야 한다
+     * Facebook SDK 로그인 또는 공유와 통합한 모든 액티비티와 프래그먼트에서 onActivityResult를 callbackManager에 전달해야 한다
+     * @param requestCode   어떤 호출이 발생했는지에 대한 값
+     * @param resultCode    호출에 대해 어떤 선택을 했는지에 대한 값
+     * @param data          data를 담고 있는 intent
      */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -254,7 +260,7 @@ public class LoginActivity extends Activity {
 
     /**
      * 신규 User에 한해 유저정보를 Insert 한 뒤
-     * @param id_text
+     * @param id_text   신규 유저의 id
      */
     public void insertUserIdText(final String id_text) {
         Call<String> insertUser = mApiService.insertUser(id_text, mFbName, mFbEmail, mFbGender, mFbAge, 0, MainActivity.DEFAULT_GOAL, 0, 0, 0, 0);
@@ -275,7 +281,7 @@ public class LoginActivity extends Activity {
 
     /**
      * MainActivity로 이동합니다.
-     * @param user
+     * @param user  user정보를 저장하기 위한 데이터
      */
     public void moveToMain(User user) {
 
@@ -332,7 +338,7 @@ public class LoginActivity extends Activity {
 
     /**
      * User와 Record 정보들을 이용하여 통계 차트를 그릴때 필요한 비교대상들의 데이터를 미리 만들어 저장해둡니다.
-     * @param response
+     * @param response  정보들을 담고 있는 List
      */
     private void MakeStatisticInfo(Response<List<UserJoinRecord>> response) {
         int sumMale = 0;
@@ -420,7 +426,7 @@ public class LoginActivity extends Activity {
 
     /**
      * login 한 User 정보를 SharedPreferences 에 저장해둡니다.
-     * @param user
+     * @param user  로그인한 User 정보
      */
     private void MakeUserInfo(User user) {
         SharedPreferences.Editor editor = pref.edit();

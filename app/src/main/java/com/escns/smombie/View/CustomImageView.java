@@ -17,6 +17,7 @@ import com.escns.smombie.R;
 
 /**
  * Created by Administrator on 2016-08-14.
+ * 프로필 이미지를 보여주기 위한 ImageView이지만 오픈소스 라이브러리로 대체. 현재는 사용하지 않음
  */
 
 public class CustomImageView extends ImageView {
