@@ -212,7 +212,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
-     *  View들의 초기설정을 해준다.
+     *  View들의 초기설정을 해주고,
+     *  API 23 이상부터는 Permission 확인을 수행합니다.
      */
     public void init() {
 

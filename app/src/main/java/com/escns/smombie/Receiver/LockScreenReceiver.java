@@ -305,6 +305,10 @@ public class LockScreenReceiver extends BroadcastReceiver {
         global.setIsWalking(0);
     }
 
+    /**
+     * 상단의 상태바 클릭을 막기 위해서 보이지 않는 상태를 그릴 때 필요한 상태바의 높이를 계산
+     * @return
+     */
     public int getStatusBarHeight() {
         int result = 0;
         int resourceId = mContext.getResources().getIdentifier("status_bar_height", "dimen", "android");

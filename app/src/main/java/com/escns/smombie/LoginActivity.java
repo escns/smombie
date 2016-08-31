@@ -273,6 +273,10 @@ public class LoginActivity extends Activity {
         });
     }
 
+    /**
+     * MainActivity로 이동합니다.
+     * @param user
+     */
     public void moveToMain(User user) {
 
         MakeUserInfo(user);
@@ -326,6 +330,10 @@ public class LoginActivity extends Activity {
         finish();
     }
 
+    /**
+     * User와 Record 정보들을 이용하여 통계 차트를 그릴때 필요한 비교대상들의 데이터를 미리 만들어 저장해둡니다.
+     * @param response
+     */
     private void MakeStatisticInfo(Response<List<UserJoinRecord>> response) {
         int sumMale = 0;
         int sumFemale = 0;
@@ -410,6 +418,10 @@ public class LoginActivity extends Activity {
         Log.i("tag", "avg30s : " + avg30s);
     }
 
+    /**
+     * login 한 User 정보를 SharedPreferences 에 저장해둡니다.
+     * @param user
+     */
     private void MakeUserInfo(User user) {
         SharedPreferences.Editor editor = pref.edit();
         editor.putInt("USER_ID_INT", user.getmIdInt());
