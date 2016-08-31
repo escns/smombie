@@ -10,7 +10,7 @@ import com.jaekwon.loopviewpagerlayout.lib.LoopViewPagerLayout;
  * Created by Administrator on 2016-08-26.
  * @author hajaekwon
  * 제가 git에서 관리 중인 무한 Loop View Pager 오픈 소스를 상속받아 다시 Custom 한 LoopViewPager 입니다.
- * View가 3개 일 때  3 <- 1 -> 2 로 스크롤 이동이 가능합니다.
+ * View가 3개 일 때  3 , 1 , 2 로 스크롤 이동이 가능합니다.
  */
 
 public class LoopViewPager2 extends LoopViewPagerLayout {
